@@ -8,7 +8,7 @@ floor/test-fixtures
 
 # Trusted spec docs: human-only, hook-protected. Excluded from the formatter
 # so style fixes can never mutate their content-hash (fix #4 / spec-drift).
-# They may still be formatted by hand; they are out of the linter's scope only.
+# They may still be formatted by hand; they are out of the formatter's scope only.
 CONSTITUTION.md
 ARCHITECTURE.md
 THREAT-MODEL.md
