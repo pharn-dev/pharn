@@ -1,11 +1,20 @@
 {
-  // Lint all markdown, including the trusted spec docs.
+  // Lint all markdown except the trusted spec docs (see ignores).
   "globs": ["**/*.md"],
-  "ignores": ["node_modules", "floor/test-fixtures"],
+  // Trusted spec docs are human-only and hook-protected; they are excluded so
+  // style fixes can never mutate their content-hash (fix #4 / spec-drift).
+  // They may still be formatted by hand; this only removes them from scope.
+  "ignores": ["node_modules", "floor/test-fixtures", "CONSTITUTION.md", "ARCHITECTURE.md", "THREAT-MODEL.md", "LIMITS.md"],
   "config": {
     "default": true,
     // Long-form specs use wide lines and occasional inline HTML.
     "MD013": false,
     "MD033": false,
+    // Keep a Changelog repeats "Added"/"Changed"/etc. under each release; allow
+    // duplicate headings unless they are siblings under the same parent.
+    "MD024": { "siblings_only": true },
+    // GitHub issue/PR templates are fragments that open with "##" sections, not a
+    // document title, so the first-line-h1 rule does not apply.
+    "MD041": false,
   },
 }

@@ -48,12 +48,17 @@ echo '{"tool_name":"Write","tool_input":{"file_path":"pharn-core/rules/x.md"}}' 
 ```
 
 - **Slash commands `/plan`, `/build`, `/review`** (`.claude/commands/*.md`) are the core workflow.
-- **No build/lint step. No real test runner.** Zero dependencies (Node stdlib only; Node 24).
-  `npm test` is an unconfigured placeholder that intentionally errors. `floor/validate.test.mjs` and
-  `.claude/hooks/protect-trusted-paths.test.cjs` exist but are **empty stubs**.
-- `node floor/validate.mjs .` currently reports `GREEN — 0 capabilities`: the PHARN _product_ has not
-  been built in this repo yet. The floor deliberately ignores the bootstrap's own tooling
-  (`.claude/commands/`, `floor/`).
+- **Dev tooling is real; the methodology stays stdlib-only.** The floor, the hook, and the commands
+  have **zero runtime dependencies** (Node stdlib; Node 24). The repo carries **dev-only**
+  devDependencies (ESLint, Prettier, markdownlint) wired as npm scripts: `npm run check`
+  (`format:check` + `lint` + `lint:md` + `test`) is the aggregate gate, and `npm test` runs
+  `node --test` over the **populated** suites in `.claude/hooks/protect-trusted-paths.test.cjs` and
+  `floor/validate.test.mjs` (4 tests, green) — these are no longer empty stubs.
+- `node floor/validate.mjs .` currently reports `GREEN — 1 capabilities checked` — **attempt 0 is
+  built**: the `trust-fence` lens (`pharn-review/trust-fence/`) with its `pharn-contracts/finding-shape`
+  contract and hostile eval; `REVIEW.md` records the dogfood `/review` of it. Read this count live;
+  never assert repo state from memory (P6). The floor still deliberately ignores the bootstrap's own
+  tooling (`.claude/commands/`, `floor/`).
 
 ## Architecture: the big picture
 
