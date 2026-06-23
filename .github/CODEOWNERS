@@ -1,1 +1,9 @@
+# GitHub-layer write-guard (fix #2): every change requires my review.
 * @PrzemekGalarowicz
+
+# The four trusted spec docs — redundant with `*` above, listed explicitly
+# so the human-only write-guard is readable at the GitHub layer.
+CONSTITUTION.md @PrzemekGalarowicz
+ARCHITECTURE.md @PrzemekGalarowicz
+THREAT-MODEL.md @PrzemekGalarowicz
+LIMITS.md @PrzemekGalarowicz
