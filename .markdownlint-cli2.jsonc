@@ -1,0 +1,11 @@
+{
+  // Lint all markdown, including the trusted spec docs.
+  "globs": ["**/*.md"],
+  "ignores": ["node_modules", "floor/test-fixtures"],
+  "config": {
+    "default": true,
+    // Long-form specs use wide lines and occasional inline HTML.
+    "MD013": false,
+    "MD033": false,
+  },
+}

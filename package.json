@@ -1,0 +1,43 @@
+{
+  "name": "pharn-oss",
+  "version": "1.0.0",
+  "description": "Audit-grade methodology for AI-native development. Skills, commands, lenses, and rules that turn AI sessions into versioned artifacts — so your codebase stays legible past month six. Claude Code first; Codex and Cursor next.",
+  "keywords": [
+    "audit",
+    "developer-tools",
+    "methodology",
+    "cursor",
+    "codex",
+    "developer-tool",
+    "ai-development-tools",
+    "ai-development",
+    "ai-native",
+    "ai-developer-tools",
+    "agentic-workflow",
+    "claude-code",
+    "agentic-coding",
+    "developer-tools-ai-agent",
+    "agentic-skill",
+    "agentic-skills"
+  ],
+  "license": "Apache-2.0",
+  "author": "Przemysław Galarowicz",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "node --test \"**/*.test.mjs\" \"**/*.test.cjs\" \".claude/**/*.test.mjs\" \".claude/**/*.test.cjs\"",
+    "lint": "eslint .",
+    "lint:md": "markdownlint-cli2",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "check": "npm run format:check && npm run lint && npm run lint:md && npm test"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.5.0",
+    "eslint-config-prettier": "^10.1.8",
+    "globals": "^17.7.0",
+    "markdownlint-cli2": "^0.22.1",
+    "prettier": "^3.8.4"
+  }
+}
