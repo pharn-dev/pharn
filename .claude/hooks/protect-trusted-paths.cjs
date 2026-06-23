@@ -5,14 +5,16 @@
 // trusted file. Trust-by-location is only real if the location is write-protected at the floor —
 // otherwise an injected instruction that gets a Write to CONSTITUTION.md rewrites the trusted layer.
 //
-// Protected by default: the four trusted spec docs. Extend with the PHARN_PROTECTED env var
-// (comma-separated basenames or path fragments).
+// Protected by default: the four trusted spec docs + CODEOWNERS, the GitHub-layer write-guard
+// itself. Guarding CODEOWNERS locally is "guarding the guard": if the agent could rewrite it, it
+// could delete the human-only review requirement and collapse the GitHub-layer trust control (P2).
+// Extend further with the PHARN_PROTECTED env var (comma-separated basenames or path fragments).
 //
 // Wire it via .claude/hooks/settings.snippet.json (matcher: Write|Edit|MultiEdit).
 
 "use strict";
 
-const DEFAULT_PROTECTED = ["CONSTITUTION.md", "ARCHITECTURE.md", "THREAT-MODEL.md", "LIMITS.md"];
+const DEFAULT_PROTECTED = ["CONSTITUTION.md", "ARCHITECTURE.md", "THREAT-MODEL.md", "LIMITS.md", "CODEOWNERS"];
 const extra = (process.env.PHARN_PROTECTED || "")
   .split(",")
   .map((s) => s.trim())
