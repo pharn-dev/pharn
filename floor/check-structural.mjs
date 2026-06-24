@@ -118,7 +118,9 @@ function evalAssertion(a, i, findings, repoDir) {
         }
         let lineCount;
         try {
-          lineCount = readFileSync(abs, "utf8").replace(/\r?\n$/, "").split(/\r?\n/).length;
+          lineCount = readFileSync(abs, "utf8")
+            .replace(/\r?\n$/, "")
+            .split(/\r?\n/).length;
         } catch (e) {
           red("file_resolves", `cannot read ${abs}: ${e.message}`);
           return;
