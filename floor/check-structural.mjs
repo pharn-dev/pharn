@@ -118,7 +118,7 @@ function evalAssertion(a, i, findings, repoDir) {
         }
         let lineCount;
         try {
-          lineCount = readFileSync(abs, "utf8").split(/\r?\n/).length;
+          lineCount = readFileSync(abs, "utf8").replace(/\r?\n$/, "").split(/\r?\n/).length;
         } catch (e) {
           red("file_resolves", `cannot read ${abs}: ${e.message}`);
           return;
@@ -174,8 +174,14 @@ function main() {
   if (!Array.isArray(actual)) red("input", "actual.json must be a JSON array of finding objects");
   const assertions = expected && typeof expected === "object" ? expected.assertions : undefined;
   const structural = assertions && Array.isArray(assertions.structural) ? assertions.structural : undefined;
-  const semantic = assertions && Array.isArray(assertions.semantic) ? assertions.semantic : [];
   if (structural === undefined) red("input", "expected.json must have assertions.structural[] (an array)");
+  // semantic[] is optional, but if present it must be an array — a non-array value
+  // must not silently coerce to [] (that would bypass the deterministic skill_kind check below).
+  const rawSemantic = assertions ? assertions.semantic : undefined;
+  if (rawSemantic !== undefined && !Array.isArray(rawSemantic)) {
+    red("input", "expected.json assertions.semantic must be an array when present");
+  }
+  const semantic = Array.isArray(rawSemantic) ? rawSemantic : [];
   if (reds.length) return fail();
 
   // The skill_kind rule — the "don't launder everything through the judge" guarantee, made real.

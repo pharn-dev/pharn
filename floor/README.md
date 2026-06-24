@@ -52,9 +52,11 @@ run the skill; it checks an output the skill already produced.
 
 **What this changes (P0).** Before, `eval-format.md` labeled `structural[]`
 **floor-reducible-but-not-yet-enforced** and named this checker as the backstop. With it landed,
-`structural[]` is **floor-enforced**: if a model laundered an untrusted needle (e.g. `skip authz`)
-into an enum-gated field, or routed a `deterministic` skill's judgment through `semantic[]`, that is
-now a deterministic **RED**, not a hope.
+`structural[]` is **floor-executable and CI-tested** (but not yet auto-enforced — `/build` does not
+invoke `check-structural.mjs`, and its live-eval wiring is still deferred): when the checker is run,
+if a model laundered an untrusted needle (e.g. `skip authz`) into an enum-gated field, or routed a
+`deterministic` skill's judgment through `semantic[]`, that is a deterministic **RED**, not a hope —
+but you must run it; nothing in the build loop invokes it automatically yet.
 
 **Honest scope (P0) — the boundary that keeps this from overselling.** The checker enforces
 `structural[]` **over a provided finding output**. It does **not** run the skill and does **not**

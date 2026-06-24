@@ -65,7 +65,11 @@ Written by `/build` (the planner writes only this `PLAN.md`). Paths reflect `flo
   - `green.expected.json`, `green.actual.json` — the trust-fence-modeled pair (all structural[] pass).
   - per-RED `*.expected.json` / `*.actual.json` variants (one mutated axis each).
 - `floor/README.md` — **append** a row/section documenting the third floor piece and its honest scope
-  (the only edit to an existing file; `README.md` is not a trusted/protected path).
+  (`README.md` is not a trusted/protected path).
+- `CLAUDE.md`, `CHANGELOG.md` — **meta-docs whose facts this increment invalidates** (the floor-piece
+  list and the `node --test` count both change once `floor/check-structural.mjs` +
+  `floor/check-structural.test.mjs` land). Synced alongside the floor artifacts; neither is a
+  trusted/protected path.
 
 The live trust-fence eval under `pharn-review/trust-fence/evals/` is **not touched** (byte-immutable).
 
