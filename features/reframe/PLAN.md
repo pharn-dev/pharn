@@ -17,7 +17,7 @@ Grounding:
 - `grep -rniI "bootstrap"` over the whole tree (minus `.git`) → matches **only** `CONSTITUTION.md`
   (lines 5, 13, 35, 115).
 - Framing-phrase sweep (`real pharn|mini-pharn|scaffold|lives elsewhere|build the real|writes pharn|
-  the real thing|separate experiment|tool to build|scaffolding for|…`) → only `CLAUDE.md:8`
+the real thing|separate experiment|tool to build|scaffolding for|…`) → only `CLAUDE.md:8`
   (a negation: "**not** scaffolding for a 'real PHARN'…") and `LIMITS.md:95/109/112`
   (legitimate technical usage). No misframing.
 - Repo URLs (`pharn-dev/…`) → already `pharn-dev/pharn-oss` in `CONTRIBUTING.md:22`, `SECURITY.md:26`,
@@ -32,19 +32,19 @@ Grounding:
 
 ### Human-only — `CONSTITUTION.md` (write-protected trusted doc; REPORT, do not edit)
 
-| file:line          | sense       | current                                                                         | proposed                                                            |
-| ------------------ | ----------- | ------------------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| CONSTITUTION.md:5  | 2 (tooling) | `…injected as system-level prefix before every bootstrap command (plan/build/review); write-protected…` | drop "bootstrap": `…before every command (plan/build/review); write-protected…` |
-| CONSTITUTION.md:13 | 1 (name)    | `…every command, plan, design law, and agent decision in this bootstrap.`       | `…in PHARN-OSS.` (or "in this repo")                                |
-| CONSTITUTION.md:35 | framing     | `The disease this bootstrap exists to prevent is…`                              | `The disease this repo exists to prevent is…` (mirrors CLAUDE.md:35) |
-| CONSTITUTION.md:115 | 2 (tooling) | `Each bootstrap command (`/plan`, `/build`, `/review`) injects this file's contents…` | drop "bootstrap": `Each command (`/plan`, `/build`, `/review`) injects…` |
+| file:line           | sense       | current                                                                                                 | proposed                                                                        |
+| ------------------- | ----------- | ------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
+| CONSTITUTION.md:5   | 2 (tooling) | `…injected as system-level prefix before every bootstrap command (plan/build/review); write-protected…` | drop "bootstrap": `…before every command (plan/build/review); write-protected…` |
+| CONSTITUTION.md:13  | 1 (name)    | `…every command, plan, design law, and agent decision in this bootstrap.`                               | `…in PHARN-OSS.` (or "in this repo")                                            |
+| CONSTITUTION.md:35  | framing     | `The disease this bootstrap exists to prevent is…`                                                      | `The disease this repo exists to prevent is…` (mirrors CLAUDE.md:35)            |
+| CONSTITUTION.md:115 | 2 (tooling) | `Each bootstrap command (/plan, /build, /review) injects this file's contents…`                         | drop "bootstrap": `Each command (/plan, /build, /review) injects…`              |
 
 ### Verified clean — no change (recorded so the sweep is provably complete)
 
-| file:line                    | why it stays                                                                       |
-| ---------------------------- | ---------------------------------------------------------------------------------- |
-| CLAUDE.md:8                  | negation — already correct PHARN-OSS framing ("**not** scaffolding for a real PHARN") |
-| LIMITS.md:95                 | "Fencing scaffolding" = the prose wrapping untrusted blocks (a cost), not a repo-as-scaffolding claim |
+| file:line                         | why it stays                                                                                                            |
+| --------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| CLAUDE.md:8                       | negation — already correct PHARN-OSS framing ("**not** scaffolding for a real PHARN")                                   |
+| LIMITS.md:95                      | "Fencing scaffolding" = the prose wrapping untrusted blocks (a cost), not a repo-as-scaffolding claim                   |
 | LIMITS.md:109, 112; CLAUDE.md:138 | "the experiment / experiment agenda" = the rewrite-and-measure agenda, a real concept, not "repo is just an experiment" |
 
 ## Files

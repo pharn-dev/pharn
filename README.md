@@ -12,13 +12,13 @@ most of it.
 
 ## The problem
 
-AI agents write code faster than a team can keep up with *why*. The code lands; the reasoning behind
+AI agents write code faster than a team can keep up with _why_. The code lands; the reasoning behind
 it — which constraints applied, where a feature begins and ends, what was traded off — does not. The
 result is **comprehension debt**: a codebase that runs but that no one fully understands, and that
 gets harder to change the faster it is generated. Autocomplete and ad-hoc chat make this worse, not
 better — they leave no durable record.
 
-PHARN-OSS treats *intent* as the artifact. Every change runs through a pipeline —
+PHARN-OSS treats _intent_ as the artifact. Every change runs through a pipeline —
 `spec → plan → grill → build → regress → verify → ship` — and each stage leaves a typed, versioned
 record that links back to the spec. Your chat history disappears; your spec, plan, and review do not.
 
@@ -31,8 +31,8 @@ the whole team.
   commands, lenses, rules — that you read, diff, and version in git. Nothing is hidden behind a binary
   or an API. You can audit exactly what the discipline does.
 - **Guarantees reduce to a deterministic floor, or they are labeled advisory.** PHARN-OSS draws a hard
-  line between what is *guaranteed* (enforced by a deterministic check — a hook, a content-hash, an
-  enum/regex) and what is *advisory* (a model's judgment). It does not sell a probabilistic claim as a
+  line between what is _guaranteed_ (enforced by a deterministic check — a hook, a content-hash, an
+  enum/regex) and what is _advisory_ (a model's judgment). It does not sell a probabilistic claim as a
   guarantee. (`CONSTITUTION.md`, P0.)
 - **Built to resist its own attack surface.** An agent that reviews code, fetches docs, and
   accumulates memory is operating on hostile input. PHARN-OSS treats trust as a structural property,
