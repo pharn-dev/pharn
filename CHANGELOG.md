@@ -8,6 +8,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Added
 
+- **The eval-format contract** (`pharn-contracts/eval-format.md`) — the structural-vs-semantic split for eval assertions: `structural[]` (floor-reducible) versus `semantic[]` (advisory llm-judge), keyed by a `skill_kind` discriminator.
+- **The structural checker** (`floor/check-structural.mjs`) — a deterministic, dependency-free floor piece that executes an eval's `structural[]` assertions against a skill's already-produced finding output (`finding_count`, `field_equals`, `file_resolves`, `needle_absent_from_enum_gated`, plus the `skill_kind` rule) and exits non-zero on any RED. Ships with a `node --test` suite; reviewed in `features/structural-checker/REVIEW.md`.
 - Repository governance files: `CODE_OF_CONDUCT.md`, `CONTRIBUTING.md`, `SECURITY.md`, `CHANGELOG.md`, and `SKILLS_VERSION`.
 
 ### Changed
