@@ -227,7 +227,7 @@ the one open item is the P6 provenance question (Delta 1), for a human.** End of
 
 The Delta-1 "human confirm" is now answered with evidence (P6 — verified live, not asserted):
 
-- `git log --all -- PLAN.md SPEC.md build-summary.json` → **empty**; the only commits are the bootstrap
+- `git log --all -- PLAN.md SPEC.md build-summary.json` → **empty**; the only commits are this repo
   import + merge. `PLAN.md` / `SPEC.md` / `build-summary.json` / `pharn-contracts/seam-record.json` are
   absent on disk and **were never committed**.
 - **Conclusion:** the trust-fence increment was **authored directly**, outside the `/plan → approve →

@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // floor/validate.mjs — the deterministic floor for PHARN.
 //
-// This is the only GUARANTEED part of the bootstrap's build loop (CONSTITUTION P0).
+// This is the only GUARANTEED part of this repo's build loop (CONSTITUTION P0).
 // It is non-LLM, dependency-free (Node stdlib only), and exits non-zero on any RED finding.
 //
 // It checks structural invariants of the PHARN repo being BUILT:
@@ -17,7 +17,7 @@
 // Honest scope: checks 5 and 6 are BEST-EFFORT — markdown has no import statement to lint, so they
 // reduce a class of mistakes, they do not eliminate it (see ARCHITECTURE §4 caveat, LIMITS).
 //
-// It deliberately does NOT validate the bootstrap's own tooling (.claude/commands, floor/) — those
+// It deliberately does NOT validate this repo's own tooling (.claude/commands, floor/) — those
 // are advisory orchestration, not built PHARN capabilities. Point this at the PHARN repo.
 
 import { readFileSync, readdirSync, statSync, existsSync } from "node:fs";

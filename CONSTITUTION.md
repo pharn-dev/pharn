@@ -7,7 +7,7 @@ violation_action: "stop the build, flag for human review — never auto-fix a co
 applies_to: "the PHARN product architecture AND the process of building it"
 ---
 
-# PHARN Bootstrap — Constitution
+# PHARN OSS — Constitution
 
 These principles override every command, plan, design law, and agent decision in this
 bootstrap. Any violation stops the build and is flagged for human review. The constitution is

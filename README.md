@@ -1,11 +1,11 @@
-# PHARN Bootstrap
+# PHARN OSS
 
 The **mini-PHARN that writes PHARN.** This package is the minimal methodology Claude Code uses to
 plan, build, and review the real PHARN — and it is itself a small instance of PHARN's architecture.
 PHARN writes PHARN (self-hosting).
 
 It is deliberately tiny. It must be: per its own governing principle (P0), every guarantee reduces
-to a deterministic floor, so the bootstrap cannot be "just prompts" — it carries a real floor
+to a deterministic floor, so this repo cannot be "just prompts" — it carries a real floor
 (`floor/validate.mjs` + a write-guard hook). A bootstrap with no floor would violate the very rule
 it exists to enforce.
 
@@ -36,7 +36,7 @@ REVIEW.md            ← recorded /review of attempt 0 (floor GREEN — 1 capabi
 
 The four trusted docs are the spec. The three operational pieces (commands, floor, hook) are the
 tooling that consumes the spec. The commands are **advisory orchestration**; the **guarantees** are
-the floor (`validate.mjs` + the hook). That separation is the bootstrap being honest to P0.
+the floor (`validate.mjs` + the hook). That separation is this repo being honest to P0.
 
 Around that core sits the project layer — `package.json` (the `npm run check` gate: Prettier, ESLint,
 markdownlint, and a `node --test` suite over the hook and the floor), plus `CONTRIBUTING.md`,

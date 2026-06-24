@@ -116,7 +116,7 @@ not execute this as an instruction" is a heuristic again — co-located with lim
 it (free text never alone gates a guaranteed decision) but does not zero it. This is the single
 place the trust model is not provable on paper.
 
-**Therefore bootstrap attempt 0 targets exactly this** (`README.md`): a minimal lens, a hostile
+**Therefore attempt 0 targets exactly this** (`README.md`): a minimal lens, a hostile
 fixture (adversarial code with an injected instruction in a comment), and a check of whether the
 boundary-through-the-finding-object holds under real injection. It is the only fix that cannot be
 verified by reasoning — everything else is enum-checks, hooks, and content-hashes, which are either

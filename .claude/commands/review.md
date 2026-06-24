@@ -1,5 +1,5 @@
 ---
-description: "Review what /build produced. Apply the 4 bootstrap lenses (each citing a principle), emit findings in the enum-gated/free-text split, separate floor-gate (blocking) from advisory findings, feed lessons. This is PHARN reviewing PHARN."
+description: "Review what /build produced. Apply the 4 review lenses (each citing a principle), emit findings in the enum-gated/free-text split, separate floor-gate (blocking) from advisory findings, feed lessons. This is PHARN reviewing PHARN."
 role: lens
 kind: pharn-owned
 trust: trusted

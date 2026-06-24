@@ -4,7 +4,7 @@ PHARN is an audit-grade methodology — taking security seriously is part of the
 
 ## What this repo is, and its security surface
 
-This repository is the **PHARN bootstrap**: four trusted markdown spec docs, three slash commands, one `PreToolUse` write-guard hook (`.claude/hooks/protect-trusted-paths.cjs`), and one deterministic validator (`floor/validate.mjs`). No transpile step, no bundled runtime dependencies, no network egress, no secrets — stdlib-only Node (`.cjs`/`.mjs`) plus markdown.
+This repository is the **PHARN OSS**: four trusted markdown spec docs, three slash commands, one `PreToolUse` write-guard hook (`.claude/hooks/protect-trusted-paths.cjs`), and one deterministic validator (`floor/validate.mjs`). No transpile step, no bundled runtime dependencies, no network egress, no secrets — stdlib-only Node (`.cjs`/`.mjs`) plus markdown.
 
 PHARN's security model (`THREAT-MODEL.md`, threat model B) starts from one axiom: **prompt injection is not solved.** An agent that must read hostile context — code under review, fetched docs, accumulated memory, another model's output — cannot be made to reliably ignore instructions embedded in that content. Defense therefore rests on the **deterministic floor** (hooks, content-hashes, enum/regex checks that do not depend on model judgment), not on "the model will notice the attack." The security-relevant surfaces of this repo follow from that shape.
 
@@ -62,7 +62,7 @@ We will keep you informed throughout, coordinate disclosure timing with you, and
 
 ## Security best practices for users
 
-The write-guard hook and the floor are defense-in-depth, not a guarantee _of correctness_. When using the bootstrap:
+The write-guard hook and the floor are defense-in-depth, not a guarantee _of correctness_. When using this repo:
 
 1. **Keep the write-guard hook wired** in `.claude/settings.json` — trust-by-location is only real if the trusted docs are write-protected at the floor.
 2. **Review what the agent produces** before you run or merge it — that is the methodology's whole point.

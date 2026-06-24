@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this repo is
 
-This is the **PHARN Bootstrap** — the "mini-PHARN that writes PHARN." It is the minimal methodology
+This is the **PHARN OSS** — the "mini-PHARN that writes PHARN." It is the minimal methodology
 Claude Code uses to plan, build, and review the real PHARN, and it is itself a tiny instance of
 PHARN's architecture (PHARN writes PHARN; self-hosting).
 
@@ -60,7 +60,7 @@ echo '{"tool_name":"Write","tool_input":{"file_path":"pharn-core/rules/x.md"}}' 
 - `node floor/validate.mjs .` currently reports `GREEN — 1 capabilities checked` — **attempt 0 is
   built**: the `trust-fence` lens (`pharn-review/trust-fence/`) with its `pharn-contracts/finding-shape`
   contract and hostile eval; `REVIEW.md` records the dogfood `/review` of it. Read this count live;
-  never assert repo state from memory (P6). The floor still deliberately ignores the bootstrap's own
+  never assert repo state from memory (P6). The floor still deliberately ignores this repo's own
   tooling (`.claude/commands/`, `floor/`).
 
 ## Architecture: the big picture
