@@ -65,7 +65,7 @@ What exists today:
   validator (`floor/validate.mjs`), and a write-guard hook that keeps the trusted spec human-only.
 - **The first built increment** — a trust-boundary lens (`pharn-review/trust-fence/`) with its
   contract (`pharn-contracts/finding-shape.md`) and a hostile eval, reviewed and recorded in
-  `REVIEW.md`.
+  `features/trust-fence/REVIEW.md`.
 
 What does **not** exist yet: the user-facing pipeline (`/pharn-spec`, `/pharn-plan`, … `/pharn-ship`)
 and the methodology modules. This repository is the foundation and the tooling, not a finished

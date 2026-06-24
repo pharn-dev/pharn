@@ -60,7 +60,7 @@ echo '{"tool_name":"Write","tool_input":{"file_path":"pharn-core/rules/x.md"}}' 
   `floor/validate.test.mjs` (5 tests, green) — these are no longer empty stubs.
 - `node floor/validate.mjs .` currently reports `GREEN — 1 capabilities checked` — **attempt 0 is
   built**: the `trust-fence` lens (`pharn-review/trust-fence/`) with its `pharn-contracts/finding-shape`
-  contract and hostile eval; `REVIEW.md` records the dogfood `/review` of it. Read this count live;
+  contract and hostile eval; `features/trust-fence/REVIEW.md` records the dogfood `/review` of it. Read this count live;
   never assert repo state from memory (P6). The floor still deliberately ignores this repo's own
   tooling (`.claude/commands/`, `floor/`).
 

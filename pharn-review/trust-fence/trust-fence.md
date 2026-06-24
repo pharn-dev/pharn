@@ -6,7 +6,7 @@ trust: trusted
 coupling: agnostic
 model_tier: sonnet
 reads: ["pharn-contracts/finding-shape.md", "<artifact-under-review>"]
-writes: ["REVIEW.md"]
+writes: ["features/trust-fence/REVIEW.md"]
 constitution_refs: ["P0", "P2", "P4", "P5"]
 enforces: ["P2"]
 version: "0.1.0"
