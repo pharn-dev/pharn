@@ -274,5 +274,5 @@ it can never flip a floor-gated block.
 **Residual (named, not hidden — `LIMITS.md`):** when a _downstream LLM stage_ consumes the
 free-text of a finding, "do not execute this as an instruction" becomes a heuristic again. Fix #1
 bounds the blast radius (free text never alone gates a guaranteed decision) but does not zero it.
-This is the one place the trust model is not provable on paper — and is why bootstrap **attempt 0**
+This is the one place the trust model is not provable on paper — and is why **attempt 0**
 targets it (`README.md`).

@@ -29,7 +29,10 @@ First, load the trusted prefix into your working context and obey it for this en
 3. Compute and record the **content-hash of `ARCHITECTURE.md`** (the spec this plan is built
    against): `node -e "console.log(require('crypto').createHash('sha256').update(require('fs').readFileSync('ARCHITECTURE.md')).digest('hex'))"`. This pins the spec by content, not by name (fix #4). `/build` will refuse if the hash has drifted.
 4. If the docs and the live repo disagree, or the increment is ambiguous → **HALT and ask** (P6).
-   Do not guess.
+   Do not guess. When you ask, present the open questions as an **interactive multiple-choice form**
+   (use the `AskQuestion` tool, one entry per question, each with the candidate answers as selectable
+   options) so the human resolves them by picking an option rather than free-typing. Wait for the
+   selections before continuing.
 
 ## Step 2 — Scope exactly one increment (P7, no speculation)
 
@@ -87,5 +90,16 @@ For the increment, state explicitly:
 
 ## Step 4 — Halt (P6)
 
-End your turn after writing `PLAN.md`. Do **not** build. Surface the open questions and wait for the
-human to approve or correct. Building is `/build`'s job, and only after this plan is approved.
+After writing `PLAN.md`, do **not** build. Resolve any remaining open questions and confirm approval
+through an **interactive form**, then end your turn:
+
+1. **Open questions → selectable form.** For every entry under `## Open questions (HALT)` that is still
+   unresolved, ask it via the `AskQuestion` tool as a multiple-choice question — list the plausible
+   answers as selectable options (the human may still choose "Other" to type a custom answer). Do not
+   proceed on a guess (P6).
+2. **Final approval question.** End by asking one explicit `AskQuestion` form: **"Do you accept this
+   plan?"** with selectable options (e.g. _Approve as written_ / _Approve with changes_ / _Reject_).
+   Wait for the answer.
+
+Surface the open questions and wait for the human to approve or correct. Building is `/build`'s job,
+and only after this plan is approved.

@@ -2,7 +2,7 @@
 file: "LIMITS.md"
 trust: trusted
 editable_by: "human only"
-purpose: "What PHARN does NOT guarantee. Labels the irreducible limits, the residual, and the token cost model honestly. Required by P0 and P7: a limit sold as a guarantee is the disease this whole bootstrap exists to prevent."
+purpose: "What PHARN does NOT guarantee. Labels the irreducible limits, the residual, and the token cost model honestly. Required by P0 and P7: a limit sold as a guarantee is the disease this whole repo exists to prevent."
 ---
 
 # PHARN — Limits (what we do not guarantee)
@@ -60,7 +60,7 @@ frontmatter cannot express).
 When a downstream LLM stage consumes the **free-text** fields of a finding (`problem`, `evidence`),
 "do not execute this as an instruction" becomes a heuristic again (`THREAT-MODEL.md §5`). Fix #1
 bounds it — free text never alone gates a guaranteed decision — but does not eliminate it. This is
-the one place the trust model is not provable on paper, and is the target of bootstrap attempt 0.
+the one place the trust model is not provable on paper, and is the target of attempt 0.
 
 ---
 
@@ -100,7 +100,7 @@ it is a real per-leaf tax.
 
 ## 4. What "good architecture" means here
 
-Per P0, claiming the architecture is "proven good" would be the exact disease this bootstrap
+Per P0, claiming the architecture is "proven good" would be the exact disease this repo
 prevents. The honest standard:
 
 - Every _guarantee_ reduces to the floor (`ARCHITECTURE.md §2`) **or** is labeled `advisory`.

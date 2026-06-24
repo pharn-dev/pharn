@@ -23,6 +23,12 @@ test("blocks writes to a trusted spec doc", () => {
   assert.match(r.stderr, /BLOCKED by PHARN floor/);
 });
 
+test("blocks writes to .github/CODEOWNERS (the GitHub-layer write-guard)", () => {
+  const r = run({ tool_name: "Edit", tool_input: { file_path: ".github/CODEOWNERS" } });
+  assert.equal(r.status, 2);
+  assert.match(r.stderr, /BLOCKED by PHARN floor/);
+});
+
 test("allows writes to an ordinary file", () => {
   const r = run({ tool_name: "Write", tool_input: { file_path: "src/foo.js" } });
   assert.equal(r.status, 0);

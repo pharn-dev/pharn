@@ -1,6 +1,6 @@
 # The Floor
 
-This directory is the **deterministic floor** — the only part of the bootstrap's build loop that
+This directory is the **deterministic floor** — the only part of this repo's build loop that
 actually _guarantees_ anything (`CONSTITUTION.md` P0). It is non-LLM, dependency-free (Node stdlib),
 and cannot be talked out of its verdict by prompt injection. Everything else — the commands, the
 review lenses — is **advisory orchestration** that _invokes_ the floor.
@@ -22,7 +22,7 @@ node floor/validate.mjs <pharn-repo-dir>     # default: current dir
 ```
 
 Point it at the PHARN repo being built. It exits **non-zero on any RED finding**. It deliberately
-ignores the bootstrap's own tooling (`.claude/commands/`, `floor/`) — those are advisory, not built
+ignores this repo's own tooling (`.claude/commands/`, `floor/`) — those are advisory, not built
 PHARN capabilities. `/build` runs it automatically and halts on RED; you can also run it yourself.
 
 What it checks (all deterministic):

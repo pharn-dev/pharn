@@ -1,5 +1,5 @@
 {
-  "_comment": "PHARN floor write-guard (fix #2): a PreToolUse hook that blocks Write/Edit/MultiEdit to the four trusted spec docs (CONSTITUTION/ARCHITECTURE/THREAT-MODEL/LIMITS). Commit this file — it is a shared guarantee. Adjust the command path if the bootstrap is not at the repo root; set PHARN_PROTECTED to extend the protected list. Personal, machine-local settings (e.g. permission allowlists) belong in settings.local.json, which is gitignored.",
+  "_comment": "PHARN floor write-guard (fix #2): a PreToolUse hook that blocks Write/Edit/MultiEdit to the four trusted spec docs (CONSTITUTION/ARCHITECTURE/THREAT-MODEL/LIMITS). Commit this file — it is a shared guarantee. Adjust the command path if this repo is not at the repo root; set PHARN_PROTECTED to extend the protected list. Personal, machine-local settings (e.g. permission allowlists) belong in settings.local.json, which is gitignored.",
   "hooks": {
     "PreToolUse": [
       {

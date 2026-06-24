@@ -1,0 +1,28 @@
+name: floor
+
+# Runs the deterministic floor (P0) on every PR and on push to main.
+# Uses `pull_request` (NOT pull_request_target) and grants no write and no
+# secrets: a fork PR's untrusted markdown (threat B surface #6/#7) can never
+# exfiltrate anything or mutate the repo from here.
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  floor:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: lts/*
+      - name: Unit tests (hook + floor)
+        # Explicit globs (mirrors `npm test`): bare `node --test` skips the
+        # dot-directory, which would silently drop the write-guard hook test.
+        run: node --test "**/*.test.mjs" "**/*.test.cjs" ".claude/**/*.test.cjs" ".claude/**/*.test.mjs"
+      - name: Validate floor
+        run: node floor/validate.mjs .
