@@ -2,21 +2,25 @@
 
 # PHARN
 
-**Ship at 8x speed. Keep the understanding of a 1x craftsman.**
+**Ship at agent speed. Keep the understanding of a craftsman.**
 
-An agent-orchestrated intent layer for Claude Code that prevents comprehension debt.
+PHARN is an agent-orchestrated intent layer for Claude Code that prevents comprehension debt. This
+repository, **PHARN-OSS**, is its open-source edition.
 
 [![Version](https://img.shields.io/badge/version-1.0.0-blue)](./CHANGELOG.md)
 [![License: Apache 2.0](https://img.shields.io/badge/license-Apache%202.0-green)](./LICENSE)
 [![CI](https://github.com/pharn-dev/pharn/actions/workflows/ci.yml/badge.svg)](https://github.com/pharn-dev/pharn/actions/workflows/ci.yml)
 [![CodeQL](https://github.com/pharn-dev/pharn/actions/workflows/codeql.yml/badge.svg)](https://github.com/pharn-dev/pharn/actions/workflows/codeql.yml)
-[![Claude Code](https://img.shields.io/badge/Claude%20Code-plugin-555)](https://claude.com/claude-code)
+[![Floor](https://github.com/pharn-dev/pharn/actions/workflows/floor.yml/badge.svg)](https://github.com/pharn-dev/pharn/actions/workflows/floor.yml)
+[![Secrets](https://github.com/pharn-dev/pharn/actions/workflows/gitleaks.yml/badge.svg)](https://github.com/pharn-dev/pharn/actions/workflows/gitleaks.yml)
+[![Built for Claude Code](https://img.shields.io/badge/built%20for-Claude%20Code-555)](https://claude.com/claude-code)
 
 </div>
 
 > **Status: early, active development.** The architecture is specified and the methodology is being
-> built incrementally, in the open, using its own tooling (PHARN builds PHARN). It is **not yet ready
-> to adopt** — there is no installable pipeline yet. Star or watch to follow along; see
+> built incrementally, in the open, using its own tooling (PHARN builds PHARN). The `1.0.0` version
+> tags that foundation — the spec and the build tooling — **not** an adoptable pipeline. It is **not
+> yet ready to adopt** — there is no installable pipeline yet. Star or watch to follow along; see
 > [Current state](#current-state) for exactly what exists today.
 
 ---
@@ -41,11 +45,12 @@ An agent-orchestrated intent layer for Claude Code that prevents comprehension d
 Vibe-coding with an AI agent is fast — until the chat history scrolls away and takes the
 _understanding_ with it. Six months later, nobody on the team can say why the code is shaped the way
 it is, what the constraints were, or which decisions were deliberate. That gap is **comprehension
-debt** — a term coined by Addy Osmani in early 2026 — and it compounds faster than any other kind.
+debt** — a term [coined by Addy Osmani](https://addyosmani.com/blog/comprehension-debt/) in early
+2026 — and it compounds faster than any other kind.
 
-This isn't hypothetical. A 2026 Anthropic RCT measured developers scoring ~17% lower on comprehension
-of code they shipped with AI assistance, while industry data shows PR volume nearly doubling — more
-code, understood less.
+This isn't hypothetical. A [2026 Anthropic RCT](https://www.anthropic.com/research/AI-assistance-coding-skills)
+measured developers scoring ~17% lower on comprehension of code they shipped with AI assistance, even
+as the volume of AI-generated code keeps climbing — more code, understood less.
 
 PHARN is the intent layer that closes the gap. It keeps the spec, the constitution, and a
 markdown-canonical record in your repo — readable, diffable, and versioned in git. The agent does the
@@ -61,8 +66,8 @@ architect and reviewer, everyone working off the same artifact. It does **not** 
 ## What makes it different
 
 - **The methodology is the product, and it is readable.** PHARN ships as plain markdown — skills,
-  commands, lenses, rules — that you read, diff, and version in git. Nothing is hidden behind a binary
-  or an API. You can audit exactly what the discipline does.
+  commands, lenses, rules — that you read, diff, and version in git. Nothing is obfuscated behind a
+  binary or a closed API. You can audit exactly what the discipline does.
 - **Guarantees reduce to a deterministic floor, or they are labeled advisory.** PHARN draws a hard
   line between what is _guaranteed_ (enforced by a deterministic check — a hook, a content-hash, an
   enum/regex) and what is _advisory_ (a model's judgment). It does not sell a probabilistic claim as a
