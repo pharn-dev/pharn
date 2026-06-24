@@ -4,7 +4,7 @@ PHARN is an audit-grade methodology — taking security seriously is part of the
 
 ## What this repo is, and its security surface
 
-This repository is the **PHARN OSS**: four trusted markdown spec docs, three slash commands, one `PreToolUse` write-guard hook (`.claude/hooks/protect-trusted-paths.cjs`), and one deterministic validator (`floor/validate.mjs`). No transpile step, no bundled runtime dependencies, no network egress, no secrets — stdlib-only Node (`.cjs`/`.mjs`) plus markdown.
+This repository **is PHARN-OSS** — the audit-grade methodology itself, early-stage and in active development. Its security surface is small by design: four trusted markdown spec docs, three slash commands, one `PreToolUse` write-guard hook (`.claude/hooks/protect-trusted-paths.cjs`), and one deterministic validator (`floor/validate.mjs`). No transpile step, no bundled runtime dependencies, no network egress, no secrets — stdlib-only Node (`.cjs`/`.mjs`) plus markdown.
 
 PHARN's security model (`THREAT-MODEL.md`, threat model B) starts from one axiom: **prompt injection is not solved.** An agent that must read hostile context — code under review, fetched docs, accumulated memory, another model's output — cannot be made to reliably ignore instructions embedded in that content. Defense therefore rests on the **deterministic floor** (hooks, content-hashes, enum/regex checks that do not depend on model judgment), not on "the model will notice the attack." The security-relevant surfaces of this repo follow from that shape.
 
@@ -23,7 +23,7 @@ We patch security issues against the **latest** released version only. The curre
 
 Instead, report privately through one of these channels:
 
-1. **GitHub Security Advisories (preferred)** — use [private vulnerability reporting](https://github.com/pharn-dev/pharn/security/advisories/new) to open a confidential report. No email is exposed and the report stays embargoed until a fix ships.
+1. **GitHub Security Advisories (preferred)** — use [private vulnerability reporting](https://github.com/pharn-dev/pharn-oss/security/advisories/new) to open a confidential report. No email is exposed and the report stays embargoed until a fix ships.
 2. **Email** — if you cannot use GitHub advisories, email `support@pharn.dev` with `[PHARN SECURITY]` in the subject.
 
 Please include as much of the following as you can — it speeds up triage:

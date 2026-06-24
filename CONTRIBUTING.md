@@ -1,6 +1,6 @@
 # Contributing to PHARN
 
-Thanks for your interest in improving PHARN. This repository is the **PHARN OSS** — the minimal, self-hosting methodology Claude Code uses to plan, build, and review the real PHARN. There is no application code: the product is a _methodology expressed as markdown specs_ plus a few deterministic Node helpers (`.mjs`/`.cjs`). Treat the markdown as the source, not as docs about source.
+Thanks for your interest in improving PHARN. This repository **is PHARN-OSS** — the audit-grade methodology for AI-native development, built using its own minimal tooling (PHARN builds PHARN; self-hosting). It is early-stage and in active development. There is no application code: the product is a _methodology expressed as markdown specs_ plus a few deterministic Node helpers (`.mjs`/`.cjs`). Treat the markdown as the source, not as docs about source.
 
 ## Read first
 
@@ -19,8 +19,8 @@ The four trusted docs — `CONSTITUTION.md`, `ARCHITECTURE.md`, `THREAT-MODEL.md
 ## Setup
 
 ```bash
-git clone https://github.com/pharn-dev/pharn.git
-cd pharn
+git clone https://github.com/pharn-dev/pharn-oss.git
+cd pharn-oss
 npm install   # dev-only tooling (ESLint, Prettier, markdownlint).
               # The methodology itself is Node stdlib only — zero runtime dependencies, Node 24.
 ```
