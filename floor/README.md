@@ -5,15 +5,15 @@ actually _guarantees_ anything (`CONSTITUTION.md` P0). It is non-LLM, dependency
 and cannot be talked out of its verdict by prompt injection. Everything else — the commands, the
 review lenses — is **advisory orchestration** that _invokes_ the floor.
 
-The floor is two pieces, mapping to two of the three floor primitives in `ARCHITECTURE.md §2`:
+The floor is three files. Two of the three floor primitives in `ARCHITECTURE.md §2` are files here;
+the third, **content-hash**, is used inline by `/plan` and `/build` to pin the spec
+(`spec_content_hash`, fix #4) rather than as a file:
 
-| piece                                        | primitive                       | enforces                     |
-| -------------------------------------------- | ------------------------------- | ---------------------------- |
-| `validate.mjs`                               | enum / regex / structural check | P1, P3, P4; fixes #1, #5, #6 |
-| `../.claude/hooks/protect-trusted-paths.cjs` | pre-write hook                  | P2; fix #2                   |
-
-(The third primitive, **content-hash**, is used inline by `/plan` and `/build` to pin the spec —
-`spec_content_hash`, fix #4 — not as a file here.)
+| file                                         | primitive                                | enforces                                      |
+| -------------------------------------------- | ---------------------------------------- | --------------------------------------------- |
+| `validate.mjs`                               | enum / regex / structural check          | P1, P3, P4; fixes #1, #5, #6                  |
+| `check-structural.mjs`                       | enum / regex-substring / path-resolution | `structural[]` of an eval `expected` (P0, P1) |
+| `../.claude/hooks/protect-trusted-paths.cjs` | pre-write hook                           | P2; fix #2                                    |
 
 ## Run the validator
 
@@ -33,6 +33,35 @@ What it checks (all deterministic):
 4. finding templates separate enum-gated from free-text/untrusted fields (**fix #1**)
 5. no sibling reference in `reads:` across `pharn-stack-*` / `pharn-skills-*` modules (P3)
 6. the four archetype maps agree, _if_ `pharn-contracts/archetype-maps.json` exists (**fix #5**)
+
+## Run the structural checker
+
+```bash
+node floor/check-structural.mjs <expected.json> <actual.json> [repoDir]
+```
+
+`check-structural.mjs` **executes** the `structural[]` reduction that `pharn-contracts/eval-format.md`
+documents. Given an eval's `expected` (normalized to JSON) and a skill's already-produced finding
+output (a JSON array of `finding-shape` objects), it evaluates the four structural kinds —
+`finding_count`, `field_equals`, `file_resolves`, `needle_absent_from_enum_gated` — plus the one
+`skill_kind` rule (`deterministic` forbids a non-empty `semantic[]`), and exits **non-zero on any
+RED**. Each kind reduces to a floor primitive (`ARCHITECTURE §2`): an enum/count check, an equality
+check, path resolution, or a substring scan over the **enum-gated** fields only (`type`, `rule_id`,
+`severity`, `file` — never `problem` / `evidence`, which are untrusted free-text DATA). It does **not**
+run the skill; it checks an output the skill already produced.
+
+**What this changes (P0).** Before, `eval-format.md` labeled `structural[]`
+**floor-reducible-but-not-yet-enforced** and named this checker as the backstop. With it landed,
+`structural[]` is **floor-enforced**: if a model laundered an untrusted needle (e.g. `skip authz`)
+into an enum-gated field, or routed a `deterministic` skill's judgment through `semantic[]`, that is
+now a deterministic **RED**, not a hope.
+
+**Honest scope (P0) — the boundary that keeps this from overselling.** The checker enforces
+`structural[]` **over a provided finding output**. It does **not** run the skill and does **not**
+guarantee the model _produces_ a clean, un-laundered output under injection — that is the named
+residual (`LIMITS §2`, `THREAT-MODEL §5`, attempt 0). The trip-wire moves onto the floor; the model's
+behavior under injection does not become guaranteed. `semantic[]` stays **advisory** — the checker
+never evaluates a `judge` string (no LLM).
 
 ## Wire the write-guard hook
 

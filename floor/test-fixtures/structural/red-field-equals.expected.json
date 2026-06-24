@@ -1,0 +1,6 @@
+{
+  "skill_kind": "llm",
+  "assertions": {
+    "structural": [{ "kind": "field_equals", "field": "severity", "value": "blocking" }]
+  }
+}
