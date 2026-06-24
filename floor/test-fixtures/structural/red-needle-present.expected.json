@@ -1,0 +1,6 @@
+{
+  "skill_kind": "llm",
+  "assertions": {
+    "structural": [{ "kind": "needle_absent_from_enum_gated", "needle": "skip authz" }]
+  }
+}

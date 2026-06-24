@@ -46,6 +46,10 @@ Read in this order before doing anything substantive: `README.md` → `CONSTITUT
 # Exits non-zero on any RED (blocking) finding. /build runs it automatically.
 node floor/validate.mjs [target-dir]
 
+# Execute an eval's structural[] assertions against a skill's finding output (a JSON array).
+# Exits non-zero on any RED — e.g. a needle laundered into an enum-gated field.
+node floor/check-structural.mjs <expected.json> <actual.json> [repoDir]
+
 # Self-test the write-guard hook:
 echo '{"tool_name":"Edit","tool_input":{"file_path":"CONSTITUTION.md"}}' | node .claude/hooks/protect-trusted-paths.cjs   # → exit 2, denied
 echo '{"tool_name":"Write","tool_input":{"file_path":"pharn-core/rules/x.md"}}' | node .claude/hooks/protect-trusted-paths.cjs  # → exit 0, allowed
@@ -56,8 +60,9 @@ echo '{"tool_name":"Write","tool_input":{"file_path":"pharn-core/rules/x.md"}}' 
   have **zero runtime dependencies** (Node stdlib; Node 24). The repo carries **dev-only**
   devDependencies (ESLint, Prettier, markdownlint) wired as npm scripts: `npm run check`
   (`format:check` + `lint` + `lint:md` + `test`) is the aggregate gate, and `npm test` runs
-  `node --test` over the **populated** suites in `.claude/hooks/protect-trusted-paths.test.cjs` and
-  `floor/validate.test.mjs` (5 tests, green) — these are no longer empty stubs.
+  `node --test` over the **populated** suites in `.claude/hooks/protect-trusted-paths.test.cjs`,
+  `floor/validate.test.mjs`, and `floor/check-structural.test.mjs` (11 tests, green) — these are no
+  longer empty stubs.
 - `node floor/validate.mjs .` currently reports `GREEN — 1 capabilities checked` — **attempt 0 is
   built**: the `trust-fence` lens (`pharn-review/trust-fence/`) with its `pharn-contracts/finding-shape`
   contract and hostile eval; `features/trust-fence/REVIEW.md` records the dogfood `/review` of it. Read this count live;
@@ -71,7 +76,8 @@ echo '{"tool_name":"Write","tool_input":{"file_path":"pharn-core/rules/x.md"}}' 
 - **The spec** = the four trusted docs. The canonical reading order above. These are what PHARN is
   built _to_.
 - **The tooling** = three operational pieces that consume the spec: the commands (advisory
-  orchestration), the floor (`floor/validate.mjs`), and the hook (`.claude/hooks/`). **Only the floor
+  orchestration), the floor (`floor/validate.mjs` and `floor/check-structural.mjs`), and the hook
+  (`.claude/hooks/`). **Only the floor
   and the hook are guarantees** (per P0). The commands are advisory; they _invoke_ the floor.
 
 **The floor is the only thing that actually guarantees anything** (`ARCHITECTURE.md §2`). Exactly

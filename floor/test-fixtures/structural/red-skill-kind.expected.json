@@ -1,0 +1,7 @@
+{
+  "skill_kind": "deterministic",
+  "assertions": {
+    "structural": [{ "kind": "finding_count", "op": "==", "value": 1 }],
+    "semantic": [{ "judge": "this judgment should have been structural — its presence under a deterministic skill is the violation" }]
+  }
+}

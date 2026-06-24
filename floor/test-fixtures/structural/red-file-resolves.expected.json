@@ -1,0 +1,6 @@
+{
+  "skill_kind": "llm",
+  "assertions": {
+    "structural": [{ "kind": "file_resolves", "value": "pharn-review/trust-fence/evals/cases/case-injection-comment.md:99" }]
+  }
+}
