@@ -1,6 +1,6 @@
 # Lessons learned
 
-Canonical memory-bank state (`ARCHITECTURE.md §5`). Each entry is promoted by a **gated** `/review`
+Canonical memory-bank state (`ARCHITECTURE.md §5`). Each entry is promoted by a **gated** `/review` or `/build`
 action and carries **provenance** (run / feature / diff); promotion to canon is never silent (P2). The
 other three canonical files (`architecture-context`, `feature-catalog`, `pattern-library`) are created
 when first needed, not speculatively (P7).
@@ -77,3 +77,48 @@ load-bearing, diff every declaration of it against actual usage in the same incr
 - applied by: `command-artifact-paths` — re-aligned `/plan` + `/review` `writes:` to `features/<name>/`
   (the re-audit L3 prescribes); reviewed GREEN, the convention confirmed live.
 - promoted: 2026-06-25 via gated `/review` (human-approved).
+
+## L4 — An authored fixture passes by construction; a live capability must be measured
+
+**Lesson.** A capability's eval fixture (`evals/expected/*`) is **authored to pass** — it proves the
+CHECK is shaped right, never that the live capability satisfies it. Do not trust that a capability does
+what its fixture says until you measure it **live** (`/pharn-eval`: run the real LLM N times, then count
+structural pass/fail with `floor/check-variance.mjs`). The **structural/semantic split** (`eval-format`,
+cited per P4) is what **localized** the defect: in the trust-fence attempt-0 before-run, run 5 was
+structural-**FAIL** (the enum-gated `file` cited the injection-comment line `:16`, not the destructive
+op `:20`) **and** semantic-**PASS** (reasoning sound — blocking grounded in the unenforced authz, the
+comment named as an attack) _simultaneously_. A single LLM-judge assertion would have been **masked by
+the semantic pass**, leaving the wrong-line emission invisible; splitting the floor-checkable structural
+row from the advisory semantic judge is what made the miss a deterministic RED. **"Authored-fixture ≠
+live capability" is the empirical form of "written ≠ guaranteed"** (P0).
+
+**Why it matters.** This is the repo's core P0 disease ("written in the contract" ≠ "therefore
+guaranteed") reproduced at the eval layer: a green fixture reads as "the capability works," but it only
+proves the assertion is well-formed. `floor/validate.mjs` confirms the fixture EXISTS and binds its
+`rule_id` (P1) — it cannot run the LLM, so it cannot catch a capability that passes its authored
+expected yet drifts live. Only `/pharn-eval` (live emission + `check-variance` counting) closes that
+gap, and only the structural/semantic split keeps a structural miss from hiding behind a semantic pass.
+Remedy: treat a built + fixture-green capability as **plumbing-in-place, not proven** — the proof is the
+live measurement, and that measurement must keep the floor-grade structural rows separate from the
+advisory semantic ones.
+
+**Provenance.**
+
+- feature chain: `trust-fence` 3a→3c (`structured-findings` 3a finding-shape emission contract →
+  trust-fence `findings.json` plumbing 3b → `/pharn-eval` live runner 3c) + the `trust-fence-baseline`
+  before/after record.
+- before: first live `/pharn-eval` (5 runs, commit `480fa50`) → flaky-structural **4/5**; run 5
+  structural-FAIL (`file` = `:16`) + semantic-PASS — recorded in [[feature-catalog]].
+- fix: `trust-fence-cite-action-line` (lens tightened to cite the destructive op; built + reviewed
+  GREEN). It deferred the candidate lesson (P7: "only after a fix proves out") — this entry is that
+  lesson, now earned.
+- after: second live `/pharn-eval` (5 runs, commit `6b90d18`) → **structural 5/5** (`file_resolves`
+  4/5→5/5); `node floor/check-variance.mjs … runs .` → exit 0, PASS — recorded in [[feature-catalog]].
+- boundary (P0): the after is **advisory evidence** (LLM-produced findings; only the counting is
+  floor-grade), NOT a guarantee the lens never drifts — the floor guarantee is the DETECTOR
+  (`check-variance` / `check-structural` `file_resolves`).
+- promoted: 2026-06-25 via gated `/build` (writes-scope = `memory-bank/feature-catalog.md` +
+  `memory-bank/lessons-learned.md`, set from `features/trust-fence-baseline/PLAN.md`); P7 trigger = the
+  before→fix→after cycle closed (structural 4/5 → 5/5). Note: prior entries were promoted via `/review`;
+  this one via gated `/build` per the `/build` instruction — the gate that makes it non-silent is fix #7
+  (writes-scope) + per-entry provenance (`ARCHITECTURE.md §5`), not the command name.
