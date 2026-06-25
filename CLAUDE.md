@@ -80,11 +80,11 @@ either blocks.
   `.pharn/writes-scope.json` from the active Capability/command's declared `writes:`
   (`--from-frontmatter <cap.md>`) or, for `/build`, the plan's `## Files` (`--from-plan <PLAN.md>`).
   The scope is **parsed deterministically** (P0/P5) — no model picks it.
-- **Fail-closed.** With no scope file, only a default-safe-set is writable (`.pharn/**`, `features/**`,
-  `pharn-*/**`); `memory-bank/**`, `floor/**`, `.claude/**`, and root files are **denied** until an
-  explicit `writes:` declaration names them. A **set** scope is authoritative — it replaces the
-  safe-set for non-`.pharn` zones — so `writes: ["memory-bank/lessons-learned.md"]` unlocks exactly
-  that file.
+- **Fail-closed.** With no scope file, only a default-safe-set is writable (other `.pharn/**` — not
+  `writes-scope.json`, which is setter-only — `features/**`, `pharn-*/**`); `memory-bank/**`,
+  `floor/**`, `.claude/**`, and root files are **denied** until an explicit `writes:` declaration
+  names them. A **set** scope is authoritative — it replaces the safe-set for non-`.pharn` zones — so
+  `writes: ["memory-bank/lessons-learned.md"]` unlocks exactly that file.
 - **When a write is blocked,** the fix is to **declare the path in `writes:` and re-run the
   scope-setter** — _never_ to bypass the hook. The deny message names the blocked path and the active
   scope.

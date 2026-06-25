@@ -5,7 +5,7 @@ kind: pharn-owned
 trust: trusted
 model_tier: sonnet
 reads: ["CONSTITUTION.md", "ARCHITECTURE.md", "THREAT-MODEL.md", "LIMITS.md", "<target repo>"]
-writes: ["features/**/PLAN.md"]
+writes: ["features/<name>/PLAN.md"]
 constitution_refs: ["P0", "P1", "P3", "P5", "P6", "P7"]
 version: "0.1.0"
 ---
@@ -23,16 +23,17 @@ First, load the trusted prefix into your working context and obey it for this en
 
 ## Step 0 — Set the writes-scope (fix #7, fail-closed)
 
-**Before any write,** as your first action set the active writes-scope from this command's declared
-`writes:`, so the pre-write hook permits exactly those paths and denies everything else (fail-closed):
+**After Step 2 names `<name>` and before Step 3,** set the active writes-scope (resolved to that single
+plan file) from this command's declared `writes:`:
 
 ```bash
-node .claude/hooks/set-writes-scope.cjs --from-frontmatter .claude/commands/plan.md
+node .claude/hooks/set-writes-scope.cjs --from-frontmatter .claude/commands/plan.md --target features/<name>/PLAN.md
 ```
 
-Deterministic floor step (P0/P5): the scope is parsed from `writes:`, never chosen by a model. If a
-later write is blocked with the `writes-scope guard` message, the fix is to **declare the path in
-`writes:` and re-run this setter** — never to bypass the hook (see CLAUDE.md, "Writes-scope").
+Deterministic floor step (P0/P5): scope is parsed from `writes:` and narrowed to `--target` — never
+chosen by a model. If a later write is blocked with the `writes-scope guard` message, the fix is to
+**declare the path in `writes:` and re-run this setter (with `--target`)** — never to bypass the hook
+(see CLAUDE.md, "Writes-scope").
 
 ## Step 1 — Discovery (P6, mandatory; never assert from memory)
 
@@ -68,7 +69,8 @@ For the increment, state explicitly:
 
 ## Step 3 — Write `features/<name>/PLAN.md`
 
-Create the folder and write the plan there — `<name>` is the increment's slug. Step 0 has already scoped `features/**/PLAN.md`, so this path is writable:
+Create the folder and write the plan there — `<name>` is the increment's slug. Step 0 has already scoped
+that single file (`features/<name>/PLAN.md`), so this path is writable:
 
 ```markdown
 # PLAN — <increment name>

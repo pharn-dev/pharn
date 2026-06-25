@@ -59,8 +59,8 @@ THREAT-MODEL, LIMITS].md + CODEOWNERS` (+ `PHARN_PROTECTED` extras). On a hit it
   discovery, no halt).
 - **No reason the scope-setter cannot be a command's first step** (another HALT trigger — not fired):
   each command has a clear first action; the setter is a plain `node` invocation (run via Bash, not the
-  Write tool, so the PreToolUse Write-matcher never intercepts it); writing `.pharn/**` is the
-  bootstrap exception. No chicken-and-egg.
+  Write tool, so the PreToolUse Write-matcher never intercepts it); other `.pharn/**` (not
+  `writes-scope.json`) is the bootstrap exception for the Write tool. No chicken-and-egg.
 
 ## The mechanism (the crux)
 
@@ -80,8 +80,11 @@ file the hook reads:
 2. **Hook** (`.claude/hooks/enforce-writes-scope.cjs`, PreToolUse, deterministic, stdlib): for each
    write path it normalizes to a repo-root-relative path (`path.relative(cwd, resolve(cwd, p))`; a path
    escaping the root → DENY) and decides by **glob membership only** (no LLM, no free text):
-   - `.pharn/**` → **ALLOW unconditionally** (bootstrap; the setter must always be able to write its
-     own state, with or without a scope file).
+   - `.pharn/**` (except `.pharn/writes-scope.json`) → **ALLOW unconditionally** (bootstrap for other
+     runtime files under `.pharn/`).
+   - `.pharn/writes-scope.json` → **DENY on the Write tool** (exit 2) always — scope state is
+     **setter-only**: `set-writes-scope.cjs` runs via Bash/fs (not PreToolUse), so Step 0 can still
+     write it while the active writer cannot self-escalate by editing the gate's input.
    - else read `.pharn/writes-scope.json`: **present & valid** → allow-set = `scope[]` (authoritative —
      module dirs are **not** auto-added); **absent or unparseable** → allow-set = the **default-safe-set**.
    - path matches any glob in the allow-set → ALLOW (exit 0); otherwise DENY (exit 2) with the
@@ -96,7 +99,8 @@ file the hook reads:
 An **allow-list** — anything not on it is denied (fail-closed), so the sensitive zones need no explicit
 blocklist:
 
-- `.pharn/**` (bootstrap — also handled unconditionally above)
+- `.pharn/**` except `.pharn/writes-scope.json` (bootstrap for other runtime files; scope state is
+  setter-only — see Hook above)
 - `features/**` (process artifacts / scratch)
 - `pharn-*/**` (capability modules — `pharn-contracts/core/pipeline/review/audits/stack-*/skills-*`;
   99% of loop writes)
@@ -202,12 +206,16 @@ This is executable floor code, so P1 is satisfied by a `node --test` suite (not 
 
 - **Hook, no scope file:** `pharn-review/foo.md` → exit 0 (safe-set module); `features/foo/bar.md` →
   exit 0; `memory-bank/x.md` → exit 2; `floor/x.mjs` → exit 2; `.claude/x` → exit 2;
-  `.pharn/writes-scope.json` → exit 0 (bootstrap).
+  `.pharn/writes-scope.json` → exit 2 (setter-only; not bootstrap via Write); `.pharn/other` → exit 0.
+- **Hook, root-normalization (out-of-repo):** `../outside.md` → exit 2; `../../outside.md` → exit 2;
+  `/tmp/outside.md` (absolute, outside cwd) → exit 2 — `toRel()` returns null; deny carries
+  `writes-scope guard` and the original blocked path (not a scope miss).
 - **Hook, scope present (authoritative):** `scope:["features/foo/**"]` → inside → exit 0; `pharn-core/x.md`
   (outside) → exit 2 (proves authoritative, not additive).
 - **Hook, explicit unlock of a sensitive zone:** `scope:["memory-bank/lessons-learned.md"]` →
   `memory-bank/lessons-learned.md` → exit 0; `memory-bank/other.md` → exit 2 (declaration is tight).
-- **Hook, bootstrap with a scope set:** any scope + `.pharn/writes-scope.json` → exit 0.
+- **Hook, scope-state not self-writable:** any scope (including one naming `.pharn/writes-scope.json`) +
+  `.pharn/writes-scope.json` via Write → exit 2; `.pharn/other` → exit 0 (other bootstrap paths intact).
 - **Composition with fix #2:** `protect-trusted-paths.cjs` + `ARCHITECTURE.md` → exit 2 (fix #2 intact,
   scope-independent); and `enforce-writes-scope.cjs` + `scope:["ARCHITECTURE.md"]` + `ARCHITECTURE.md`
   → exit 0 — documenting that fix #7 is scope-only and **fix #2 is the trusted-doc backstop** (hence
@@ -243,12 +251,11 @@ assert on `r.status` (not stdout-grep alone), mirroring `check-structural.test.m
   ARCHITECTURE §3.1/§7/§2 "enforced by the pre-write hook" wording becomes **true**, and the 3a emission
   backstop (a) ("the pre-write `writes:` hook enforces the path") becomes **real**, not presumed.
 - **Residual, named honestly (P0/P7):** fix #7 blocks **ad-hoc / injected one-off** writes outside the
-  declared scope and forces an explicit declaration to reach a sensitive zone. It does **not** contain
-  an agent that **deliberately rewrites its own** `.pharn/writes-scope.json` (which it can, since
-  `.pharn/**` is always-writable for bootstrap, and that file is gitignored so a self-widened scope is
-  not in the human-reviewed diff). That residual is bounded by fix #2 — the trusted docs + CODEOWNERS
-  remain denied no matter what scope is set — and is the honest limit, co-located with the
-  fence-enforced-by-the-same-model limit (LIMITS §1b). It is **safe-by-default**, not open: a command
+  declared scope and forces an explicit declaration to reach a sensitive zone. Write-tool
+  self-escalation via `.pharn/writes-scope.json` is **closed** (that path is setter-only). The remaining
+  widen path is the setter reading an untrusted `writes:` / `PLAN.md` — bounded by fix #2 (the trusted
+  docs + CODEOWNERS remain denied no matter what scope is set) and by the normal loop pointing the
+  setter only at command frontmatter / an approved plan. It is **safe-by-default**, not open: a command
   that forgets Step 0 falls back to the default-safe-set, which still denies the sensitive zones.
 
 ## Trust audit (P2)

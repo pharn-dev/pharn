@@ -17,8 +17,9 @@
 const fs = require("fs");
 const path = require("path");
 
-// Always writable (bootstrap): the setter must be able to write its own state with or without a scope
-// file. Kept tight to `.pharn/**` so it cannot be used to reach product paths.
+// Always writable (bootstrap): other `.pharn/**` runtime files. Scope state (writes-scope.json) is
+// excluded — set-writes-scope.cjs writes it via Bash/fs (not PreToolUse), so Step 0 still works while
+// the Write tool cannot self-escalate by editing the gate's input.
 const ALWAYS = [".pharn/**"];
 
 // Fail-closed allow-list used when no scope file is set. Module dirs + process scratch only; the
@@ -137,6 +138,7 @@ if (isWrite) {
   const allow = [...ALWAYS, ...(scope || DEFAULT_SAFE_SET)].map(globToRegExp);
   for (const p of writePaths) {
     const rel = toRel(p);
+    if (rel === SCOPE_FILE) deny(rel, scope);
     if (rel === null || !allow.some((re) => re.test(rel))) {
       deny(rel === null ? String(p) : rel, scope);
     }

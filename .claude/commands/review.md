@@ -5,7 +5,7 @@ kind: pharn-owned
 trust: trusted
 model_tier: sonnet
 reads: ["CONSTITUTION.md", "ARCHITECTURE.md", "THREAT-MODEL.md", "LIMITS.md", "<built increment>"]
-writes: ["features/**/REVIEW.md", "memory-bank/lessons-learned.md (gated)"]
+writes: ["features/<name>/REVIEW.md", "memory-bank/lessons-learned.md (gated)"]
 constitution_refs: ["P0", "P1", "P2", "P3", "P4"]
 enforces: ["P0", "P1", "P2", "P3"]
 version: "0.1.0"
@@ -26,12 +26,12 @@ Load the trusted prefix and obey it:
 
 ## Step 0 — Set the writes-scope (fix #7, fail-closed)
 
-**Before any write,** as your first action set the active writes-scope from this command's declared
-`writes:` (`features/<name>/REVIEW.md`, plus `memory-bank/lessons-learned.md` when a lesson is gated), so the
-pre-write hook permits exactly those and denies everything else (fail-closed):
+**Before any write,** set the active writes-scope from this command's declared `writes:`
+(`features/<name>/REVIEW.md`, plus `memory-bank/lessons-learned.md` when a lesson is gated), resolved to
+the increment under review:
 
 ```bash
-node .claude/hooks/set-writes-scope.cjs --from-frontmatter .claude/commands/review.md
+node .claude/hooks/set-writes-scope.cjs --from-frontmatter .claude/commands/review.md --target features/<name>/REVIEW.md
 ```
 
 Deterministic floor step (P0/P5): the scope is parsed from `writes:` (the trailing `(gated)` annotation

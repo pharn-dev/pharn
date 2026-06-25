@@ -8,8 +8,11 @@
 // from frontmatter / markdown — no model decides scope; that is what makes `writes:` floor-grade (P5).
 //
 // Usage (run as a command's FIRST step, before any write):
-//   node .claude/hooks/set-writes-scope.cjs --from-frontmatter <capability-or-command.md>
+//   node .claude/hooks/set-writes-scope.cjs --from-frontmatter <capability-or-command.md> [--target <path>]
 //   node .claude/hooks/set-writes-scope.cjs --from-plan <PLAN.md>
+//
+// `--target` resolves placeholder/glob `writes:` entries (e.g. features/<name>/PLAN.md) to one concrete
+// file before emitting scope — so the hook allowlist is a single artifact path, not a broad directory.
 //
 // Exits non-zero (and writes nothing) rather than emit an empty/placeholder scope — fail-closed.
 
@@ -23,6 +26,27 @@ function fail(msg) {
   process.exit(1);
 }
 
+function parseArgs(argv) {
+  const args = argv.slice(2);
+  let mode;
+  let file;
+  let target;
+  for (let i = 0; i < args.length; i++) {
+    const a = args[i];
+    if (a === "--target") {
+      if (!args[i + 1]) fail("--target requires a path");
+      target = args[++i];
+    } else if (!mode) {
+      mode = a;
+    } else if (!file) {
+      file = a;
+    } else {
+      fail(`unexpected argument: ${a}`);
+    }
+  }
+  return { mode, file, target };
+}
+
 // Strip a trailing " (annotation)" (e.g. " (gated)") and surrounding whitespace.
 function clean(entry) {
   return String(entry)
@@ -30,9 +54,76 @@ function clean(entry) {
     .trim();
 }
 
-// Drop placeholders like "<files named in PLAN.md only>" and empties.
+// Emit only literal repo-relative paths — no placeholders, globs, or empties.
 function isConcrete(entry) {
-  return entry.length > 0 && !entry.includes("<") && !entry.includes(">");
+  return (
+    entry.length > 0 &&
+    !entry.includes("<") &&
+    !entry.includes(">") &&
+    !entry.includes("*") &&
+    !entry.includes("?")
+  );
+}
+
+function normalizeRel(p) {
+  const rel = path.relative(process.cwd(), path.resolve(process.cwd(), String(p))).replace(/\\/g, "/");
+  if (rel === "" || rel === ".." || rel.startsWith("../")) fail(`--target escapes repo root: ${p}`);
+  return rel;
+}
+
+function globToRegExp(glob) {
+  let re = "";
+  for (let i = 0; i < glob.length; i++) {
+    const c = glob[i];
+    if (c === "*") {
+      if (glob[i + 1] === "*") {
+        re += ".*";
+        i++;
+      } else {
+        re += "[^/]*";
+      }
+    } else if ("\\^$.|?+()[]{}".includes(c)) {
+      re += "\\" + c;
+    } else {
+      re += c;
+    }
+  }
+  return new RegExp("^" + re + "$");
+}
+
+function placeholderToRegExp(entry) {
+  let re = "";
+  for (let i = 0; i < entry.length; i++) {
+    const c = entry[i];
+    if (c === "<") {
+      const end = entry.indexOf(">", i);
+      if (end === -1) return null;
+      re += "[^/]+";
+      i = end;
+    } else if ("\\^$.|?+()[]{}*".includes(c)) {
+      re += "\\" + c;
+    } else {
+      re += c;
+    }
+  }
+  return new RegExp("^" + re + "$");
+}
+
+// Resolve a declared writes entry to one concrete path. Literals pass through; placeholders/globs need
+// --target and must match it — the emitted scope is the target path, not the pattern.
+function resolveEntry(entry, target) {
+  const e = clean(entry);
+  if (isConcrete(e)) return e;
+  if (!target) return null;
+  const t = normalizeRel(target);
+  if (e.includes("<") || e.includes(">")) {
+    const re = placeholderToRegExp(e);
+    return re && re.test(t) ? t : null;
+  }
+  if (e.includes("*") || e.includes("?")) {
+    return globToRegExp(e).test(t) ? t : null;
+  }
+  return null;
 }
 
 // --- Mode A: read the `writes:` array from a markdown file's YAML frontmatter. ---
@@ -79,17 +170,22 @@ function pathsFromPlanFiles(file) {
 }
 
 function main() {
-  const [, , mode, file] = process.argv;
+  const { mode, file, target } = parseArgs(process.argv);
   if (!mode || !file || (mode !== "--from-frontmatter" && mode !== "--from-plan")) {
-    fail("usage: set-writes-scope.cjs (--from-frontmatter <file.md> | --from-plan <PLAN.md>)");
+    fail("usage: set-writes-scope.cjs (--from-frontmatter <file.md> [--target <path>] | --from-plan <PLAN.md>)");
   }
   if (!fs.existsSync(file)) fail(`file not found: ${file}`);
 
   const raw = mode === "--from-frontmatter" ? writesFromFrontmatter(file) : pathsFromPlanFiles(file);
-  const scope = raw.map(clean).filter(isConcrete);
+  const scope = raw
+    .map((entry) => resolveEntry(entry, target))
+    .filter((p) => p !== null)
+    .filter(isConcrete);
   if (scope.length === 0) {
     if (mode === "--from-frontmatter") {
-      fail(`no concrete \`writes:\` paths in ${file} (only placeholders/empties) — use --from-plan`);
+      fail(
+        `no concrete \`writes:\` paths in ${file} (only placeholders/empties${target ? "" : " — pass --target for placeholder/glob entries"}) — use --from-plan`
+      );
     }
     fail(`no back-tick paths under \`## Files\` in ${file}`);
   }

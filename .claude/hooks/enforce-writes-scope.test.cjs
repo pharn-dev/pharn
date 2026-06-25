@@ -61,12 +61,36 @@ test("no scope: .claude/ is DENIED (commands + hooks — a write here could disa
   assert.equal(hook(tmp(), ".claude/x").status, 2);
 });
 
-test("no scope: .pharn/ is ALLOWED (bootstrap — the setter writes its own state)", () => {
-  assert.equal(hook(tmp(), ".pharn/writes-scope.json").status, 0);
+test("no scope: .pharn/writes-scope.json is DENIED (setter-only — no Write-tool self-escalation)", () => {
+  const r = hook(tmp(), ".pharn/writes-scope.json");
+  assert.equal(r.status, 2);
+  assert.match(r.stderr, /writes-scope guard/);
 });
 
-test("no scope: a path escaping the repo root is DENIED", () => {
-  assert.equal(hook(tmp(), "../outside.md").status, 2);
+test("no scope: other .pharn/ runtime files remain ALLOWED (bootstrap)", () => {
+  assert.equal(hook(tmp(), ".pharn/other").status, 0);
+});
+
+test("no scope: parent traversal (../outside.md) is DENIED (root-normalization)", () => {
+  const r = hook(tmp(), "../outside.md");
+  assert.equal(r.status, 2);
+  assert.match(r.stderr, /writes-scope guard/);
+  assert.match(r.stderr, /Blocked path : \.\.\/outside\.md/);
+});
+
+test("no scope: multi-segment traversal (../../outside.md) is DENIED (root-normalization)", () => {
+  const r = hook(tmp(), "../../outside.md");
+  assert.equal(r.status, 2);
+  assert.match(r.stderr, /writes-scope guard/);
+  assert.match(r.stderr, /Blocked path : \.\.\/\.\.\/outside\.md/);
+});
+
+test("no scope: an absolute path outside the repo root is DENIED (root-normalization)", () => {
+  const outside = join(os.tmpdir(), "pharn-writes-scope-outside.md");
+  const r = hook(tmp(), outside);
+  assert.equal(r.status, 2);
+  assert.match(r.stderr, /writes-scope guard/);
+  assert.match(r.stderr, new RegExp(`Blocked path : ${outside.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}`));
 });
 
 // --- Hook, scope present: authoritative (replaces the safe-set, not additive) ---
@@ -97,10 +121,16 @@ test("scope [memory-bank/lessons-learned.md]: a sibling in the zone is DENIED (d
   assert.equal(hook(cwd, "memory-bank/other.md").status, 2);
 });
 
-test("scope set: .pharn/ remains ALLOWED (bootstrap, even under a tight scope)", () => {
+test("scope set: .pharn/writes-scope.json is DENIED even when scope names it (setter-only)", () => {
+  const cwd = tmp();
+  setScope(cwd, [".pharn/writes-scope.json", "features/foo/**"]);
+  assert.equal(hook(cwd, ".pharn/writes-scope.json").status, 2);
+});
+
+test("scope set: other .pharn/ runtime files remain ALLOWED (bootstrap)", () => {
   const cwd = tmp();
   setScope(cwd, ["features/foo/**"]);
-  assert.equal(hook(cwd, ".pharn/writes-scope.json").status, 0);
+  assert.equal(hook(cwd, ".pharn/other").status, 0);
 });
 
 // --- Composition with fix #2 (additive, never replacing) ---
@@ -150,6 +180,49 @@ test("setter --from-frontmatter on a placeholder-only writes: exits non-zero and
   assert.equal(r.status, 1);
   assert.match(r.stderr, /--from-plan/);
   assert.equal(fs.existsSync(join(cwd, ".pharn", "writes-scope.json")), false);
+});
+
+test("setter --from-frontmatter resolves features/<name>/PLAN.md to --target single file", () => {
+  const cwd = tmp();
+  const md = join(cwd, "plan.md");
+  fs.writeFileSync(md, '---\nwrites: ["features/<name>/PLAN.md"]\n---\n# x\n');
+  const r = setter(cwd, "--from-frontmatter", md, "--target", "features/foo/PLAN.md");
+  assert.equal(r.status, 0);
+  const rec = JSON.parse(fs.readFileSync(join(cwd, ".pharn", "writes-scope.json"), "utf8"));
+  assert.deepEqual(rec.scope, ["features/foo/PLAN.md"]);
+});
+
+test("setter --from-frontmatter resolves a glob writes entry to --target single file", () => {
+  const cwd = tmp();
+  const md = join(cwd, "plan.md");
+  fs.writeFileSync(md, '---\nwrites: ["features/**/PLAN.md"]\n---\n# x\n');
+  const r = setter(cwd, "--from-frontmatter", md, "--target", "features/writes-scope/PLAN.md");
+  assert.equal(r.status, 0);
+  const rec = JSON.parse(fs.readFileSync(join(cwd, ".pharn", "writes-scope.json"), "utf8"));
+  assert.deepEqual(rec.scope, ["features/writes-scope/PLAN.md"]);
+});
+
+test("setter --from-frontmatter on placeholder writes without --target exits non-zero", () => {
+  const cwd = tmp();
+  const md = join(cwd, "plan.md");
+  fs.writeFileSync(md, '---\nwrites: ["features/<name>/PLAN.md"]\n---\n# x\n');
+  const r = setter(cwd, "--from-frontmatter", md);
+  assert.equal(r.status, 1);
+  assert.match(r.stderr, /--target/);
+  assert.equal(fs.existsSync(join(cwd, ".pharn", "writes-scope.json")), false);
+});
+
+test("setter --from-frontmatter keeps concrete paths and resolves placeholders with --target", () => {
+  const cwd = tmp();
+  const md = join(cwd, "review.md");
+  fs.writeFileSync(
+    md,
+    '---\nwrites: ["features/<name>/REVIEW.md", "memory-bank/lessons-learned.md (gated)"]\n---\n# x\n'
+  );
+  const r = setter(cwd, "--from-frontmatter", md, "--target", "features/foo/REVIEW.md");
+  assert.equal(r.status, 0);
+  const rec = JSON.parse(fs.readFileSync(join(cwd, ".pharn", "writes-scope.json"), "utf8"));
+  assert.deepEqual(rec.scope, ["features/foo/REVIEW.md", "memory-bank/lessons-learned.md"]);
 });
 
 // --- Setter Mode B (PLAN.md ## Files) ---
