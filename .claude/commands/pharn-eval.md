@@ -83,7 +83,13 @@ write any artifact via the Write tool, declare its concrete path in `writes:` an
    cost _before_ the loop, e.g. `about to run trust-fence 5× via claude -p — approx $0.55 at ~$0.11/run
 observed`. A run count is enough; do not build a cost model.
 
-4. **For `i` in `1..N`:**
+4. **Reset the run tree (P5 — deterministic inputs).** Before the loop, clear and recreate `runs/` so
+   stale `runs/<i>/findings.json` from a previous invocation cannot be counted: `check-variance.mjs`
+   enumerates **every** subdir of `runs/`, so a prior `--runs 10` would otherwise pollute a later
+   `--runs 5` and corrupt the variance verdict. Run `rm -rf runs && mkdir -p runs` once, up front —
+   this is the only deletion, and `runs/` is gitignored scratch.
+
+5. **For `i` in `1..N`:**
    - `mkdir -p runs/<i>`
    - **Invoke the capability AS A LENS — never as a naked "emit this JSON".** A bare emit-prompt is
      refused as injection by a `claude -p` started in this repo (it loads the repo `CLAUDE.md` / P2
@@ -110,7 +116,7 @@ observed`. A run count is enough; do not build a cost model.
      `expected.semantic[]` by index. It runs **only** over `semantic[]` free-text — it **never** re-checks
      `structural` (that is Node's job, always). Its output is advisory and report-only.
 
-5. **Tabulate — the deterministic floor step (no LLM):**
+6. **Tabulate — the deterministic floor step (no LLM):**
 
    ```bash
    node floor/check-variance.mjs <capability-dir>/evals/expected/<expected>.json runs .
@@ -120,7 +126,7 @@ observed`. A run count is enough; do not build a cost model.
    verdict: exit **0** consistent-pass · **1** structural FAIL (flaky or consistent-fail) · **2**
    inconclusive (0 valid runs).
 
-6. **Report** the runner's verdict verbatim, including its honest P0 boundary line. Surface the
+7. **Report** the runner's verdict verbatim, including its honest P0 boundary line. Surface the
    errored/excluded count loudly. Do not relabel a `flaky-structural` FAIL as "mostly passing," and do
    not let `semantic-flaky` gate anything.
 
