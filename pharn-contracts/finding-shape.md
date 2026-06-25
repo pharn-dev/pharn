@@ -40,6 +40,53 @@ finding:
 | `problem`  | free-text  | derived from the (possibly untrusted) input  | **inherits input trust**                              |
 | `evidence` | free-text  | quoted snippet from the input                | **inherits input trust**                              |
 
+## Emission — findings.json (the machine-readable array)
+
+A Capability that emits findings MUST serialize them as a single **`findings.json`** — a JSON array of
+the finding object defined above (zero or more) — **in addition to** any human-facing output
+(e.g. `REVIEW.md`). The capability declares this file in its `writes:` frontmatter
+(`ARCHITECTURE.md §3.1`, enforced by the pre-write hook — cited, not restated, P4).
+
+- **Shape:** `[ {type, rule_id, severity, file, problem, evidence}, … ]` — each element is exactly the
+  object above; no field is redefined here (P4). An empty finding list is the empty array `[]`.
+- **The taint split is REAL at the output (P2).** The enum-gated fields (`type`, `rule_id`,
+  `severity`, `file`) are the capability's **own** assertion — TRUSTED, produced by its
+  enum-check / path-resolution. The free-text fields (`problem`, `evidence`) **inherit the input's
+  trust** — UNTRUSTED when the reviewed artifact is untrusted, carried as quoted DATA. Because the
+  split is a real JSON field boundary at the capability's output, it is **structural**, not something
+  a downstream model re-interprets from prose.
+- **Naming/location:** the file is named `findings.json` and is colocated with the capability's
+  human-facing output (the same directory it `writes:`). Example: `trust-fence` writes
+  `features/trust-fence/REVIEW.md`, so its findings array is `features/trust-fence/findings.json`.
+- **Consumer (cited):** this is exactly the `actual.json` that `floor/check-structural.mjs` reads; the
+  emission contract is what gives that checker a real capability output to range over.
+
+### Emission enforcement audit (P0) — what is and is NOT floor-backed
+
+Honest scope, because the disease this repo exists to prevent is "written in the contract" mistaken
+for "therefore guaranteed." The `MUST` above is a **three-way split**, not one blanket guarantee:
+
+- **Declaring it → floor-enforced (fix #7).** Once a Capability names `findings.json` in its `writes:`
+  (`ARCHITECTURE.md §3.1`), the live pre-write **writes-scope guard** (`enforce-writes-scope.cjs`,
+  fix #7) pins the **path** — a hook reduction (`ARCHITECTURE.md §2`): the Capability may write its
+  findings array only where it declared, nowhere else.
+- **Emitting it at all → advisory.** Nothing on the floor forces a Capability to declare or write
+  `findings.json` — `floor/validate.mjs` does not check for it, and no hook fabricates an emission. So
+  `MUST emit` is a **conformance requirement** on a conforming Capability, **not** a floor-guaranteed
+  production. Labeled plainly per P0, lest the `MUST` read as a guarantee that the artifact exists.
+- **Shape + the no-laundering trip-wire → floor-checkable at eval time, once the 3c runner lands (not
+  at write time).** The array's structure, and the rule that no `trust: untrusted` needle reaches an
+  enum-gated field, reduce to `floor/check-structural.mjs` (enum / regex-substring / path-resolution —
+  `ARCHITECTURE.md §2`). That **primitive exists and is tested today**, but **no runner yet invokes it
+  over a capability's emitted `findings.json`** — that wiring is increment **3c, not yet built**. So
+  this facet is **floor-reducible-but-not-yet-enforced**: honest today, it must **not** be read as an
+  always-on guarantee until 3c lands.
+
+So: **declaring** the path is guaranteed _today_ (fix #7, live); **shape/laundering** is
+floor-reducible but **not enforced until the 3c runner lands** (`check-structural.mjs` exists and is
+tested; the wiring over emitted output is unbuilt); **emitting at all** is an advisory conformance
+requirement. No reading of the `MUST` above is a blanket floor guarantee that the artifact exists.
+
 ## The rule of the contract (P0, P2)
 
 A **guaranteed decision** (a floor-gate / constitutional block) is computed from the **enum-gated
