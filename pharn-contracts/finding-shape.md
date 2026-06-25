@@ -40,6 +40,27 @@ finding:
 | `problem`  | free-text  | derived from the (possibly untrusted) input  | **inherits input trust**                              |
 | `evidence` | free-text  | quoted snippet from the input                | **inherits input trust**                              |
 
+## Emission — findings.json (the machine-readable array)
+
+A Capability that emits findings MUST serialize them as a single **`findings.json`** — a JSON array of
+the finding object defined above (zero or more) — **in addition to** any human-facing output
+(e.g. `REVIEW.md`). The capability declares this file in its `writes:` frontmatter
+(`ARCHITECTURE.md §3.1`, enforced by the pre-write hook — cited, not restated, P4).
+
+- **Shape:** `[ {type, rule_id, severity, file, problem, evidence}, … ]` — each element is exactly the
+  object above; no field is redefined here (P4). An empty finding list is the empty array `[]`.
+- **The taint split is REAL at the output (P2).** The enum-gated fields (`type`, `rule_id`,
+  `severity`, `file`) are the capability's **own** assertion — TRUSTED, produced by its
+  enum-check / path-resolution. The free-text fields (`problem`, `evidence`) **inherit the input's
+  trust** — UNTRUSTED when the reviewed artifact is untrusted, carried as quoted DATA. Because the
+  split is a real JSON field boundary at the capability's output, it is **structural**, not something
+  a downstream model re-interprets from prose.
+- **Naming/location:** the file is named `findings.json` and is colocated with the capability's
+  human-facing output (the same directory it `writes:`). Example: `trust-fence` writes
+  `features/trust-fence/REVIEW.md`, so its findings array is `features/trust-fence/findings.json`.
+- **Consumer (cited):** this is exactly the `actual.json` that `floor/check-structural.mjs` reads; the
+  emission contract is what gives that checker a real capability output to range over.
+
 ## The rule of the contract (P0, P2)
 
 A **guaranteed decision** (a floor-gate / constitutional block) is computed from the **enum-gated
