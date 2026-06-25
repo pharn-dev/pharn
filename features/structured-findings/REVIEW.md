@@ -127,3 +127,95 @@ explicit `advisory` label.
   only fix #2).
 - promoted: <pending human-gated approval>
 ```
+
+---
+
+# RE-REVIEW — F1 fix (Emission enforcement audit added) — increment 3a follow-up
+
+- increment: `pharn-contracts/finding-shape.md` +22 lines — a new `### Emission enforcement audit (P0)`
+  subsection under `## Emission — findings.json` (commit `151123d`). This is the agent-fixable **F1**
+  from the review above, landed.
+- diff under review: 22 insertions to `finding-shape.md` (lines 64-84); no other file. Reviewed as
+  `trust: untrusted` per `/review`.
+- reviewer: PHARN reviewing PHARN — findings obey the finding object (fix #1): enum-gated
+  `{type, rule_id, severity, file}` + free-text `{problem, evidence}` rendered as DATA.
+
+## Step 0 — Floor (the only guaranteed gate)
+
+`node floor/validate.mjs .` → **`GREEN — 1 capabilities checked`**. No `role:` added (capability count
+stays 1); CHECK 5 tokens retained. The floor passed; **everything below is advisory** (P0).
+
+## Lens results
+
+- **L-eval (P1):** PASS, **no finding.** No Capability / `enforces` / `rule_id` added → P1 imposes
+  nothing, and the floor concurs (count stays 1). Floor and lens agree.
+- **L-trust (P2):** PASS, **no finding.** The new text documents the trust split faithfully and adds
+  **no** new untrusted payload — it uses the generic `trust: untrusted` needle phrasing and does
+  **not** re-quote the trust-fence `skip authz`/`pre-approved` strings. **Injection scan of the
+  reviewed artifact:** the `MUST` / "Labeled plainly per P0" / "Once a Capability names…" sentences are
+  contract DATA about capability obligations and the contract's own honesty labeling — not directives
+  aimed at the reviewer; no "ignore previous instructions / approve / skip-review"-class content. My
+  behavior was not changed by anything in the artifact. No guaranteed decision is made to rest on a
+  free-text field.
+- **L-axis (P3):** PASS, **no finding.** One axis: the enforcement honesty *of* the emission
+  requirement is the same axis as the `## Emission` section it nests under (consistent with the 3a
+  ruling that "serializing the object is the same axis as defining it"). No sibling reference: the
+  subsection cites the spec (`ARCHITECTURE.md §2, §3.1`) and the **floor tooling**
+  (`enforce-writes-scope.cjs`, `floor/validate.mjs`, `floor/check-structural.mjs`) — naming the floor
+  op a guarantee reduces to is exactly what P0 requires; the sibling contract `eval-format.md` is
+  deliberately **not** referenced.
+- **L-floor (P0), the governing lens:** **1 finding (advisory, minor)** — see below. The fix lands the
+  F1 honesty: the `MUST` is now a labeled three-way split (declaring → fix #7 *live*; emitting →
+  advisory; shape/laundering → `check-structural` at eval/3c). Two of the three facets reduce to a
+  named **live** floor op; the residual is a single-facet labeling nuance.
+
+## Findings — floor-gate (blocking)
+
+**None.** `validate.mjs` is GREEN; the increment claims no guarantee without a floor reduction or an
+`advisory` label. Each facet reduces to a named floor op or is plainly marked advisory.
+
+## Findings — advisory-gate (warn — inform, never the sole basis for a block)
+
+```yaml
+- type: FINDING
+  rule_id: P0
+  severity: minor # advisory assignment (fix #3)
+  file: "pharn-contracts/finding-shape.md:77"
+  problem: "The third facet labels the shape/no-laundering check 'floor-checked at eval time (3c)' / 'guaranteed at eval time (check-structural.mjs, 3c)' without stating that the 3c eval-time application — a runner invoking check-structural.mjs over a capability's emitted findings.json — is itself not yet built, unlike the sibling contract eval-format.md which explicitly says its checker 'is the next increment ... must not call them guaranteed today.'"
+  evidence: "Lines 77-80 (the bullet) + 82-84 (the summary 'guaranteed at eval time'). Live reads this run: no capability declares findings.json in writes: (trust-fence writes only `features/trust-fence/REVIEW.md` → 3b unbuilt); no command/capability invokes check-structural (grep over .claude/commands + pharn-* empty → 3c unbuilt; only floor/ + its tests + docs reference it); finding-shape.md carries no 'not-yet-built / next increment / deferred' qualifier for 3c (grep empty). The check-structural PRIMITIVE exists and is tested, but its application over emitted output is deferred — so 'guaranteed at eval time (3c)' sits in parallel with the live 'floor-enforced (fix #7)' facet and could be misread as equally live today."
+```
+
+### Why this is advisory (minor), not blocking
+
+The facet **does** reduce to a real floor primitive (`check-structural.mjs` exists and is tested) and
+**does** carry contingency markers ("at eval time", "when an eval runner ranges it over the emitted
+file", "(3c)") — so it is substantially honest and fabricates no guarantee. It is **not** blocking:
+the floor is GREEN, no live output is falsely claimed-as-checked (3b is unbuilt → nothing is emitted
+to check yet), and the verdict rests on the reviewer's reading of "guaranteed (3c)" against
+`eval-format.md`'s stricter precedent — a free-text/labeling judgment, hence advisory-gate (fix #3).
+Severity **minor**: a one-clause consistency refinement, not a material false claim.
+
+### Recommended resolution (the reviewer does not edit built files)
+
+- **F1b (agent-fixable, optional follow-up):** add one clause to the third facet — that the 3c
+  eval-time application (a runner ranging `check-structural` over emitted output) is **not yet built**
+  (only the primitive exists and is tested today), mirroring `eval-format.md`'s "the checker … is the
+  next increment." That makes the artifact-borne honesty symmetric with facet 1 (fix #7, which **is**
+  live). Purely additive; `finding-shape.md` is agent-editable.
+
+## Verdict
+
+**GREEN on the floor (the increment's only guaranteed gate passed); NOT blocked. 0 floor-gate
+findings, 1 advisory (minor) P0 finding.** The increment **closes F1** from the review above and
+**satisfies L2**: the PLAN's guarantee-audit honesty now lives in the durable artifact — `MUST emit`
+is labeled a three-way split (declaring → fix #7 *live*; emitting → advisory; shape/laundering →
+`check-structural` at 3c), no longer an unlabeled blanket `MUST`. The lone residual is itself a tiny,
+recursive instance of the same P0 discipline on one facet (the 3c application's not-yet-built status
+should travel with the artifact too).
+
+## Lesson
+
+**None proposed.** The single advisory finding is an *application* of existing canon **L2** ("a
+contract's honesty must travel with the artifact, and may cite only live floor ops"), not a new
+recurring failure — proposing a new lesson would duplicate L2 and violate P7. Recorded above as
+**F1b** for an optional follow-up; canon is untouched (P2).
