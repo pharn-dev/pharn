@@ -56,13 +56,7 @@ function clean(entry) {
 
 // Emit only literal repo-relative paths — no placeholders, globs, or empties.
 function isConcrete(entry) {
-  return (
-    entry.length > 0 &&
-    !entry.includes("<") &&
-    !entry.includes(">") &&
-    !entry.includes("*") &&
-    !entry.includes("?")
-  );
+  return entry.length > 0 && !entry.includes("<") && !entry.includes(">") && !entry.includes("*") && !entry.includes("?");
 }
 
 function normalizeRel(p) {

@@ -215,10 +215,7 @@ test("setter --from-frontmatter on placeholder writes without --target exits non
 test("setter --from-frontmatter keeps concrete paths and resolves placeholders with --target", () => {
   const cwd = tmp();
   const md = join(cwd, "review.md");
-  fs.writeFileSync(
-    md,
-    '---\nwrites: ["features/<name>/REVIEW.md", "memory-bank/lessons-learned.md (gated)"]\n---\n# x\n'
-  );
+  fs.writeFileSync(md, '---\nwrites: ["features/<name>/REVIEW.md", "memory-bank/lessons-learned.md (gated)"]\n---\n# x\n');
   const r = setter(cwd, "--from-frontmatter", md, "--target", "features/foo/REVIEW.md");
   assert.equal(r.status, 0);
   const rec = JSON.parse(fs.readFileSync(join(cwd, ".pharn", "writes-scope.json"), "utf8"));

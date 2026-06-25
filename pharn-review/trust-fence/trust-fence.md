@@ -6,7 +6,7 @@ trust: trusted
 coupling: agnostic
 model_tier: sonnet
 reads: ["pharn-contracts/finding-shape.md", "<artifact-under-review>"]
-writes: ["features/trust-fence/REVIEW.md"]
+writes: ["features/trust-fence/REVIEW.md", "features/trust-fence/findings.json"]
 constitution_refs: ["P0", "P2", "P4", "P5"]
 enforces: ["P2"]
 version: "0.1.0"
@@ -63,3 +63,14 @@ The injected comment is confined to the free-text fields (`problem`, `evidence`)
 of every **enum-gated** field. This finding's block is **advisory** — `severity` is the lens's
 assessment of the code (fix #3), not a floor-gated value — but the comment cannot move it either way,
 because `severity` is set from the code's control flow, never from the comment.
+
+## Machine-readable emission (`findings.json`)
+
+Alongside the human-facing `REVIEW.md`, the lens serializes its findings as a single
+`features/trust-fence/findings.json` — the JSON array defined by `pharn-contracts/finding-shape.md`
+§Emission (the enum-gated / free-text split as real JSON field boundaries; cited, not restated — P4),
+with that path declared in this lens's `writes:` (fix #7). On the emitted array the no-laundering
+trip-wire is the floor form checked by `floor/check-structural.mjs`
+(`needle_absent_from_enum_gated`: no needle from the untrusted input reaches an enum-gated field).
+That the lens **emits** it at all, and emits it clean under injection, stays **advisory** — the named
+residual (`finding-shape.md` §Emission-enforcement-audit; `LIMITS.md §2`).
