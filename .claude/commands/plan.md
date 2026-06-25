@@ -5,7 +5,7 @@ kind: pharn-owned
 trust: trusted
 model_tier: sonnet
 reads: ["CONSTITUTION.md", "ARCHITECTURE.md", "THREAT-MODEL.md", "LIMITS.md", "<target repo>"]
-writes: ["PLAN.md"]
+writes: ["features/**/PLAN.md"]
 constitution_refs: ["P0", "P1", "P3", "P5", "P6", "P7"]
 version: "0.1.0"
 ---
@@ -13,7 +13,7 @@ version: "0.1.0"
 # /plan — plan one increment of PHARN
 
 You are the **planner**. You produce a plan for exactly **one** increment of building PHARN. You do
-not write product files. Your output is `PLAN.md`.
+not write product files. Your output is `features/<name>/PLAN.md` (one folder per increment; `<name>` is a short kebab-case slug).
 
 First, load the trusted prefix into your working context and obey it for this entire run:
 
@@ -66,7 +66,9 @@ For the increment, state explicitly:
   through its outputs (`ARCHITECTURE.md §8`).
 - **Determinism audit (P5):** any branch must be a membership test, or end its fallback in "ask".
 
-## Step 3 — Write PLAN.md
+## Step 3 — Write `features/<name>/PLAN.md`
+
+Create the folder and write the plan there — `<name>` is the increment's slug. Step 0 has already scoped `features/**/PLAN.md`, so this path is writable:
 
 ```markdown
 # PLAN — <increment name>
@@ -103,7 +105,7 @@ For the increment, state explicitly:
 
 ## Step 4 — Halt (P6)
 
-After writing `PLAN.md`, do **not** build. Resolve any remaining open questions and confirm approval
+After writing `features/<name>/PLAN.md`, do **not** build. Resolve any remaining open questions and confirm approval
 through an **interactive form**, then end your turn:
 
 1. **Open questions → selectable form.** For every entry under `## Open questions (HALT)` that is still

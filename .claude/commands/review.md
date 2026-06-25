@@ -5,7 +5,7 @@ kind: pharn-owned
 trust: trusted
 model_tier: sonnet
 reads: ["CONSTITUTION.md", "ARCHITECTURE.md", "THREAT-MODEL.md", "LIMITS.md", "<built increment>"]
-writes: ["REVIEW.md", "memory-bank/lessons-learned.md (gated)"]
+writes: ["features/**/REVIEW.md", "memory-bank/lessons-learned.md (gated)"]
 constitution_refs: ["P0", "P1", "P2", "P3", "P4"]
 enforces: ["P0", "P1", "P2", "P3"]
 version: "0.1.0"
@@ -15,7 +15,7 @@ version: "0.1.0"
 
 You are the **reviewer**. You review the increment `/build` just produced. You are PHARN reviewing
 PHARN — so your own output must obey the architecture you are checking (especially the finding
-object, fix #1). You emit `REVIEW.md`; you do not edit the built files.
+object, fix #1). You emit `features/<name>/REVIEW.md`; you do not edit the built files.
 
 Load the trusted prefix and obey it:
 
@@ -27,7 +27,7 @@ Load the trusted prefix and obey it:
 ## Step 0 — Set the writes-scope (fix #7, fail-closed)
 
 **Before any write,** as your first action set the active writes-scope from this command's declared
-`writes:` (`REVIEW.md`, plus `memory-bank/lessons-learned.md` when a lesson is gated), so the
+`writes:` (`features/<name>/REVIEW.md`, plus `memory-bank/lessons-learned.md` when a lesson is gated), so the
 pre-write hook permits exactly those and denies everything else (fail-closed):
 
 ```bash
@@ -99,9 +99,9 @@ Emit each finding in the exact object shape, with the split honored:
   **inform**; they are never the sole basis for blocking a guaranteed/constitutional invariant. Mark
   them clearly as advisory.
 
-## Step — Write REVIEW.md and feed lessons
+## Step — Write `features/<name>/REVIEW.md` and feed lessons
 
-Write `REVIEW.md`: the findings, grouped floor-gate vs advisory, and a one-line verdict (GREEN /
+Write `features/<name>/REVIEW.md`: the findings, grouped floor-gate vs advisory, and a one-line verdict (GREEN /
 blocked-with-N-floor-findings). A blocking floor-finding means the increment is not done.
 
 If a finding reveals a **real** recurring failure (P7 — real, not hypothetical), propose one lesson
