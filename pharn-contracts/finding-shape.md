@@ -74,14 +74,18 @@ for "therefore guaranteed." The `MUST` above is a **three-way split**, not one b
   `findings.json` — `floor/validate.mjs` does not check for it, and no hook fabricates an emission. So
   `MUST emit` is a **conformance requirement** on a conforming Capability, **not** a floor-guaranteed
   production. Labeled plainly per P0, lest the `MUST` read as a guarantee that the artifact exists.
-- **Shape + the no-laundering trip-wire → floor-checked at eval time (3c), not at write time.** The
-  array's structure, and the rule that no `trust: untrusted` needle reaches an enum-gated field, are
-  verified by `floor/check-structural.mjs` (enum / regex-substring / path-resolution —
-  `ARCHITECTURE.md §2`) when an eval runner ranges it over the emitted file.
+- **Shape + the no-laundering trip-wire → floor-checkable at eval time, once the 3c runner lands (not
+  at write time).** The array's structure, and the rule that no `trust: untrusted` needle reaches an
+  enum-gated field, reduce to `floor/check-structural.mjs` (enum / regex-substring / path-resolution —
+  `ARCHITECTURE.md §2`). That **primitive exists and is tested today**, but **no runner yet invokes it
+  over a capability's emitted `findings.json`** — that wiring is increment **3c, not yet built**. So
+  this facet is **floor-reducible-but-not-yet-enforced**: honest today, it must **not** be read as an
+  always-on guarantee until 3c lands.
 
-So: **declaring** the path is guaranteed (fix #7); **shape/laundering** is guaranteed at eval time
-(`check-structural.mjs`, 3c); **emitting at all** is an advisory conformance requirement — no reading
-of the `MUST` above is a blanket floor guarantee that the artifact exists.
+So: **declaring** the path is guaranteed _today_ (fix #7, live); **shape/laundering** is
+floor-reducible but **not enforced until the 3c runner lands** (`check-structural.mjs` exists and is
+tested; the wiring over emitted output is unbuilt); **emitting at all** is an advisory conformance
+requirement. No reading of the `MUST` above is a blanket floor guarantee that the artifact exists.
 
 ## The rule of the contract (P0, P2)
 
