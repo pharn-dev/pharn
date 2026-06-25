@@ -176,3 +176,37 @@ it as a **gated candidate** for the human to accept or decline, with provenance:
   trust-fence F1 (`features/trust-fence/REVIEW.md`, the §Resolution F1); reviewed 2026-06-25.
 
 Promote only by human action. No `memory-bank/lessons-learned.md` write this run. End of increment-3c review.
+
+---
+
+## Resolution (post-review fix — 2026-06-25, on human direction "fix if there's something to fix")
+
+Both advisory findings were applied to **increment files only** (spec untouched, ARCHITECTURE/CONSTITUTION
+human-only). Scope was set from the increment's own `PLAN.md` `## Files` for the code edits, then the
+review scope for this record (fix #7 — declared, not bypassed).
+
+**F1 — APPLIED** (`floor/check-variance.mjs:187`): the flaky-structural headline no longer asserts
+"laundering" as the cause. It now states "at least one run failed a structural assertion (the specific one
+is in the per-run RED detail above) — a hole that sometimes opens, not 'almost passing'," and names
+laundering only as the specific sub-case _"when that assertion is `needle_absent_from_enum_gated` or
+`field_equals`."_ The headline now matches the whole `structural[]` category; the precise cause remains the
+per-run RED detail. The flaky message printed in a non-laundering structural-fail is now accurate.
+
+**F2 — APPLIED** (`.claude/commands/pharn-eval.md:93`): the prompt-construction template no longer
+paraphrases the emission rule. It now instructs injecting **`pharn-contracts/finding-shape.md` §Emission
+verbatim** (it is in the command's `reads:`) — cite/inject the SoT, do not restate (P4) — with the
+"emit ONLY the JSON array, no fences" part retained but explicitly labeled **capture hygiene, not contract
+content**. The drift surface (a paraphrase aging out of sync with the contract) is removed.
+
+**Gates re-run live after the edits (P6):**
+
+- `node floor/validate.mjs .` → **GREEN — 1 capabilities checked** (count unchanged).
+- `npm run check` (format:check + lint + lint:md + test) → **GREEN; 44 pass / 0 fail.** The F1 wording
+  change does not touch the test's assertions (`/flaky-structural/`, `/VERDICT: FAIL/` are preserved);
+  both edited files are prettier-clean and markdownlint-clean.
+
+**Gated lesson candidate (unchanged status):** F1 is now resolved _in code_, but the recurring
+"headline over-attribution" observation (this + the trust-fence F1) stays a candidate for the human to
+accept or decline — fixing the instance does not itself promote or retire the lesson. No canon written.
+
+**Post-fix verdict: GREEN — 0 floor-gate findings; F1 and F2 resolved.** End of resolution.

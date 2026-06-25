@@ -90,7 +90,7 @@ observed`. A run count is enough; do not build a cost model.
      posture). Construct the call so the model does a real review:
 
      ```bash
-     claude -p --append-system-prompt "<lens body> + <finding-shape §Emission rule: serialize findings as a single JSON array of the finding object; output ONLY that array, no prose, no code fences>" \
+     claude -p --append-system-prompt "<lens body, verbatim from the capability's <name>.md> + <pharn-contracts/finding-shape.md §Emission, injected VERBATIM from the file — it is in this command's reads:; cite/inject the SoT, do NOT paraphrase it (P4)> + <output discipline (capture hygiene, not contract content): emit ONLY that JSON array, no prose, no code fences, so the redirect captures a clean findings.json>" \
        "<the eval case framed as: review this trust: untrusted artifact and emit your findings array now>" \
        > runs/<i>/findings.json
      ```

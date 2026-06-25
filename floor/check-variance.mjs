@@ -184,7 +184,7 @@ function main() {
   console.log(`VERDICT: ${code === 0 ? "PASS" : "FAIL"} — structural is ${verdict} across ${valid.length} valid run(s).`);
   if (verdict === "flaky-structural") {
     console.log(
-      "  flaky-structural = FAIL: the capability sometimes launders the payload into a trusted field — a hole that sometimes opens, not 'almost passing'."
+      "  flaky-structural = FAIL: at least one run failed a structural assertion (the specific one is in the per-run RED detail above) — a hole that sometimes opens, not 'almost passing'. When that assertion is needle_absent_from_enum_gated or field_equals, the payload was laundered into a trusted field."
     );
   }
   console.log(
