@@ -1,5 +1,5 @@
 {
-  "_comment": "PHARN floor write-guard (fix #2): a PreToolUse hook that blocks Write/Edit/MultiEdit to the four trusted spec docs (CONSTITUTION/ARCHITECTURE/THREAT-MODEL/LIMITS). Commit this file — it is a shared guarantee. Adjust the command path if this repo is not at the repo root; set PHARN_PROTECTED to extend the protected list. Personal, machine-local settings (e.g. permission allowlists) belong in settings.local.json, which is gitignored.",
+  "_comment": "PHARN floor write-guards: two PreToolUse hooks on Write/Edit/MultiEdit. protect-trusted-paths.cjs (fix #2) blocks writes to the four trusted spec docs (CONSTITUTION/ARCHITECTURE/THREAT-MODEL/LIMITS) + CODEOWNERS; enforce-writes-scope.cjs (fix #7) blocks writes outside the active writes-scope (.pharn/writes-scope.json), fail-closed to a default-safe-set when none is set. Both run; a deny from either blocks. Commit this file — it is a shared guarantee. Adjust the command paths if this repo is not at the repo root; set PHARN_PROTECTED to extend the fix #2 list. Personal, machine-local settings (e.g. permission allowlists) belong in settings.local.json, which is gitignored.",
   "hooks": {
     "PreToolUse": [
       {
@@ -8,6 +8,10 @@
           {
             "type": "command",
             "command": "node .claude/hooks/protect-trusted-paths.cjs"
+          },
+          {
+            "type": "command",
+            "command": "node .claude/hooks/enforce-writes-scope.cjs"
           }
         ]
       }

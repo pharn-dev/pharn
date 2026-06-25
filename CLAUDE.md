@@ -69,6 +69,29 @@ echo '{"tool_name":"Write","tool_input":{"file_path":"pharn-core/rules/x.md"}}' 
   never assert repo state from memory (P6). The floor still deliberately ignores this repo's own
   tooling (`.claude/commands/`, `floor/`).
 
+## Writes-scope (fix #7 — fail-closed)
+
+`writes:` is **floor-enforced**, not advisory. Two hooks run on every `Write|Edit|MultiEdit` (wired in
+`.claude/settings.json`): `protect-trusted-paths.cjs` (fix #2 — the trusted-doc denylist) **and**
+`enforce-writes-scope.cjs` (fix #7 — the writes-scope guard). A write must pass **both**; a deny from
+either blocks.
+
+- **Set scope BEFORE writing.** Each command's **first step** runs `set-writes-scope.cjs` to write
+  `.pharn/writes-scope.json` from the active Capability/command's declared `writes:`
+  (`--from-frontmatter <cap.md>`) or, for `/build`, the plan's `## Files` (`--from-plan <PLAN.md>`).
+  The scope is **parsed deterministically** (P0/P5) — no model picks it.
+- **Fail-closed.** With no scope file, only a default-safe-set is writable (`.pharn/**`, `features/**`,
+  `pharn-*/**`); `memory-bank/**`, `floor/**`, `.claude/**`, and root files are **denied** until an
+  explicit `writes:` declaration names them. A **set** scope is authoritative — it replaces the
+  safe-set for non-`.pharn` zones — so `writes: ["memory-bank/lessons-learned.md"]` unlocks exactly
+  that file.
+- **When a write is blocked,** the fix is to **declare the path in `writes:` and re-run the
+  scope-setter** — _never_ to bypass the hook. The deny message names the blocked path and the active
+  scope.
+- `.pharn/` is gitignored runtime state (created on first command run; delete it to reset to
+  fail-closed). fix #7 composes with fix #2 — the trusted docs + `CODEOWNERS` stay denied regardless of
+  any scope.
+
 ## Architecture: the big picture
 
 **Two things only exist here, and the separation is the whole point:**

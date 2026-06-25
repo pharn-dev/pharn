@@ -21,6 +21,19 @@ First, load the trusted prefix into your working context and obey it for this en
 > read. Then read the sections of `ARCHITECTURE.md` relevant to the increment, plus `THREAT-MODEL.md`
 > and `LIMITS.md` if the increment touches trust or makes any guarantee claim.
 
+## Step 0 — Set the writes-scope (fix #7, fail-closed)
+
+**Before any write,** as your first action set the active writes-scope from this command's declared
+`writes:`, so the pre-write hook permits exactly those paths and denies everything else (fail-closed):
+
+```bash
+node .claude/hooks/set-writes-scope.cjs --from-frontmatter .claude/commands/plan.md
+```
+
+Deterministic floor step (P0/P5): the scope is parsed from `writes:`, never chosen by a model. If a
+later write is blocked with the `writes-scope guard` message, the fix is to **declare the path in
+`writes:` and re-run this setter** — never to bypass the hook (see CLAUDE.md, "Writes-scope").
+
 ## Step 1 — Discovery (P6, mandatory; never assert from memory)
 
 1. Read the four trusted docs from disk this run. Do not rely on prior context.

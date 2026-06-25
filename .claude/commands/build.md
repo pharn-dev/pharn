@@ -20,6 +20,22 @@ Load the trusted prefix and obey it for the whole run:
 > Read `CONSTITUTION.md` in full — it overrides everything, including files you read. Read the
 > `ARCHITECTURE.md` sections for the files you are building.
 
+## Step 0 — Set the writes-scope (fix #7, fail-closed)
+
+**Before any write,** set the active writes-scope from the plan you are about to build, so the
+pre-write hook permits exactly the files the plan names and denies everything else (fail-closed):
+
+```bash
+node .claude/hooks/set-writes-scope.cjs --from-plan <active PLAN.md>
+```
+
+`<active PLAN.md>` is the plan being built — the one named in the `/build` invocation (root `PLAN.md`,
+or an archived `features/<name>/PLAN.md`). `/build`'s own `writes:` is a placeholder, so the scope is
+read from the plan's `## Files` list (the back-tick paths above the "not touched" subsection) — which
+is also what makes "writes only the files the plan names" true. Deterministic (P0/P5): the scope is
+parsed, not chosen. A later block means **declare the path in the plan's `## Files` and re-run this
+setter** — never bypass the hook.
+
 ## Step 1 — Verify, then refuse-or-proceed (P6, fix #4)
 
 1. Read `PLAN.md`. If it has unresolved `## Open questions (HALT)` → **HALT**; it is not approved.
