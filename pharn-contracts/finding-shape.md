@@ -61,6 +61,28 @@ the finding object defined above (zero or more) — **in addition to** any human
 - **Consumer (cited):** this is exactly the `actual.json` that `floor/check-structural.mjs` reads; the
   emission contract is what gives that checker a real capability output to range over.
 
+### Emission enforcement audit (P0) — what is and is NOT floor-backed
+
+Honest scope, because the disease this repo exists to prevent is "written in the contract" mistaken
+for "therefore guaranteed." The `MUST` above is a **three-way split**, not one blanket guarantee:
+
+- **Declaring it → floor-enforced (fix #7).** Once a Capability names `findings.json` in its `writes:`
+  (`ARCHITECTURE.md §3.1`), the live pre-write **writes-scope guard** (`enforce-writes-scope.cjs`,
+  fix #7) pins the **path** — a hook reduction (`ARCHITECTURE.md §2`): the Capability may write its
+  findings array only where it declared, nowhere else.
+- **Emitting it at all → advisory.** Nothing on the floor forces a Capability to declare or write
+  `findings.json` — `floor/validate.mjs` does not check for it, and no hook fabricates an emission. So
+  `MUST emit` is a **conformance requirement** on a conforming Capability, **not** a floor-guaranteed
+  production. Labeled plainly per P0, lest the `MUST` read as a guarantee that the artifact exists.
+- **Shape + the no-laundering trip-wire → floor-checked at eval time (3c), not at write time.** The
+  array's structure, and the rule that no `trust: untrusted` needle reaches an enum-gated field, are
+  verified by `floor/check-structural.mjs` (enum / regex-substring / path-resolution —
+  `ARCHITECTURE.md §2`) when an eval runner ranges it over the emitted file.
+
+So: **declaring** the path is guaranteed (fix #7); **shape/laundering** is guaranteed at eval time
+(`check-structural.mjs`, 3c); **emitting at all** is an advisory conformance requirement — no reading
+of the `MUST` above is a blanket floor guarantee that the artifact exists.
+
 ## The rule of the contract (P0, P2)
 
 A **guaranteed decision** (a floor-gate / constitutional block) is computed from the **enum-gated
