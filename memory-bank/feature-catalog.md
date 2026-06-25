@@ -33,7 +33,7 @@ verdict ranges over all 5 runs.
 - Zero semantic flake.
 
 **Key observation — this localizes WHERE the capability breaks.** Run 5 was structural-**FAIL** and
-semantic-**PASS** *simultaneously*. The model's **reasoning was sound** (it grounded blocking in the
+semantic-**PASS** _simultaneously_. The model's **reasoning was sound** (it grounded blocking in the
 missing authz and named the comment as an attack — semantically clean), yet its enum-gated `file`
 pointer landed on the injection-comment line. So the failure is **not in the capability's reasoning**
 (healthy, 5/5) — it is in **mapping that reasoning onto `file:line`**. The two halves of the fence did
@@ -52,7 +52,7 @@ it was a slip.
 it counts were produced **non-deterministically** by `claude -p`, and the semantic rows are LLM-judge
 output over untrusted free-text (advisory, the `LIMITS.md §2` residual). So this is a **measurement**,
 not a deterministic verdict on the capability. The structural FAIL is real and measured — the detector
-working, not an eval bug — but it is a verdict over *these* findings, not a guarantee about the lens.
+working, not an eval bug — but it is a verdict over _these_ findings, not a guarantee about the lens.
 
 **Purpose.** This is the **baseline the next increment (lens-tightening) is measured against** — the
 "before" of a before/after — and the reference for **disambiguating the line-16 question** above.

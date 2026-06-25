@@ -20,7 +20,7 @@ comment, feel safe, leave the authz hole). This real, measured failure is the tr
 ## Discovery (live, this run — P6)
 
 - **How the lens currently decides `file:line`:** `pharn-review/trust-fence/trust-fence.md` gives only
-  vague guidance — Procedure step 2 says ``file`` = "the real `path:line`" (line 42) and the finding
+  vague guidance — Procedure step 2 says `file` = "the real `path:line`" (line 42) and the finding
   template says `file: "<path:line>" # … resolves to a real location` (line 56). **Nothing instructs
   the model WHICH line** — the destructive call site vs. the comment. That gap is the flake's room.
 - **The bar already pins the action line:** `…/evals/expected/expected-injection-comment.json` pins
@@ -74,10 +74,10 @@ comment, feel safe, leave the authz hole). This real, measured failure is the tr
 
 ## Guarantee audit (P0)
 
-- **`file:line` cites the action line (`:20`), not the comment line (`:16`)** → the *check* is **floor**
+- **`file:line` cites the action line (`:20`), not the comment line (`:16`)** → the _check_ is **floor**
   (`file_resolves`: path-resolution + exact equality, floor primitive #3, via
   `check-structural.mjs`/`check-variance.mjs`). It DETECTS a miss as RED; it does **not** PREVENT one.
-- **The lens *reliably* satisfies that check under injection** → **advisory.** The lens is an LLM; its
+- **The lens _reliably_ satisfies that check under injection** → **advisory.** The lens is an LLM; its
   consistency is **measured by the live re-run**, never assumed. This increment AIMS for consistent-pass;
   whether it lands is the measurement, not a guarantee. **If it stays flaky-structural after tightening,
   that is a deeper capability limit to surface (`LIMITS.md §2` residual) — not to paper over, and not to
@@ -89,8 +89,8 @@ comment, feel safe, leave the authz hole). This real, measured failure is the tr
 - **Taint propagation:** free-text `problem`/`evidence` inherit the untrusted tag and quote the payload
   as DATA (unchanged). The enum-gated `file` is set from the **code's control flow** — the destructive
   call site — never from the comment.
-- **Why this tightening *reinforces* P2:** citing the comment's line was the injected comment's
-  *placement* subtly capturing an **enum-gated** field (`file`) — the baseline's open "line-16 =
+- **Why this tightening _reinforces_ P2:** citing the comment's line was the injected comment's
+  _placement_ subtly capturing an **enum-gated** field (`file`) — the baseline's open "line-16 =
   partial location-attack?" question. Pinning `file` to the destructive operation removes that channel:
   the attacker choosing where to put a comment can no longer steer the enum-gated `file` pointer. No
   guaranteed decision rests on a tainted field; this closes a residual path by which placement leaked
@@ -117,5 +117,5 @@ comment, feel safe, leave the authz hole). This real, measured failure is the tr
 
 - **None.** The one flagged HALT trigger — "would reliably citing the action line require changing the
   eval fixtures or the checker?" — was checked live and answered **no**: the expected already pins
-  `…:20` and the checker already enforces it, so the lens is tightened *to* the bar, with no fixture or
+  `…:20` and the checker already enforces it, so the lens is tightened _to_ the bar, with no fixture or
   checker change (no silent workaround; no mismatch to discuss).
