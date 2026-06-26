@@ -64,7 +64,7 @@ to **declare the path in `writes:` and re-run this setter (with `--target`)** �
    If it differs, the plan was built against a moved spec. Record it as a finding (`rule_id` `P6`,
    `severity` `blocking`) — but respect the division of labor (fix #3, `ARCHITECTURE.md §7`): the
    _computation_ is floor-grade (a content-hash), yet **here it only warns**; the actual **block** on
-   drift is `/build`'s floor-gate (fix #4, `build.md` Step 1.2). You surface it early; `/build`
+   drift is `/build`'s floor-gate (fix #4; `ARCHITECTURE.md §6`). You surface it early; `/build`
    enforces it.
 
 3. Read the contracts the plan cites (at least `pharn-contracts/finding-shape.md` and

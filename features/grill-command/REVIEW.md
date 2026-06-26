@@ -88,6 +88,10 @@ Advisory rationale: this is a cross-_command_ prose coupling, not a layered-tree
 violation — hence `minor`, non-blocking. Impact is low because `grill.md:67` already cites the durable
 `fix #4` alongside the volatile step number; dropping the step number would make it fully durable.
 
+**Resolved (this pass).** `grill.md:67` now reads `/build's floor-gate (fix #4; ARCHITECTURE.md §6)` —
+the volatile `build.md Step 1.2` pointer is removed, leaving only durable anchors. Re-verified after the
+edit: floor `GREEN — 1`, `npm run check` clean. No findings remain open.
+
 ## Prose observations (advisory, for the human — not findings)
 
 - **`role:`-on-a-command vs the "`role:` ⇒ capability" wording.** `grill.md` carries `role: griller`
@@ -110,8 +114,8 @@ violation — hence `minor`, non-blocking. Impact is low because `grill.md:67` a
 **GREEN — 0 floor-gate findings; 1 minor advisory.** The advisory-only `/grill` increment is sound:
 faithfully self-labeled (P0), dogfoods the enum-gated/free-text split (P2, fix #1), adds no counted
 capability and no new floor primitive (floor GREEN/1), and aligns with the spec without touching a
-trusted doc. The increment is **done**; the single advisory is a non-blocking maintainability nit for a
-future pass.
+trusted doc. The increment is **done**; the single (minor) advisory — the `build.md` step-number
+coupling — was **resolved this pass** (see above), so **no findings remain open**.
 
 ## Lessons (P7 — gated promotion)
 
