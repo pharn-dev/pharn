@@ -136,7 +136,7 @@ parsed scope):
   plan's authorized paths — an excluded-section path can never enter it, regardless of exclusion
   wording."** → floor: **enum/regex check** (`ARCHITECTURE.md §2` #3). The setter's parse is a
   deterministic regex section-scan; its output is the allowlist the **floor hook** (`enforce-writes-
-  scope.cjs`) enforces on every write. **Proven** by the new tests **and** the live run this session (0
+scope.cjs`) enforces on every write. **Proven** by the new tests **and** the live run this session (0
   diffs on 15 PLANs; excluded path absent in all 4 adversarial cases). This **restores fix #7's write-
   gate guarantee for every stage that calls the setter** — i.e. across the chain, because one setter
   serves all stages.
@@ -154,8 +154,8 @@ parsed scope):
      `/build`'s scope (e.g. `/regress`'s escape check) re-derives it from `PLAN.md` via the **same
      canonical (now-hardened) parser** — not from the volatile runtime file. The static plan is the
      source of truth; the runtime file is a derived cache.
-  4. ∴ a scope stack would solve a non-problem (no consumer needs a **prior** stage's *runtime* scope;
-     they need the durable *declared* one, already in `PLAN.md`). Adding it is exactly the speculative
+  4. ∴ a scope stack would solve a non-problem (no consumer needs a **prior** stage's _runtime_ scope;
+     they need the durable _declared_ one, already in `PLAN.md`). Adding it is exactly the speculative
      addition P7 forbids. The recorded failure (`regress.md:81`) is fixed by re-deriving **correctly**
      (the hardened parser), not by recording history.
 - **The per-write enforcement guarantee (a write must be ⊆ the active scope)** is **unchanged** and
@@ -163,7 +163,7 @@ parsed scope):
 - **Honest scope of the floor reduction (P0).** The setter is a Bash-run helper, not the `PreToolUse`
   hook; but its **output** is consumed by the hook, which **is** the guarantee, and the setter itself
   is a pure deterministic regex computation. Tightening the setter tightens what the floor enforces. No
-  guarantee is claimed for the orchestration that *calls* the setter (advisory) — only for the parse +
+  guarantee is claimed for the orchestration that _calls_ the setter (advisory) — only for the parse +
   the hook.
 
 ## Trust audit (P2) — the setter ingests an untrusted PLAN.md
@@ -172,7 +172,7 @@ parsed scope):
   strings** via regex (the enum/path-membership class) and **never** interprets free-text as
   instructions. The scope decision rests **only** on heading/path/cue **membership** — never on a
   tainted free-text field. An injected instruction in a plan's prose cannot widen scope: it is not a
-  `- `path`` item, and path-shaped text not at a list item's start is ignored by the unchanged capture
+  `- path` list item, and path-shaped text not at a list item's start is ignored by the unchanged capture
   anchor. **Taint does not propagate into the write-gate** (the guard reads paths, not prose). The
   broadened cue can only ever **shrink** the captured set (fail-safe), never enlarge it.
 
@@ -194,7 +194,7 @@ parsed scope):
 ## Known residuals (named, bounded — P7)
 
 - **Head-less, inline-marked exclusion** — an exclusion expressed **inside** an authorized-style path
-  item (`- `floor/validate.mjs` — NOT touched`) is **not** detected (the cue is anchored to non-path
+  item (`- floor/validate.mjs — NOT touched`) is **not** detected (the cue is anchored to non-path
   lines to avoid dropping legitimate items whose description mentions "not touched"). This format is
   **not observed** in any of the 15 PLANs; the convention is a sub-heading or a non-path intro line.
   Bounded and fail-safe-adjacent; left unhandled (P7 — no real triggering case).
@@ -209,8 +209,8 @@ parsed scope):
    files** above: harden `set-writes-scope.cjs` (Mode B) + extend `enforce-writes-scope.test.cjs`. It
    restores the named fix-#7 write-gate guarantee; smallest coherent increment (P7); provably non-
    regressive (0 diffs on 15 PLANs, live). _Declined:_ (b) setter + `/regress` consumer (`--print` mode
-   + `regress.md` Step 1.3) — the `/regress` consumer fix (`regress.md:81`) is the **immediate,
-   separable follow-up** (advisory-layer; does not affect this increment's P0 write-gate guarantee).
+   - `regress.md` Step 1.3) — the `/regress` consumer fix (`regress.md:81`) is the **immediate,
+     separable follow-up** (advisory-layer; does not affect this increment's P0 write-gate guarantee).
 2. **DEFECT A (overwrite hand-off)** → **per-stage overwrite is correct; no audit stack** (P7), as
    reasoned in the Guarantee audit. **Confirmed** at approval; not revisited.
 

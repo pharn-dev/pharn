@@ -91,13 +91,13 @@ that gate, not asserted here (I have not read canon this run — P6).
 - **Candidate — _A deterministic guard is only as robust as the STRUCTURAL anchor it keys on;
   substituting a prose/wording heuristic for an available structural test is a latent defect in the
   dangerous (too-permissive) direction._** The setter detected a plan's exclusion section by matching
-  the word "touch" (`/not\W*touch/i`) — a prose accident — when an exclusion is *structurally* a markdown
+  the word "touch" (`/not\W*touch/i`) — a prose accident — when an exclusion is _structurally_ a markdown
   heading. Proven live this increment: that prose-keyed boundary **leaks** `floor/validate.mjs` into
   writable scope on `### Out of scope` / `### Excluded paths` (any exclusion not phrased with "touch").
   The fix keys on structure (any heading ends the authorized list); the prose cue survives only as a
   fail-safe-shrinking fallback.
-  - **Why:** this is the P5 disease one level down — a test that *looks* deterministic (it is a regex)
-    but keys on an *incidental* feature (a specific word) rather than the *structural* one (heading
+  - **Why:** this is the P5 disease one level down — a test that _looks_ deterministic (it is a regex)
+    but keys on an _incidental_ feature (a specific word) rather than the _structural_ one (heading
     level). When the keyed word is absent, the guard silently no-ops; for a security setter, "silently
     no-ops" means "too permissive." The same shape recurs (the probe's verifier-discovery grep'd the
     prose `role: verifier` instead of parsing frontmatter — `REVIEW.md` of `pipeline-integration-probe`).
