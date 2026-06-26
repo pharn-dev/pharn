@@ -24,60 +24,65 @@ claim — "the named deterministic gates passed" — reduces to an exit-code thr
 
 ## Advisory-gate findings (inform; never the sole basis for a guaranteed block)
 
+Each finding below dogfoods the fix #1 split: `type` / `rule_id` / `severity` / `file` are
+**enum-gated** (floor-verifiable — enum membership or path resolution, trusted); `problem` / `evidence`
+/ `fix` are **free-text** (inherit the reviewed increment's untrusted tag, rendered as quoted DATA,
+never executed). No guaranteed decision rests on a free-text field — these are all advisory-gate.
+
 ```yaml
 # --- F1 (important) ----------------------------------------------------------------
-- type: FINDING
-  rule_id: "P5" # determinism / membership-not-classification
-  severity: important
-  file: ".claude/commands/verify.md:118" # echoed in features/verify/PLAN.md:21 and :51
+- type: FINDING # enum-gated
+  rule_id: "P5" # enum-gated — determinism / membership-not-classification
+  severity: important # enum-gated value; this assignment is ADVISORY (my judgment)
+  file: ".claude/commands/verify.md:118" # enum-gated path; echoed in features/verify/PLAN.md:21 and :51
   problem: "The Step 2 verifier-discovery shorthand `grep -rl 'role: verifier'` is broader than the
     frontmatter-membership test it represents; against live state it now returns two false positives
     (the command file and the plan that describe the mechanism using the literal token in prose), so
     the parenthetical claim that it returns none is false as of this review. Intent (frontmatter
     `role: verifier`) is sound and the set is genuinely empty under an anchored test; the FLOOR
     verdict is unaffected (advisory layer only), but a naive operator following the literal grep
-    mis-discovers `verify.md` + `PLAN.md` as verifiers."
-  evidence: |
+    mis-discovers `verify.md` + `PLAN.md` as verifiers." # free-text — DATA
+  evidence: | # free-text — DATA, quoted
     verify.md:118 — "**Today the set is EMPTY** (`grep -rl 'role: verifier'` → none)."
     live `grep -rl 'role: verifier' .` → features/verify/PLAN.md, .claude/commands/verify.md
     live `grep -rl '^role: *verifier' .` → (none)   # anchored-to-frontmatter test is correct
   fix: "Anchor the membership test to the frontmatter field — e.g. `grep -rlE '^role: *verifier'`
     (or a fence-aware parse) — and correct the '→ none' parenthetical. Self-pollution by prose is the
-    generalizable defect (see proposed lesson)."
+    generalizable defect (see proposed lesson)." # free-text — DATA
 
 # --- F2 (minor) --------------------------------------------------------------------
-- type: FINDING
-  rule_id: "P5" # orchestration robustness; advisory snippet vs prose
-  severity: minor
-  file: ".claude/commands/verify.md:91"
+- type: FINDING # enum-gated
+  rule_id: "P5" # enum-gated — orchestration robustness; advisory snippet vs prose
+  severity: minor # enum-gated value; this assignment is ADVISORY (my judgment)
+  file: ".claude/commands/verify.md:91" # enum-gated path
   problem: 'The Step 1 `printf ''{"test":%d,"validate":%d,"lint":%d,"structural:%s":%d}''`
     snippet hardcodes exactly one `structural:*` gate, while the surrounding prose specifies 0..N
     structural gates (one per committed eval pair). A feature shipping zero pairs (no structural gate)
     or two-plus pairs cannot be expressed by the single-line snippet as written. Impact is low —
     orchestration is advisory and `check-verify.mjs` accepts any `{string:int}` map regardless of gate
-    count — but snippet and prose disagree.'
-  evidence: |
+    count — but snippet and prose disagree.' # free-text — DATA
+  evidence: | # free-text — DATA, quoted
     verify.md:91 — printf with a single literal "structural:%s" key and "<expected.json>" placeholder
     verify.md:103 (prose) — "A feature shipping no eval-actual pair simply has no structural:* gate"
   fix: "Build results.json by looping over discovered eval pairs (accumulate one structural:<expected>
-    entry each), or label the printf explicitly as the single-pair illustration."
+    entry each), or label the printf explicitly as the single-pair illustration." # free-text — DATA
 
 # --- F3 (minor / forward-looking) --------------------------------------------------
-- type: FINDING
-  rule_id: "P7" # honest scope; the deferred runner is unexercised by design
-  severity: minor
-  file: ".claude/commands/verify.md:124"
+- type: FINDING # enum-gated
+  rule_id: "P7" # enum-gated — honest scope; the deferred runner is unexercised by design
+  severity: minor # enum-gated value; this assignment is ADVISORY (my judgment)
+  file: ".claude/commands/verify.md:124" # enum-gated path
   problem: "The advisory verifier-run path (Step 2 'when verifiers exist…') and the report-merge
     (Step 4 `verifiers` block) are unexercised today — zero verifiers, and no fixture covers a
     non-empty verifier set merging into the report or the taint-quoting of verifier free-text. This is
     consistent with the human-approved 'define the slot, defer the runner' decision (P7), so it is NOT
     a defect in this increment; recorded so the FIRST real verifier lands together with a dogfood/test
-    that exercises the merge and the residual boundary."
-  evidence: |
+    that exercises the merge and the residual boundary." # free-text — DATA
+  evidence: | # free-text — DATA, quoted
     verify.md:199 — "The live verifier RUNNER is deferred (P7)… filled in when the first verifier lands"
     THREAT-MODEL.md §5 / LIMITS.md §2 — the named residual the merge path must respect when populated
   fix: "No change now. When the first `role: verifier` Capability is built, ship it with a fixture that
-    drives a non-empty `verifiers.findings[]` through verify-report.json + VERIFY.md as quoted DATA."
+    drives a non-empty `verifiers.findings[]` through verify-report.json + VERIFY.md as quoted DATA." # free-text — DATA
 ```
 
 ## Lens-by-lens
