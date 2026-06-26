@@ -1,9 +1,6 @@
 {
   "base": "0ae1b38692519fdf705dd639bf761d3ec42ec388",
-  "inside": [
-    "floor/exit-label.mjs",
-    "floor/exit-label.test.mjs"
-  ],
+  "inside": ["floor/exit-label.mjs", "floor/exit-label.test.mjs"],
   "outside_gates": {
     "structural:pharn-review/trust-fence/evals/expected/expected-injection-comment.json": {
       "base": 0,

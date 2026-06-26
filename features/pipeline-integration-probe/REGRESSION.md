@@ -20,11 +20,11 @@ orchestration** — only the comparison is the guarantee.
 
 ## Per-gate exit codes (base → head)
 
-| gate                                            | base | head | result |
-| ----------------------------------------------- | ---- | ---- | ------ |
-| `tests` (8 outside suites)                       | 0    | 0    | OK     |
-| `validate` (whole-repo floor)                    | 0    | 0    | OK     |
-| `structural:…/expected-injection-comment.json`  | 0    | 0    | OK     |
+| gate                                           | base | head | result |
+| ---------------------------------------------- | ---- | ---- | ------ |
+| `tests` (8 outside suites)                     | 0    | 0    | OK     |
+| `validate` (whole-repo floor)                  | 0    | 0    | OK     |
+| `structural:…/expected-injection-comment.json` | 0    | 0    | OK     |
 
 Style gates (`lint` / `format:check` / `lint:md`) were **skipped** deterministically: `inside` touches
 no shared style config, so an outside style flip is provably impossible (and the gate is absent from
@@ -42,20 +42,20 @@ correct or that "nothing broke." A regression that no deterministic check covers
 ## Integration-probe observations (advisory — about `/regress`'s orchestration, not its verdict)
 
 > This is the first end-to-end pipeline pass. Both notes concern the **advisory orchestration** that
-> *feeds* the floor verdict — never the verdict itself — and are surfaced for a **separate increment**
+> _feeds_ the floor verdict — never the verdict itself — and are surfaced for a **separate increment**
 > (not fixed inline, to keep the integration test clean).
 
 1. **Declared-writes is re-parsed, not content-pinned across the build→regress hand-off (P5/P6).**
    `/regress` derives `declared` by re-reading `PLAN.md` `## Files`, rather than consuming the scope
    `/build` was actually pinned to (that scope is overwritten in `.pharn/writes-scope.json` by every
-   later stage). A loose parse silently *widens* `declared` and weakens the escape check. Observed
+   later stage). A loose parse silently _widens_ `declared` and weakens the escape check. Observed
    live: a naive extraction also pulled the "Explicitly **not** touched" subsection's back-tick paths
    into `declared`. The verdict was unaffected (`inside ⊆` either set), but a sloppier parse could
    **mask a real escape**.
 2. **The `tests` gate is exposed to a shell word-split footgun (P5).** The gate runs
    `node --test <outside_tests>`; expanding that list via an **unquoted variable in zsh** (the macOS
    default shell) passes the whole list as a single path → "could not find" → exit 1 at **both** base
-   and head. Equal-on-both-sides means it does **not** trip a false *regression* (1 == 1 →
+   and head. Equal-on-both-sides means it does **not** trip a false _regression_ (1 == 1 →
    pre-existing), but it fabricates a pre-existing red and could **mask** a real tests-gate regression.
    A floor-grade verdict computed over orchestrator-corrupted inputs is still GIGO — concrete teeth on
    the "verdict is floor, orchestration is advisory" two-clocks line.

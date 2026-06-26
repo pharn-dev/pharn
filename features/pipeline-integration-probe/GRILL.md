@@ -62,7 +62,7 @@ whole grill-log is advisory (fix #3).
     would false-halt on this retained heading. Latent fragility worth noting precisely because /build is
     the very next stage; consider renaming the heading (e.g. '## Resolutions') if the gate is ever made
     deterministic."
-  evidence: "## Open questions (HALT) — RESOLVED (human-approved 2026-06-26; \"Approve as written\")"
+  evidence: '## Open questions (HALT) — RESOLVED (human-approved 2026-06-26; "Approve as written")'
 ```
 
 ### Discovery / unverified hand-off assumption (P6)

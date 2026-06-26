@@ -3,17 +3,17 @@
 **Stage:** `/verify` (pipeline position `… → regress → verify → ship`, `ARCHITECTURE.md §6`) — the
 **first live `/verify` run** (closes GAP 1 for verify). It answers "was the feature built
 **correctly**?" through two strictly-separated layers: a **FLOOR layer** (deterministic gates that OWN
-the verdict via `floor/check-verify.mjs`) and an **ADVISORY layer** (verifiers that ANNOTATE only, fix
-#3). **Feature:** `pipeline-integration-probe` (a throwaway floor helper,
+the verdict via `floor/check-verify.mjs`) and an **ADVISORY layer** (verifiers that ANNOTATE only,
+fix #3). **Feature:** `pipeline-integration-probe` (a throwaway floor helper,
 `floor/exit-label.{mjs,test.mjs}`).
 
 ## FLOOR layer — deterministic gates (own the verdict)
 
-| gate                            | exit | meaning                                                                                                                        |
-| ------------------------------- | ---- | ----------------------------------------------------------------------------------------------------------------------------- |
-| `test` (`npm test`)             | 0    | the hermetic suite is green **with the feature in it** — **84** tests pass (81 + the feature's own 3 in `floor/exit-label.test.mjs`, auto-collected by the suite glob) |
-| `validate` (`floor/validate.mjs .`) | 0 | structural floor GREEN — 1 capability (the floor-helper is path-ignored, so the count is unchanged)                            |
-| `lint` (`npm run lint`)         | 0    | eslint clean on the new files                                                                                                  |
+| gate                                | exit | meaning                                                                                                                                                                |
+| ----------------------------------- | ---- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `test` (`npm test`)                 | 0    | the hermetic suite is green **with the feature in it** — **84** tests pass (81 + the feature's own 3 in `floor/exit-label.test.mjs`, auto-collected by the suite glob) |
+| `validate` (`floor/validate.mjs .`) | 0    | structural floor GREEN — 1 capability (the floor-helper is path-ignored, so the count is unchanged)                                                                    |
+| `lint` (`npm run lint`)             | 0    | eslint clean on the new files                                                                                                                                          |
 
 No `structural:*` gate: the feature is a floor helper with **no committed eval-actual pair**, so by the
 command's membership rule it ships no structural gate — its feature-specific correctness signal is its
@@ -25,7 +25,7 @@ own `*.test.*`, run inside `npm test` above.
 ## ADVISORY layer — verifiers
 
 **No verifiers registered — floor gates only.** `verifiers: { registered: 0, findings: [] }`.
-Membership is over *frontmatter* `role: verifier` (P5); **zero** capabilities declare it (none is
+Membership is over _frontmatter_ `role: verifier` (P5); **zero** capabilities declare it (none is
 authored — P7). The verifier slot is defined but has no occupant, so Step 2 is a no-op and the verdict
 is the floor gates alone.
 
@@ -41,9 +41,9 @@ assurance. The gates ensure only what they check.
 
 > Surfaced for a separate increment (not fixed inline). A live confirmation of grill **F3 / CF-2**.
 
-`verify.md` Step 2's *intent* — "capabilities whose **frontmatter** declares `role: verifier`" — is
+`verify.md` Step 2's _intent_ — "capabilities whose **frontmatter** declares `role: verifier`" — is
 correct and yields `registered: 0`. But its illustrative shorthand `grep -rl 'role: verifier'` is **not
-a membership test**: on this live repo it matches **8 files**, all *prose* (this run's `PLAN.md` /
+a membership test**: on this live repo it matches **8 files**, all _prose_ (this run's `PLAN.md` /
 `GRILL.md`, the `/verify` feature's `PLAN.md` / `REVIEW.md`, and `verify.md` itself). The count has
 **grown** since F3 predicted "3" — precisely because the repo's own prose about verifiers expanded. So
 the naive grep is **monotonically unstable**, not merely imprecise; the deterministic membership must
