@@ -22,18 +22,18 @@
 ### Explicitly **not** touched
 
 - `CONSTITUTION.md`, `ARCHITECTURE.md`, `THREAT-MODEL.md`, `LIMITS.md`, `CODEOWNERS` — trusted/human-only (hook-protected). ARCHITECTURE.md §5 already names this exact gate; **no spec edit** is needed (see Spec-reconciliation note).
-- `memory-bank/lessons-learned.md`, `memory-bank/pattern-library.md` — these are the command's **runtime** targets, written only when the command is *run* on a real candidate (gated). They are **not** written by this build increment (no speculative canon — P7).
+- `memory-bank/lessons-learned.md`, `memory-bank/pattern-library.md` — these are the command's **runtime** targets, written only when the command is _run_ on a real candidate (gated). They are **not** written by this build increment (no speculative canon — P7).
 - `pharn-*/**`, `floor/validate.mjs` — untouched; no new capability, no change to the validator.
 
 ## Contracts satisfied (cite, don't restate — P4)
 
-- **ARCHITECTURE.md §5 (lines 189–190)** — "Promotion of a lesson/pattern to canon is a **gated** action with provenance per entry (which run / feature / diff)." `check-provenance.mjs` is the floor reduction of *"provenance per entry"*; the fix-#7 write-gate is the floor reduction of *"gated write"*. The command realizes §5's mechanism without restating it.
+- **ARCHITECTURE.md §5 (lines 189–190)** — "Promotion of a lesson/pattern to canon is a **gated** action with provenance per entry (which run / feature / diff)." `check-provenance.mjs` is the floor reduction of _"provenance per entry"_; the fix-#7 write-gate is the floor reduction of _"gated write"_. The command realizes §5's mechanism without restating it.
 - **THREAT-MODEL.md §2 #3 / §3 (memory-poisoning row)** — "promotion to canon is a gated write with per-entry provenance | pre-write hook." This increment makes that row operational (the deliberate writes-scope declaration IS the gate, by design).
 - **ARCHITECTURE.md §8 / fix #1 (finding-shape split)** — applied by analogy: the checker's verdict ranges ONLY over floor-verifiable fields (provenance shape, ID); the free-text lesson body is DATA, never gates.
 
 ## Spec-reconciliation note (P6)
 
-ARCHITECTURE.md §5 + THREAT-MODEL.md §3 name the **pre-write hook** as the floor primitive for memory-poisoning, with "provenance per entry" as a required attribute. `check-provenance.mjs` adds a second, composable floor op — a primitive-#3 (enum/regex/presence) reduction of "provenance per entry." This is **domknięcie** (tightening an existing contract to its floor), like `check-structural.mjs` did for `eval-format`'s `structural[]` — **not** a new spec claim. No trusted-doc edit is required. (If a reviewer reads §5 as naming *only* the hook, that is the one reconciliation point — flagged here, not silently assumed.)
+ARCHITECTURE.md §5 + THREAT-MODEL.md §3 name the **pre-write hook** as the floor primitive for memory-poisoning, with "provenance per entry" as a required attribute. `check-provenance.mjs` adds a second, composable floor op — a primitive-#3 (enum/regex/presence) reduction of "provenance per entry." This is **domknięcie** (tightening an existing contract to its floor), like `check-structural.mjs` did for `eval-format`'s `structural[]` — **not** a new spec claim. No trusted-doc edit is required. (If a reviewer reads §5 as naming _only_ the hook, that is the one reconciliation point — flagged here, not silently assumed.)
 
 ## Behaviour of `floor/check-provenance.mjs` (the floor part)
 
@@ -44,13 +44,13 @@ Input: `node floor/check-provenance.mjs <candidate.json> <canon-file.md>`
   1. `target` ∈ {`memory-bank/lessons-learned.md`, `memory-bank/pattern-library.md`} (Q1 resolved: the two prescription files).
   2. every mandatory provenance field present + shape-valid (Q2 resolved): `feature` (non-empty), `commit` (`^[0-9a-f]{7,40}$`), `source` (non-empty), `date` (`^\d{4}-\d{2}-\d{2}$`).
   3. `id` does NOT already appear as a `## <id>` heading in `<canon-file>` → duplicate-ID is RED.
-- Pure Node stdlib (no network, no `child_process`, no `eval`) — matching `check-structural.mjs`. The real commit SHA is captured by the *command* via `git rev-parse HEAD` (deterministic bash); the checker validates its **shape**, not its existence.
+- Pure Node stdlib (no network, no `child_process`, no `eval`) — matching `check-structural.mjs`. The real commit SHA is captured by the _command_ via `git rev-parse HEAD` (deterministic bash); the checker validates its **shape**, not its existence.
 - Semantic contradiction (candidate contradicts an existing entry) is **advisory** — surfaced for the human, never auto-resolved (P5 terminal fallback = ask).
 
 ## Command flow (`/memory-promote`) — mirrors /plan's gate
 
 1. **Step 0 — set writes-scope** to the ONE target canon file: `set-writes-scope.cjs --from-frontmatter .claude/commands/memory-promote.md --target <canon-file>`. The deliberate act of declaring `memory-bank/<file>` IS part of the P2 gate (by design, fix #7).
-2. **Discovery (P6)** — read the target canon file live (existing IDs), read `features/<name>/REVIEW.md` (the lesson is typically *proposed* there), capture `git rev-parse HEAD`.
+2. **Discovery (P6)** — read the target canon file live (existing IDs), read `features/<name>/REVIEW.md` (the lesson is typically _proposed_ there), capture `git rev-parse HEAD`.
 3. **Assemble** the candidate: model may DRAFT the body; provenance is assembled **deterministically** (commit from git, feature/source from the increment ref, date = today). Compute next ID (next `L<N>`).
 4. **Validate (floor)** — run `floor/check-provenance.mjs`. Any RED → **HALT and refuse** (do not write).
 5. **Render + HALT (the human gate)** — show the full candidate + provenance and ask, via the interactive form, **accept / deny**. Write to canon **only on explicit accept**. The model NEVER writes without it.
@@ -70,10 +70,10 @@ Input: `node floor/check-provenance.mjs <candidate.json> <canon-file.md>`
 
 - **"Every promoted entry carries valid, well-shaped provenance"** → **floor**: enum/regex/presence (`check-provenance.mjs`, primitive #3). A candidate missing/malforming a mandatory field is REJECTED deterministically before any write.
 - **"No duplicate-ID entry enters canon"** → **floor**: set-membership over existing `## <id>` headings (`check-provenance.mjs`).
-- **"The write lands only in the declared canon file"** → **floor**: the fix-#7 pre-write hook (`enforce-writes-scope.cjs`) denies any out-of-scope write; memory-bank/** is fail-closed until explicitly declared.
+- **"The write lands only in the declared canon file"** → **floor**: the fix-#7 pre-write hook (`enforce-writes-scope.cjs`) denies any out-of-scope write; memory-bank/\*\* is fail-closed until explicitly declared.
 - **"The human approved THIS specific entry" (halt-for-accept/deny)** → **advisory / procedural**, NOT floor. The floor cannot verify a human said "yes"; the halt is an instruction the model follows. Backstopped by the two floor ops above (a self-promoted entry would still need valid provenance + land only in the declared file) — but **unwise-but-well-formed** content is caught only by the human gate, not the floor.
 - **"The lesson is true / general / worth canonizing"** → **advisory / human**. The command does NOT judge worth.
-- **The honest claim:** this command guarantees *no entry without valid provenance, and no write outside the declared canon file* (floor). It does **NOT** guarantee the lesson is correct, wise, or even human-approved (those are advisory/procedural). "memory-promote promoted it" must NEVER read as "therefore the lesson is sound" — that is the P0 disease.
+- **The honest claim:** this command guarantees _no entry without valid provenance, and no write outside the declared canon file_ (floor). It does **NOT** guarantee the lesson is correct, wise, or even human-approved (those are advisory/procedural). "memory-promote promoted it" must NEVER read as "therefore the lesson is sound" — that is the P0 disease.
 
 ## Trust audit (P2) — taint propagation
 
@@ -89,7 +89,7 @@ Input: `node floor/check-provenance.mjs <candidate.json> <canon-file.md>`
 
 ## Decisions (resolved via interactive form, 2026-06-26)
 
-1. **Canon-file scope (Q1) → lessons + patterns.** `/memory-promote` targets `memory-bank/lessons-learned.md` and `memory-bank/pattern-library.md` only. `pattern-library.md` is created on the first *real* pattern promotion (not by this build — P7). `feature-catalog.md` / `architecture-context.md` are out of scope.
+1. **Canon-file scope (Q1) → lessons + patterns.** `/memory-promote` targets `memory-bank/lessons-learned.md` and `memory-bank/pattern-library.md` only. `pattern-library.md` is created on the first _real_ pattern promotion (not by this build — P7). `feature-catalog.md` / `architecture-context.md` are out of scope.
 2. **Provenance schema (Q2) → feature + commit + source + date.** `check-provenance.mjs` requires: `feature` (non-empty), `commit` (`^[0-9a-f]{7,40}$`, the real SHA captured by the command via `git rev-parse HEAD`), `source` (non-empty — the surfacing `REVIEW.md` path / finding IDs = §5 "diff"), `date` (`^\d{4}-\d{2}-\d{2}$`). No `arch_sha256` pin for lessons.
 3. **Meta-doc sweep (Q3) → CHANGELOG + CLAUDE.md.** Add a `CHANGELOG.md [Unreleased]` entry and update `CLAUDE.md` (floor-commands list + correct the live test count). Correcting the count also remedies the pre-existing 3-suite/"11 tests" drift found in discovery.
 
