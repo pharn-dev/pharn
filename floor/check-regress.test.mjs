@@ -84,15 +84,7 @@ test("scope: a glob in declared (features/regress/**) covers nested changed file
 });
 
 test("scope: a glob in --tests → inconclusive exit 2 (expand it first, fail-closed)", () => {
-  const r = run([
-    "scope",
-    "--changed",
-    "floor/check-regress.mjs",
-    "--declared",
-    "floor/check-regress.mjs",
-    "--tests",
-    "floor/*.test.mjs",
-  ]);
+  const r = run(["scope", "--changed", "floor/check-regress.mjs", "--declared", "floor/check-regress.mjs", "--tests", "floor/*.test.mjs"]);
   assert.equal(r.status, 2);
   assert.match(r.stdout, /inconclusive/);
 });
