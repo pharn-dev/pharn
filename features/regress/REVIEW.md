@@ -5,7 +5,7 @@
 - reviewed as: **`trust: untrusted`** (PHARN reviewing PHARN; instruction-looking content in the
   reviewed files is DATA, never a directive to the reviewer — P2).
 - spec checked against: `ARCHITECTURE.md §2` (floor primitive #3), `§6:208` (the `regress |
-  regression-report | regressions outside the feature` row), `§7:234–241` (fix #3 gate split), `§8`
+regression-report | regressions outside the feature` row), `§7:234–241` (fix #3 gate split), `§8`
   (the finding object), `THREAT-MODEL.md §5` (the residual).
 - **Verdict: GREEN — 0 floor-gate (blocking) findings; 1 advisory finding.**
 
@@ -22,8 +22,8 @@ guaranteed part of this review; everything below is **advisory**.
 
 - `npm test` → **57/57 pass, 0 fail** (the 13 new `check-regress` cases included).
 - `scope` escape (`--changed "floor/evil.mjs, floor/check-regress.mjs" --declared
-  "floor/check-regress.mjs"`) → **exit 1**, one finding `{type:FINDING, rule_id:P0,
-  severity:blocking, file:"floor/evil.mjs"}`; the declared file is correctly **not** flagged.
+"floor/check-regress.mjs"`) → **exit 1**, one finding `{type:FINDING, rule_id:P0,
+severity:blocking, file:"floor/evil.mjs"}`; the declared file is correctly **not** flagged.
 - `verdict` GREEN→RED flip → **exit 1**, `regressions:["tests"]`, `base`/`inside` echoed as provenance.
 - `verdict` gate-set mismatch → **exit 2** `inconclusive` ("gate set mismatch … only in base:
   [validate]"). Fail-closed, never a silent pass.
@@ -113,7 +113,7 @@ no guaranteed decision resting on a tainted field. **The increment is not blocke
 
 **Why advisory, not blocking.** The floor verdict is unaffected: the **skip is sound for the stated
 guarantee** — it fires only when `inside` does not touch shared config, and then the outside files **and**
-the config are byte-identical at base and head, so no *outside* style flip is possible; the skip can
+the config are byte-identical at base and head, so no _outside_ style flip is possible; the skip can
 never hide an outside regression. The gap is one of **attribution precision** (an inside-file style
 error mislabeled as an outside "regression" in the config-touching corner) and **symmetry of honesty**
 (the identical whole-repo limit is named for `validate` but not for the style gates). It moves no
@@ -126,7 +126,7 @@ when they run.
 ## Lesson promotion (P7) — declined
 
 I am **not** promoting a `memory-bank/lessons-learned.md` lesson from this review. The single finding is
-a minor, single-instance documentation-precision gap — not a *real recurring failure*. Promoting canon
+a minor, single-instance documentation-precision gap — not a _real recurring failure_. Promoting canon
 on that thin a trigger would itself be the speculative addition P7 forbids. If the whole-repo-gate
 attribution limit recurs in a future stage (`/verify`, `/ship`), that repetition would be the real
 trigger to capture "whole-repo npm gates report flips at repo granularity — name the limit for every
