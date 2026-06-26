@@ -255,6 +255,165 @@ test("setter --from-plan reads the leading back-tick path of each ## Files item,
   assert.deepEqual(rec.scope, [".claude/hooks/enforce-writes-scope.cjs", "CLAUDE.md"]);
 });
 
+// --- Setter Mode B: exclusion-boundary tightness (fix #7 — an excluded path must NEVER enter scope) ---
+// The laundering-equivalent for writes-scope: a path listed in a plan's exclusion section leaking into
+// the writable scope is exactly the dangerous-direction failure. The boundary is wording-independent —
+// ANY heading (or a head-less prose cue) ends the authorized list, so phrasing cannot smuggle a path in.
+
+test("setter --from-plan: a `### Out of scope` heading (no 'touch' wording) keeps its paths OUT of scope", () => {
+  const cwd = tmp();
+  const plan = join(cwd, "PLAN.md");
+  fs.writeFileSync(
+    plan,
+    [
+      "# PLAN — x",
+      "",
+      "## Files",
+      "",
+      "- `pharn-core/a.md` — **NEW.** the increment",
+      "- `pharn-core/b.md` — **EDIT.** the increment",
+      "",
+      "### Out of scope",
+      "",
+      "- `floor/validate.mjs` — unchanged (must NOT enter scope)",
+      "",
+    ].join("\n")
+  );
+  const r = setter(cwd, "--from-plan", plan);
+  assert.equal(r.status, 0);
+  const rec = JSON.parse(fs.readFileSync(join(cwd, ".pharn", "writes-scope.json"), "utf8"));
+  assert.deepEqual(rec.scope, ["pharn-core/a.md", "pharn-core/b.md"]);
+  assert.ok(!rec.scope.includes("floor/validate.mjs"), "excluded-section path must be ABSENT");
+});
+
+test("setter --from-plan: a `### Excluded paths` heading keeps its paths OUT of scope (wording-independent)", () => {
+  const cwd = tmp();
+  const plan = join(cwd, "PLAN.md");
+  fs.writeFileSync(
+    plan,
+    [
+      "# PLAN — x",
+      "",
+      "## Files",
+      "",
+      "- `pharn-core/a.md` — **NEW.**",
+      "",
+      "### Excluded paths",
+      "",
+      "- `floor/validate.mjs` — unchanged (must NOT enter scope)",
+      "",
+    ].join("\n")
+  );
+  const r = setter(cwd, "--from-plan", plan);
+  assert.equal(r.status, 0);
+  const rec = JSON.parse(fs.readFileSync(join(cwd, ".pharn", "writes-scope.json"), "utf8"));
+  assert.deepEqual(rec.scope, ["pharn-core/a.md"]);
+  assert.ok(!rec.scope.includes("floor/validate.mjs"), "excluded-section path must be ABSENT");
+});
+
+test("setter --from-plan: the live-corpus `### Explicitly **not** touched` heading keeps its paths OUT", () => {
+  const cwd = tmp();
+  const plan = join(cwd, "PLAN.md");
+  fs.writeFileSync(
+    plan,
+    [
+      "# PLAN — x",
+      "",
+      "## Files",
+      "",
+      "- `.claude/hooks/set-writes-scope.cjs` — **EDIT.**",
+      "- `.claude/hooks/enforce-writes-scope.test.cjs` — **EDIT.**",
+      "",
+      "### Explicitly **not** touched (declared NOT written)",
+      "",
+      "- `.claude/hooks/enforce-writes-scope.cjs` — the GUARD is correct (must NOT enter scope)",
+      "- `floor/validate.mjs` — unchanged",
+      "",
+    ].join("\n")
+  );
+  const r = setter(cwd, "--from-plan", plan);
+  assert.equal(r.status, 0);
+  const rec = JSON.parse(fs.readFileSync(join(cwd, ".pharn", "writes-scope.json"), "utf8"));
+  assert.deepEqual(rec.scope, [".claude/hooks/set-writes-scope.cjs", ".claude/hooks/enforce-writes-scope.test.cjs"]);
+  assert.ok(!rec.scope.includes(".claude/hooks/enforce-writes-scope.cjs"), "the GUARD path must be ABSENT");
+  assert.ok(!rec.scope.includes("floor/validate.mjs"), "excluded-section path must be ABSENT");
+});
+
+test("setter --from-plan: a head-less prose exclusion intro ('Files NOT written:') keeps its paths OUT", () => {
+  const cwd = tmp();
+  const plan = join(cwd, "PLAN.md");
+  fs.writeFileSync(
+    plan,
+    [
+      "# PLAN — x",
+      "",
+      "## Files",
+      "",
+      "- `pharn-core/a.md` — **NEW.**",
+      "",
+      "Files NOT written (left unchanged):",
+      "",
+      "- `floor/validate.mjs` — unchanged (must NOT enter scope)",
+      "",
+    ].join("\n")
+  );
+  const r = setter(cwd, "--from-plan", plan);
+  assert.equal(r.status, 0);
+  const rec = JSON.parse(fs.readFileSync(join(cwd, ".pharn", "writes-scope.json"), "utf8"));
+  assert.deepEqual(rec.scope, ["pharn-core/a.md"]);
+  assert.ok(!rec.scope.includes("floor/validate.mjs"), "excluded-section path must be ABSENT");
+});
+
+test("setter --from-plan: a flat `## Files` with no exclusion captures ALL authorized paths (no early break)", () => {
+  const cwd = tmp();
+  const plan = join(cwd, "PLAN.md");
+  fs.writeFileSync(
+    plan,
+    [
+      "# PLAN — x",
+      "",
+      "## Files",
+      "",
+      "- `pharn-core/a.md` — **NEW.** a description that says it is not yet modified anywhere",
+      "- `pharn-core/b.md` — **EDIT.**",
+      "- `pharn-core/c.md` — **NEW.**",
+      "",
+      "## Next section",
+      "",
+      "- `should-not-appear.md`",
+      "",
+    ].join("\n")
+  );
+  const r = setter(cwd, "--from-plan", plan);
+  assert.equal(r.status, 0);
+  const rec = JSON.parse(fs.readFileSync(join(cwd, ".pharn", "writes-scope.json"), "utf8"));
+  // Item a.md's DESCRIPTION mentions "not ... modified" but it is a path-item, so the cue does NOT drop it.
+  assert.deepEqual(rec.scope, ["pharn-core/a.md", "pharn-core/b.md", "pharn-core/c.md"]);
+});
+
+// --- Setter hand-off: per-stage overwrite semantics (DEFECT A — overwrite is correct, no audit stack) ---
+
+test("setter overwrite: a second setter call REPLACES the scope, never merges (per-stage hand-off)", () => {
+  const cwd = tmp();
+  // Stage 1: --from-plan pins two paths.
+  const plan = join(cwd, "PLAN.md");
+  fs.writeFileSync(
+    plan,
+    ["# PLAN — x", "", "## Files", "", "- `pharn-core/a.md` — **NEW.**", "- `pharn-core/b.md` — **EDIT.**", ""].join("\n")
+  );
+  assert.equal(setter(cwd, "--from-plan", plan).status, 0);
+  const first = JSON.parse(fs.readFileSync(join(cwd, ".pharn", "writes-scope.json"), "utf8"));
+  assert.deepEqual(first.scope, ["pharn-core/a.md", "pharn-core/b.md"]);
+  // Stage 2: a later stage sets its own scope to ONE different file — it must REPLACE, not append.
+  const md = join(cwd, "review.md");
+  fs.writeFileSync(md, '---\nrole: lens\nwrites: ["features/<name>/REVIEW.md"]\n---\n# x\n');
+  assert.equal(setter(cwd, "--from-frontmatter", md, "--target", "features/foo/REVIEW.md").status, 0);
+  const second = JSON.parse(fs.readFileSync(join(cwd, ".pharn", "writes-scope.json"), "utf8"));
+  assert.deepEqual(second.scope, ["features/foo/REVIEW.md"]);
+  assert.ok(!second.scope.includes("pharn-core/a.md"), "stage-1 paths must NOT persist (overwrite, not merge)");
+  assert.ok(!second.scope.includes("pharn-core/b.md"), "stage-1 paths must NOT persist (overwrite, not merge)");
+});
+
 // --- Integration: setter then hook, end to end ---
 
 test("integration: setter unlocks memory-bank/lessons-learned.md; hook then allows it and denies a module path", () => {
