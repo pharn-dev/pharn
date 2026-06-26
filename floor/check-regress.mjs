@@ -71,31 +71,56 @@ function normPath(p) {
   return String(p).trim().replace(/^\.\//, "").replace(/\/+$/, "");
 }
 
-// --- tiny stdlib glob -> anchored RegExp (same dialect as the writes-scope hooks): `**` spans
-//     segments (incl. `/`), `*` matches within one segment, everything else literal. A literal path
-//     (no glob chars) compiles to an exact-match regex, so this also covers plain equality. ---
-function globToRegExp(glob) {
-  let re = "";
+// --- tiny stdlib glob matcher (same dialect as the writes-scope hooks): `**` spans segments
+//     (incl. `/`), `*` matches within one segment, everything else is a LITERAL char — a path with no
+//     glob chars therefore reduces to exact equality. Matched by deterministic O(glob·file) dynamic
+//     programming, NOT by compiling the pattern into a `new RegExp(...)`: the pattern is an untrusted
+//     CLI operand, so it is never handed to the regex engine — no regex-injection / ReDoS sink (P2/P5).
+//     `dp[j]` = "the remaining glob tokens match file[j..]"; the table is filled token-by-token from
+//     the end, so total work is bounded by tokens × (file length + 1). ---
+function globToTokens(glob) {
+  const tokens = [];
   for (let i = 0; i < glob.length; i++) {
-    const c = glob[i];
-    if (c === "*") {
+    if (glob[i] === "*") {
       if (glob[i + 1] === "*") {
-        re += ".*";
+        tokens.push({ t: "globstar" }); // matches any run, including "/"
         i++;
       } else {
-        re += "[^/]*";
+        tokens.push({ t: "star" }); // matches any run WITHIN one segment (no "/")
       }
-    } else if ("\\^$.|?+()[]{}".includes(c)) {
-      re += "\\" + c;
     } else {
-      re += c;
+      tokens.push({ t: "lit", c: glob[i] }); // exact char — would-be regex metachars are inert
     }
   }
-  return new RegExp("^" + re + "$");
+  return tokens;
+}
+
+function globMatch(glob, file) {
+  const tokens = globToTokens(glob);
+  const m = file.length;
+  // next[j] — can the tokens after the current one match file[j..m) ? Seeded with the empty suffix:
+  // only an exhausted file (j === m) matches zero remaining tokens.
+  let next = new Array(m + 1).fill(false);
+  next[m] = true;
+  for (let i = tokens.length - 1; i >= 0; i--) {
+    const cur = new Array(m + 1).fill(false);
+    const tok = tokens[i];
+    for (let j = m; j >= 0; j--) {
+      if (tok.t === "lit") {
+        cur[j] = j < m && file[j] === tok.c && next[j + 1];
+      } else if (tok.t === "star") {
+        cur[j] = next[j] || (j < m && file[j] !== "/" && cur[j + 1]);
+      } else {
+        cur[j] = next[j] || (j < m && cur[j + 1]); // globstar
+      }
+    }
+    next = cur;
+  }
+  return next[0];
 }
 
 function matchesAny(file, patterns) {
-  return patterns.some((pat) => globToRegExp(pat).test(file));
+  return patterns.some((pat) => globMatch(pat, file));
 }
 
 // --- read a flag value (`--flag value`) from an argv slice; undefined if absent. ---
