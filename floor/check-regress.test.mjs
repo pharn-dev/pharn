@@ -83,6 +83,34 @@ test("scope: a glob in declared (features/regress/**) covers nested changed file
   assert.deepEqual(json(r).escaped, []);
 });
 
+test("scope: a glob in --tests → inconclusive exit 2 (expand it first, fail-closed)", () => {
+  const r = run([
+    "scope",
+    "--changed",
+    "floor/check-regress.mjs",
+    "--declared",
+    "floor/check-regress.mjs",
+    "--tests",
+    "floor/*.test.mjs",
+  ]);
+  assert.equal(r.status, 2);
+  assert.match(r.stdout, /inconclusive/);
+});
+
+test("scope: a malformed --eval-pairs token (no '::') → inconclusive exit 2 (fail-closed)", () => {
+  const r = run([
+    "scope",
+    "--changed",
+    "floor/check-regress.mjs",
+    "--declared",
+    "floor/check-regress.mjs",
+    "--eval-pairs",
+    "a/expected.json::b/findings.json, oops-no-separator",
+  ]);
+  assert.equal(r.status, 2);
+  assert.match(r.stdout, /inconclusive/);
+});
+
 test("scope: missing required args → inconclusive exit 2", () => {
   const r = run(["scope", "--changed", "a"]); // no --declared
   assert.equal(r.status, 2);
