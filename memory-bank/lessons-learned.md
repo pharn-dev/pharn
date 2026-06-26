@@ -122,3 +122,31 @@ advisory semantic ones.
   before→fix→after cycle closed (structural 4/5 → 5/5). Note: prior entries were promoted via `/review`;
   this one via gated `/build` per the `/build` instruction — the gate that makes it non-silent is fix #7
   (writes-scope) + per-entry provenance (`ARCHITECTURE.md §5`), not the command name.
+
+## L5 — A floor verdict is only as trustworthy as the orchestration that captures its inputs
+
+**Lesson.** A pipeline stage's deterministic FLOOR verdict (`/regress`, `/verify` — exit-code
+comparisons) is only as trustworthy as the ADVISORY orchestration that captures its inputs: the exit
+codes and file lists are assembled by the command's Bash, and that assembly can silently corrupt them.
+Treat input-capture as a trust boundary — make it robust and self-checking (array-expand or quote shell
+lists; assert the expected cardinality; fail-closed on a surprising shape) — and never read a green
+floor verdict as a guarantee without accounting for how its inputs were produced.
+
+**Why it matters.** The "two clocks" split (the verdict is floor-grade; the orchestration that feeds it
+is advisory) has teeth: a verdict computed over corrupted inputs is GIGO, not a guarantee — the P0
+disease ("written" ≠ "guaranteed") reproduced one layer up, at the input boundary. Concretely, on the
+first full-pipeline run `/regress`'s `tests` gate ran `node --test $LIST` with an unquoted variable
+under zsh (the macOS default shell, which does **not** word-split unquoted expansions); the whole list
+was passed as a single bogus path → "could not find" → exit 1 at **both** base and head. Being equal on
+both sides it evaded a false _regression_ (1 == 1, classified pre-existing), but it fabricated a
+pre-existing red and would have **masked** a real tests-gate regression. The floor core
+(`check-regress.mjs`) was correct; its inputs were not. The remedy lives in the orchestration layer, not
+the floor.
+
+**Provenance.**
+
+- feature: `pipeline-integration-probe` (first full-pipeline integration run).
+- commit: `0ae1b38`.
+- surfaced by: `features/pipeline-integration-probe/REVIEW.md` (integration finding,
+  `.claude/commands/regress.md:116`) + `REGRESSION.md` observation #2.
+- promoted: 2026-06-27 via gated `/memory-promote` (human-approved).
