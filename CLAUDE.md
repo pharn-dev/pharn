@@ -50,6 +50,10 @@ node floor/validate.mjs [target-dir]
 # Exits non-zero on any RED — e.g. a needle laundered into an enum-gated field.
 node floor/check-structural.mjs <expected.json> <actual.json> [repoDir]
 
+# Validate a memory-bank promotion candidate: mandatory provenance shape + duplicate-id + target enum.
+# Exits non-zero on any RED. /memory-promote runs it before the human accept/deny gate (never writes on RED).
+node floor/check-provenance.mjs <candidate.json> <canon-file.md>
+
 # Self-test the write-guard hook:
 echo '{"tool_name":"Edit","tool_input":{"file_path":"CONSTITUTION.md"}}' | node .claude/hooks/protect-trusted-paths.cjs   # → exit 2, denied
 echo '{"tool_name":"Write","tool_input":{"file_path":"pharn-core/rules/x.md"}}' | node .claude/hooks/protect-trusted-paths.cjs  # → exit 0, allowed
@@ -60,9 +64,9 @@ echo '{"tool_name":"Write","tool_input":{"file_path":"pharn-core/rules/x.md"}}' 
   have **zero runtime dependencies** (Node stdlib; Node 24). The repo carries **dev-only**
   devDependencies (ESLint, Prettier, markdownlint) wired as npm scripts: `npm run check`
   (`format:check` + `lint` + `lint:md` + `test`) is the aggregate gate, and `npm test` runs
-  `node --test` over the **populated** suites in `.claude/hooks/protect-trusted-paths.test.cjs`,
-  `floor/validate.test.mjs`, and `floor/check-structural.test.mjs` (11 tests, green) — these are no
-  longer empty stubs.
+  `node --test` over the hook and floor suites (`.claude/hooks/*.test.cjs` + `floor/*.test.mjs`) — **8
+  suites, 81 tests, green** at this writing; read the count live (`npm test`), never assert it from this
+  doc (P6).
 - `node floor/validate.mjs .` currently reports `GREEN — 1 capabilities checked` — **attempt 0 is
   built**: the `trust-fence` lens (`pharn-review/trust-fence/`) with its `pharn-contracts/finding-shape`
   contract and hostile eval; `features/trust-fence/REVIEW.md` records the dogfood `/review` of it. Read this count live;
