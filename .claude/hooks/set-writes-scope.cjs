@@ -146,8 +146,12 @@ function writesFromFrontmatter(file) {
   return items;
 }
 
-// --- Mode B: the leading back-tick path of each list item under `## Files`, stopping at the
-// "Explicitly not touched" subsection (those files are declared NOT written) or the next heading. ---
+// --- Mode B: the leading back-tick path of each list item under `## Files`, stopping at the next
+// markdown heading of ANY level (an exclusion subsection like `### Explicitly not touched` /
+// `### Out of scope` is its own heading) or a head-less prose exclusion cue. A path under either of those
+// two section-level forms never enters scope, however the exclusion is worded (P5, fix #7). Residual: an
+// inline-marked item (`- `path` — not touched`) IS a path-item, so it is NOT detected — see the plan's
+// "Known residuals". ---
 function pathsFromPlanFiles(file) {
   const lines = fs.readFileSync(file, "utf8").split(/\r?\n/);
   const start = lines.findIndex((l) => /^##\s+Files\b/.test(l));
@@ -155,8 +159,17 @@ function pathsFromPlanFiles(file) {
   const out = [];
   for (let i = start + 1; i < lines.length; i++) {
     const line = lines[i];
-    if (/^##\s/.test(line)) break; // next section ends the Files block
-    if (/not\W*touch/i.test(line)) break; // "Explicitly **not** touched" — rest is not-written
+    // Boundary 1 — STRUCTURAL: any markdown heading of ANY level (`##`, `###`, …) ends the authorized
+    // list. An exclusion subsection (`### Explicitly not touched`, `### Out of scope`, `### Excluded`)
+    // is its own heading, so its paths are NEVER scanned — independent of the exclusion's wording.
+    if (/^\s{0,3}#{1,6}\s/.test(line)) break;
+    // Boundary 2 — CUE fallback for a HEAD-LESS prose exclusion intro (`Files NOT written:`), anchored
+    // to a NON-path line so an authorized item's own description ("… the public API is not touched")
+    // never trips it. `\W*` (not `\s+`) tolerates markdown markup, e.g. `**not** touched`.
+    const isPathItem = /^\s*-\s+`[^`]+`/.test(line);
+    if (!isPathItem && /\bnot\W*(touch|writ|modif|edit|chang)|\bexplicitly\W*excluded|\bout\W*of\W*scope|\boff\W*limits/i.test(line)) {
+      break;
+    }
     const m = line.match(/^\s*-\s+`([^`]+)`/);
     if (m) out.push(m[1].trim());
   }
