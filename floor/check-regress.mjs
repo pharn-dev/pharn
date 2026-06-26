@@ -148,15 +148,42 @@ function runScope(args) {
   const inside = parseList(changedRaw); // the changed files (from `git diff` — the command's job)
   const declared = parseList(declaredRaw); // the plan's `## Files` declared writes (patterns allowed)
   const tests = parseList(flag(args, "--tests")); // the FULL test-file universe (the command's job)
-  const evalPairs = (flag(args, "--eval-pairs") || "")
+
+  // --tests is a LIST of REAL file paths — the command expands any globs (e.g. via `git ls-files`)
+  // BEFORE calling. The partition below is exact-set membership, so a raw glob string would never
+  // match an inside path and would silently bypass the inside/outside coverage. Reject glob
+  // metacharacters up front (fail-closed, P5) — never a silent pass.
+  const globbyTest = tests.find((t) => t.includes("*"));
+  if (globbyTest !== undefined) {
+    emit(
+      {
+        verdict: "inconclusive",
+        reason: `--tests must be an expanded list of real file paths, not a glob: '${globbyTest}' (expand it first, e.g. via \`git ls-files\`)`,
+      },
+      2
+    );
+  }
+  // --eval-pairs tokens are "EXPECTED::ACTUAL". A token missing the `::` separator is malformed input:
+  // fail closed (P5, exit 2) rather than silently dropping it from the outside-gate set — a dropped
+  // pair would silently shrink coverage, the exact silent pass this core forbids.
+  const evalPairTokens = (flag(args, "--eval-pairs") || "")
     .split(/[\s,]+/)
     .map((t) => t.trim())
-    .filter(Boolean)
+    .filter(Boolean);
+  const malformedPair = evalPairTokens.find((tok) => !tok.includes("::"));
+  if (malformedPair !== undefined) {
+    emit(
+      {
+        verdict: "inconclusive",
+        reason: `--eval-pairs token '${malformedPair}' is missing the 'EXPECTED::ACTUAL' separator '::' — fail-closed, never silently dropped`,
+      },
+      2
+    );
+  }
+  const evalPairs = evalPairTokens
     .map((tok) => {
       const cut = tok.indexOf("::");
-      return cut === -1
-        ? { expected: normPath(tok), actual: "" }
-        : { expected: normPath(tok.slice(0, cut)), actual: normPath(tok.slice(cut + 2)) };
+      return { expected: normPath(tok.slice(0, cut)), actual: normPath(tok.slice(cut + 2)) };
     })
     .filter((p) => p.expected && p.actual);
 

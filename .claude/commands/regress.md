@@ -108,7 +108,7 @@ code** (never its stdout free-text) into a flat `{ "<gate-id>": <exit-int> }` ma
 ```bash
 mkdir -p .pharn/regress
 TMP="$(mktemp -d)"
-git worktree add --detach "$TMP" <base>          # immutable base SHA → reproducible, non-destructive
+git worktree add --detach "$TMP" "<base ref/SHA>"   # the Step-1-resolved base (immutable SHA) → reproducible, non-destructive
 # --- in "$TMP" (the BASELINE checkout), run each outside gate and record $? ---
 #   tests                  : node --test <outside_tests...>     (empty list → record 0; nothing outside to test)
 #   validate               : node floor/validate.mjs .          (whole-repo — a named granularity limit, below)
