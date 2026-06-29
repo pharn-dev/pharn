@@ -1,5 +1,5 @@
 ---
-description: "Run PHARN's build loop in order so the human need not re-type or memorize it: /plan → [human approves] → /grill → /build → /regress → /verify → /review → [human decides]. GATED orchestration — the agent INVOKES each stage (advisory); WHETHER to proceed past a stage is read from that stage's STRUCTURAL floor verdict (validate exit / regression-report.json .verdict / verify-report.json .verdict), NEVER the agent's judgment. Reuses the existing stage commands; reimplements none. Adds NO new floor primitive — every guarantee in a run belongs to a sub-stage. Two human gates (plan acceptance, post-review decision) are NON-NEGOTIABLE. NO --yolo (rejected); --loop is a separate increment. FLOOR verdicts per stage; ADVISORY orchestration."
+description: "Run PHARN's build loop in order so the human need not re-type or memorize it: /plan → [human approves] → /grill → /build → /regress → /verify → /review → [human decides]. GATED orchestration — the agent INVOKES each stage (advisory); WHETHER to proceed past a stage is read from that stage's STRUCTURAL floor verdict (validate exit / regression-report.json .verdict / verify-report.json .verdict), NEVER the agent's judgment. Reuses the existing stage commands; reimplements none. Two human gates (plan acceptance, post-stop decision) are NON-NEGOTIABLE; NO --yolo. Default (gated) mode adds NO new floor primitive — every guarantee belongs to a sub-stage. The --loop mode iterates the chain (fix → regress → verify → review) until a floor-grade stop — /verify PASS ∧ /regress clean — or a bounded max-iteration cap, the stop computed by the tested floor/check-ship.mjs whose inputs are ONLY the two floor verdicts so /review can NEVER gate the loop (structural, not discipline). FLOOR verdicts; ADVISORY orchestration."
 kind: pharn-owned
 trust: trusted
 model_tier: sonnet
@@ -7,6 +7,7 @@ reads:
   [
     "CONSTITUTION.md",
     "ARCHITECTURE.md",
+    "floor/check-ship.mjs",
     "features/<name>/regression-report.json",
     "features/<name>/verify-report.json",
     "features/<name>/GRILL.md",
@@ -14,7 +15,7 @@ reads:
   ]
 writes: ["features/<name>/SHIP.md"]
 constitution_refs: ["P0", "P2", "P5", "P6", "P7"]
-version: "0.1.0"
+version: "0.2.0"
 ---
 
 # /ship — run the gated build loop, end at a human gate
@@ -149,7 +150,65 @@ Write **`features/<name>/SHIP.md`** — a thin, **advisory** roll-up:
 
 Then **end your turn** at the human gate. `/ship` does not merge, push, or seal.
 
-## Guarantee audit (P0) — `/ship` adds NO new floor guarantee
+## `/ship --loop` — iterate to a floor-grade stop (optional mode)
+
+`/ship --loop [--max-iter N] <increment description>` runs the **same** gated chain (above), but instead
+of stopping after the first `/review` it **iterates** the verification body until a **floor-grade stop**
+— never on your judgment. **Default `/ship` (no `--loop`) is unchanged.** There is still **no `--yolo`**,
+and **both human gates still hold**.
+
+**GATE 1 is hit once, before the loop.** `/plan` is approved exactly as in the gated flow; the loop body
+**never re-plans and never re-approves** (the intent gate is never auto-re-entered). A failure the loop
+cannot fix within the approved plan's `## Files` runs to the cap and **STOPs to the human**, who may
+re-plan via a fresh `/ship` run.
+
+**The iteration body (deterministic boundary; the _fix_ inside is advisory):**
+
+1. **Iteration 1** = the gated `/build → /regress → /verify → /review` (after GATE 1).
+2. **Read the floor stop — the decision is computed by the tested helper, NOT by you:**
+
+   ```bash
+   node floor/check-ship.mjs features/<name>/verify-report.json features/<name>/regression-report.json --iter <N> --cap <M>
+   ```
+
+   `<M>` is `--max-iter` (default **3**). Branch **only** on its **exit code** (a membership test, P5):
+   - `0` `STOP_GREEN` → **STOP**: floor-GREEN reached (`/verify` PASS ∧ `/regress` clean). Present at
+     **GATE 2** — the human decides merge / fix / abandon.
+   - `1` `STOP_CAP` → **STOP**: the cap was hit without floor-GREEN. Present **"could not reach
+     floor-GREEN in N iterations"** + the standing `failing_gates[]` / `regressions[]`, hand to the human.
+   - `2` `INCONCLUSIVE` → **STOP**, fail-closed (a verdict report missing/malformed). Hand to the human.
+   - `3` `CONTINUE` → **iterate**. **First re-set the writes-scope to the plan's `## Files`** — the
+     intervening `/regress` / `/verify` / `/review` each ran their own Step 0 setter, **overwriting**
+     `.pharn/writes-scope.json` with their own artifact, so fix #7 no longer pins the build scope at this
+     point (the single `.pharn/writes-scope.json` is mutable, not a stack):
+
+     ```bash
+     node .claude/hooks/set-writes-scope.cjs --from-plan features/<name>/PLAN.md
+     ```
+
+     Then apply a **fix** to the failing gate **within the approved plan's `## Files`** (fix #7 now pins
+     it again — a write outside `## Files` is denied; never bypass the hook), and re-run
+     `/regress → /verify → /review`, `iter++`, and re-read the stop.
+
+**The fix is ADVISORY agent work — `--loop` does NOT guarantee it can fix anything (P0).** Fixing a
+failing gate is irreducible model work; `--loop` guarantees only the **stop** (it stops on floor-GREEN or
+the cap — never unbounded). An unsound fix cannot fake a green stop: `/regress` and `/verify`
+**recompute** the verdicts each iteration, and `check-ship.mjs` reads **only** those — its inputs are the
+two verdict files + `iter`/`cap`, with **no `/review` input**, so `/review` can **never** gate the loop.
+That exclusion is **structural** (the input does not exist), the fix#3 disease made impossible, not
+merely promised.
+
+**Why a helper, not inline (the floor reduction).** The loop runs with **no human between iterations**,
+so its termination is safety-critical and must be **floor, not agent judgment**. `floor/check-ship.mjs`
+reduces the stop to enum-membership over the two floor verdicts + an integer `iter ≥ cap` compare
+(`ARCHITECTURE.md §2` primitive #3), hermetically tested (`floor/check-ship.test.mjs`). You **obey** its
+exit code — advisory **compliance**, exactly as you obey `check-verify`.
+
+**Roll-up.** For a `--loop` run, `SHIP.md` (Step 3) additionally records the **iteration count**, each
+iteration's two `.verdict`s, and **why** the loop ended (`STOP_GREEN` / `STOP_CAP` / `INCONCLUSIVE`) — the
+`check-ship.mjs` decision verbatim. It is **never** a self-issued "shipped" / seal (P0).
+
+## Guarantee audit (P0) — gated adds none; `--loop` adds only the tested stop core
 
 - **"`/ship` runs the stages in order"** → **ADVISORY.** Nothing on the floor forces the sequence; the
   agent invokes each stage.
@@ -163,9 +222,13 @@ Then **end your turn** at the human gate. `/ship` does not merge, push, or seal.
 - **"`/ship` may write only `SHIP.md`"** → **FLOOR: hook (fix #7).** `set-writes-scope.cjs` +
   `enforce-writes-scope.cjs` pin the one path. The Bash stage-invocations are not gated; each stage's
   own writes are gated by its own scope.
-- **Net:** `/ship` introduces **zero** new floor primitive. Every guarantee in a `/ship` run belongs to
-  a **sub-stage**. `/ship` is convenience + two preserved human gates — and the floor-gated **stop** of
-  a `--loop` is a **separate, deferred** concept (below), not something this command claims.
+- **Net (gated mode):** the gated chain introduces **zero** new floor primitive — every guarantee belongs
+  to a **sub-stage**; `/ship` is convenience + two preserved human gates.
+- **Net (`--loop` mode):** adds **exactly one** new floor primitive — `floor/check-ship.mjs`, the tested
+  stop core (justified, P7, by the loop's autonomy: no human between iterations). It guarantees the
+  **stop** — floor-GREEN (`/verify` PASS ∧ `/regress` clean) or the cap, with `/review` **structurally**
+  excluded (no review input) — and **never** that a fix _works_ (advisory). Writing "`/ship` ensures the
+  chain ran" or "ensures quality" is still the disease — **struck**.
 
 ## Trust (P2)
 
@@ -190,11 +253,11 @@ Then **end your turn** at the human gate. `/ship` does not merge, push, or seal.
   The two human gates are non-negotiable.
 - **No auto-act at GATE 2.** Reaching the end of the chain (or floor-GREEN) is permission to
   **present**, never to merge / ship / seal. The decision is the human's.
-- **No `--loop` here.** Iterating the chain until a floor-GREEN stop is a **separate increment**
-  (`ship-loop`). Its stop condition must be **floor**, not agent judgment — and the honest floor-legal
-  stop is `/verify` PASS ∧ `/regress` clean (which already subsumes `/review`'s only floor primitive,
-  `validate` GREEN), with `/review` **advisory** (never loop-gating). That knot is resolved in its own
-  increment, against a real chain — not pre-committed here.
+- **`--loop` does NOT self-certify, auto-fix-guarantee, or bypass a gate.** The `--loop` mode (see
+  "`/ship --loop`" above) is available, but it still preserves **GATE 1** (plan approval, hit once) and
+  **GATE 2** (present at every stop, never auto-act), runs no `--yolo` / self-grill, gates the loop on the
+  **two floor verdicts only** (`/review` structurally excluded), and **guarantees only the stop, never
+  that a fix works**. Reaching floor-GREEN is permission to **present**, not to merge / ship / seal.
 
 ## A doc-reconciliation `/ship` surfaces (reported, never agent-edited)
 
