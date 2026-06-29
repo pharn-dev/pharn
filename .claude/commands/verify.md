@@ -115,10 +115,18 @@ printf '{"test":%d,"validate":%d,"lint":%d,"structural:%s":%d}' "$t" "$v" "$l" "
 Discover verifier capabilities by **deterministic membership (P5)**: capabilities whose frontmatter
 declares `role: verifier` (the role enum in `ARCHITECTURE.md §3.1`) — never LLM classification.
 
-- **Today the set is EMPTY** (`grep -rl 'role: verifier'` → none). Record
+- **Today the set is EMPTY** (`node floor/count-verifiers.mjs .` → `{"registered":0,"verifiers":[]}`). Record
   `verifiers: { registered: 0, findings: [] }` and print **"no verifiers registered — floor gates only."**
   `/verify` is fully runnable in this state: Step 2 is a no-op and the verdict is the floor gates alone.
   **No verifier is authored speculatively (P7)** — see "The verifier plug-in slot" below.
+  - **Membership is a deterministic frontmatter read, never a content grep (P5).** `floor/count-verifiers.mjs`
+    parses each file's `---`-fenced YAML frontmatter and counts only files whose `role:` is `verifier`. It
+    replaces an earlier `grep -rl 'role: verifier'` shorthand that matched **prose**, not frontmatter (the
+    grep hit 8 files this run — PLAN/GRILL/REVIEW/VERIFY text and this command itself — and **grew** as the
+    repo's own prose about verifiers expanded; `pipeline-integration-probe` finding #3, `REVIEW.md:80` /
+    `VERIFY.md`). A `role: verifier` string in prose or a fenced code block is DATA _about_ verifiers, not a
+    declaration _of_ one — the enum-gated / free-text split (`ARCHITECTURE.md §8` / fix #1) applied to
+    membership detection.
 - **When verifiers exist,** run each over the feature artifacts; each emits a `findings.json` — the
   `finding-shape.md` array (enum-gated / free-text split — cited, not restated, P4). Collect these as
   **ADVISORY**: they are **appended to the report for the human (Step 4) and NEVER passed to
