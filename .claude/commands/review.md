@@ -5,7 +5,7 @@ kind: pharn-owned
 trust: trusted
 model_tier: sonnet
 reads: ["CONSTITUTION.md", "ARCHITECTURE.md", "THREAT-MODEL.md", "LIMITS.md", "<built increment>"]
-writes: ["features/<name>/REVIEW.md", "memory-bank/lessons-learned.md (gated)"]
+writes: ["features/<name>/REVIEW.md"]
 constitution_refs: ["P0", "P1", "P2", "P3", "P4"]
 enforces: ["P0", "P1", "P2", "P3"]
 version: "0.1.0"
@@ -27,15 +27,17 @@ Load the trusted prefix and obey it:
 ## Step 0 — Set the writes-scope (fix #7, fail-closed)
 
 **Before any write,** set the active writes-scope from this command's declared `writes:`
-(`features/<name>/REVIEW.md`, plus `memory-bank/lessons-learned.md` when a lesson is gated), resolved to
-the increment under review:
+(`features/<name>/REVIEW.md` — the single artifact `/review` writes), resolved to the increment under
+review:
 
 ```bash
 node .claude/hooks/set-writes-scope.cjs --from-frontmatter .claude/commands/review.md --target features/<name>/REVIEW.md
 ```
 
-Deterministic floor step (P0/P5): the scope is parsed from `writes:` (the trailing `(gated)` annotation
-is stripped), never chosen by a model. If a later write is blocked, the fix is to **declare the path in
+Deterministic floor step (P0/P5): the scope is parsed from `writes:`, never chosen by a model. `/review`
+declares **no** `memory-bank/**` path: a gated lesson is _proposed_ here and written only by a separate
+`/memory-promote` run (under its own scope, behind `check-provenance` + the human gate, P2) — so a canon
+write is never permitted to `/review`. If a later write is blocked, the fix is to **declare the path in
 `writes:` and re-run this setter** — never to bypass the hook (see CLAUDE.md, "Writes-scope").
 
 ## Step 1 — Floor first (P0)
@@ -104,6 +106,9 @@ Emit each finding in the exact object shape, with the split honored:
 Write `features/<name>/REVIEW.md`: the findings, grouped floor-gate vs advisory, and a one-line verdict (GREEN /
 blocked-with-N-floor-findings). A blocking floor-finding means the increment is not done.
 
-If a finding reveals a **real** recurring failure (P7 — real, not hypothetical), propose one lesson
-for `memory-bank/lessons-learned.md` via a **gated** promotion with provenance (this increment's
-id/diff) — do not write canon silently (P2). End your turn.
+If a finding reveals a **real** recurring failure (P7 — real, not hypothetical), **propose** one lesson
+for canon (`memory-bank/lessons-learned.md`): record it **inside this `REVIEW.md`** as a proposed
+candidate with provenance (this increment's id/diff). Do **not** write canon here — `/review`'s scope is
+`REVIEW.md` only. The actual promotion is a separate, human-gated `/memory-promote` run that sets its own
+scope, runs `check-provenance.mjs`, and halts for accept/deny (the model never self-promotes — P2). End
+your turn.
