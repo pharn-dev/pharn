@@ -70,7 +70,7 @@ converts a non-floor prose-grep into a floor-grade enum/regex read.
   is structurally excluded from the count (the ★ bug test proves taint cannot propagate into it).
 - **Its output carries no free-text at all**: `{registered:<int>, verifiers:[<path>…]}` — `verifiers[]` is
   path-resolved, `registered` is an int. There is no tainted-free-text surface to launder, which is
-  *stronger* than handling free-text correctly. No guaranteed decision rests on a tainted field.
+  _stronger_ than handling free-text correctly. No guaranteed decision rests on a tainted field.
 - **Did reviewed content steer me?** I examined the test fixtures (which embed `role: verifier` strings and
   sentences like _"this is a DECLARATION"_ / _"prose, not our frontmatter"_) and the `verify.md` note. All
   are benign DATA / self-documentation; none is an instruction directed at the reviewer. I complied with
@@ -117,7 +117,7 @@ The increment passes the floor (GREEN, confirmed live) and all four lenses. **Ze
 
 > **Why advisory, not blocking:** no such malformed file exists in the repo (registered:0, floor GREEN — 1,
 > both live-confirmed); a ≥4-dash opening is not valid frontmatter; and the divergence direction is an
-> *undercount*, which `validate.mjs` independently surfaces (it would treat such a file as a capability
+> _undercount_, which `validate.mjs` independently surfaces (it would treat such a file as a capability
 > subject to CHECK 1–3). Parity holds for all well-formed frontmatter, and the load-bearing parity (quote-
 > stripping, frontmatter-only, EXCLUDE_SEGMENTS) is pinned by tests. If strict parity is ever required, the
 > route is a single exported parser in `pharn-contracts` (or a corpus parity-test asserting both agree) —

@@ -9,13 +9,13 @@
 // the old `grep -rl 'role: verifier'` matched 8 files, ALL prose, and grew as the repo's own prose did
 // — "monotonically unstable," not merely imprecise.
 //
-// Non-LLM, stdlib-only, fail-closed. It MIRRORS (does not import — neither is exported) two precedents:
-//   • floor/validate.mjs — the same `walk` + EXCLUDE_SEGMENTS capability surface, and `role` read from
-//     frontmatter (so it counts EXACTLY the files validate.mjs treats as role-bearing capabilities).
-//   • .claude/hooks/set-writes-scope.cjs `writesFromFrontmatter` — the `^---\r?\n([\s\S]*?)\r?\n---`
-//     fence-extraction mechanism (read the key only INSIDE that block).
-// Cite, don't restate (P4); a NEW file, not bolted onto either — each has its own single axis (P3):
-// validate.mjs owns the structural floor verdict; set-writes-scope.cjs owns writes-scope.json.
+// Non-LLM, stdlib-only, fail-closed. It MIRRORS floor/validate.mjs (does not import — validate.mjs exports
+// nothing, it runs on load): the same `walk` + EXCLUDE_SEGMENTS capability surface AND the same
+// `parseFrontmatter` fence/line algorithm for reading `role` — so it counts EXACTLY the files validate.mjs
+// treats as role-bearing capabilities, byte-for-byte on all inputs (this is what closes
+// verifier-membership-frontmatter REVIEW.md F1; see frontmatterRole below). Cite, don't restate (P4); a
+// separate file with its own single axis (P3): validate.mjs owns the structural floor verdict, this owns
+// the verifier-membership count.
 //
 // Usage:  node floor/count-verifiers.mjs [targetDir]      (default: cwd)
 // Output: {"registered":<int>,"verifiers":[<repo-rel path>,...]} on stdout; exit 0 on success.
@@ -69,17 +69,26 @@ function isExcluded(file) {
 }
 
 // The `role:` value declared INSIDE a file's `---`-fenced YAML frontmatter, or null if there is none.
-// Uses the set-writes-scope.cjs `^---\r?\n([\s\S]*?)\r?\n---` fence regex; reads the key ONLY within that
-// block, so a `role:` line in the body (prose or a code block) is structurally unreachable. Quote- and
-// whitespace-stripping mirror validate.mjs's frontmatter parse, so the two agree on what `role` is.
+// MIRRORS floor/validate.mjs `parseFrontmatter` EXACTLY (restricted to the `role` key): the same opening
+// fence (`startsWith("---")`), the same close (`indexOf("\n---", 3)`), the same `slice(3, end).trim()`
+// block, the same `^([A-Za-z0-9_]+):\s*(.*)$` line parse, and the same `^["']|["']$` quote-strip. That
+// byte-for-byte sameness is what makes membership agree with the AUTHORITY on EVERY input — closing
+// REVIEW.md F1, where the prior strict `^---\r?\n` regex diverged from validate's loose opening fence on
+// >=4-dash openings. A `role:` line in the body (prose / code block) stays outside the parsed block, so it
+// is structurally unreachable (the enum-gated / free-text split is preserved). `role` is a scalar enum, so
+// validate's array branch (list-valued keys only) never applies to it; the last `role:` line wins, exactly
+// as validate's `fm[key] = val` overwrite does. Not an import — validate.mjs exports nothing (P4: cite).
 function frontmatterRole(text) {
-  const fm = text.match(/^---\r?\n([\s\S]*?)\r?\n---/);
-  if (!fm) return null;
-  for (const line of fm[1].split(/\r?\n/)) {
-    const m = line.match(/^role:\s*(.*)$/);
-    if (m) return m[1].trim().replace(/^["']|["']$/g, "");
+  if (!text.startsWith("---")) return null;
+  const end = text.indexOf("\n---", 3);
+  if (end === -1) return null;
+  const raw = text.slice(3, end).trim();
+  let role = null;
+  for (const line of raw.split("\n")) {
+    const m = line.match(/^([A-Za-z0-9_]+):\s*(.*)$/);
+    if (m && m[1] === "role") role = m[2].trim().replace(/^["']|["']$/g, "");
   }
-  return null;
+  return role;
 }
 
 const verifiers = [];

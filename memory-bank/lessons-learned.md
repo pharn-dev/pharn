@@ -150,3 +150,29 @@ the floor.
 - surfaced by: `features/pipeline-integration-probe/REVIEW.md` (integration finding,
   `.claude/commands/regress.md:116`) + `REGRESSION.md` observation #2.
 - promoted: 2026-06-27 via gated `/memory-promote` (human-approved).
+
+## L6 — Membership/structural facts are read from the structured location, never grepped from free text
+
+**Lesson.** A structural or membership fact — "does this capability declare `role: verifier`?", "what
+paths does this plan write?" — is read from its STRUCTURED location (the `---`-fenced YAML frontmatter, an
+enum, `package.json`), never pattern-matched as a substring over file contents. The enum-gated vs free-text
+split (fix #1) governs MEMBERSHIP DETECTION, not only finding emission: a `role: verifier` string in prose
+or a fenced code block is DATA about verifiers, not a declaration of one. A substring grep over contents is
+not a membership test — it conflates documentation with declaration.
+
+**Why it matters.** A prose-matching membership check is monotonically unstable: it silently grew from a
+predicted 3 to 8 matches as the repo accumulated prose mentioning `role: verifier` (none real
+declarations), so `/verify` could believe verifiers exist when none do, or run garbage over them. This is
+the P0 disease ("written" mistaken for "declared/guaranteed") at the membership layer — the same discipline
+as the scope-setter reading `## Files` structurally (fix #15) and the finding object's enum-gated vs
+free-text split (fix #1). Remedy: read membership deterministically from the structured field
+(`floor/count-verifiers.mjs` parses the frontmatter fence and counts `role === "verifier"`); reserve free
+text for human-facing DATA. Complements L5.
+
+**Provenance.**
+
+- feature: `verifier-membership-frontmatter`
+- commit: `c355221f929769ae78dd90063843e804cb3a8fa4`
+- surfaced by: `features/verifier-membership-frontmatter/REVIEW.md` — proposed lesson (triggered by
+  `pipeline-integration-probe` finding #3, `REVIEW.md:80` / `VERIFY.md`).
+- promoted: 2026-06-29 via gated `/memory-promote` (human-approved).

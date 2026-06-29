@@ -9,7 +9,9 @@
 //     CLOSED;
 //   • a `role: verifier` in REAL `---`-fenced frontmatter registers as exactly one;
 //   • a frontmatter `role: verifier` under an EXCLUDED segment (floor/) is NOT a capability — so the
-//     count matches validate.mjs's surface and the live floor count stays 1.
+//     count matches validate.mjs's surface and the live floor count stays 1;
+//   • a >=4-dash opening fence (`----`) registers iff validate.mjs would — frontmatterRole now mirrors
+//     validate.mjs's parseFrontmatter byte-for-byte, so the two never diverge (REVIEW.md F1, CLOSED).
 
 import { test } from "node:test";
 import assert from "node:assert/strict";
@@ -109,6 +111,19 @@ role: verifier
 Body text.
 `;
 
+// a >=4-dash opening fence (`----`) declaring role: verifier. validate.mjs's loose `startsWith("---")`
+// parses it as frontmatter; after the F1 alignment this counter MUST agree (the prior strict `^---\r?\n`
+// regex returned null here). This is the exact REVIEW.md F1 divergence the increment closes.
+const FOURDASH_VERIFIER = `----
+role: verifier
+---
+# body
+`;
+
+// CRLF frontmatter — parity check: validate.mjs strips the trailing \r via each value's .trim(), so role
+// resolves to "verifier"; this counter, now mirroring that algorithm, must match.
+const CRLF_VERIFIER = "---\r\nname: x\r\nrole: verifier\r\n---\r\n# body\r\n";
+
 // --- tests ----------------------------------------------------------------------------------------
 
 test("★ THE BUG, PROVEN CLOSED: role: verifier in PROSE and in a CODE BLOCK never registers", () => {
@@ -164,6 +179,22 @@ test("a malformed (unclosed) frontmatter fence containing role: verifier → 0",
     const r = run(root);
     assert.equal(r.status, 0);
     assert.deepEqual(json(r), { registered: 0, verifiers: [] });
+  });
+});
+
+test("★ F1 CLOSED: a >=4-dash opening fence (`----`) registers, matching validate.mjs's loose fence", () => {
+  withRepo({ "pharn-pipeline/four.md": FOURDASH_VERIFIER }, (root) => {
+    const r = run(root);
+    assert.equal(r.status, 0);
+    assert.deepEqual(json(r), { registered: 1, verifiers: ["pharn-pipeline/four.md"] });
+  });
+});
+
+test("CRLF frontmatter registers (parity with validate.mjs's slice/trim/split line parse)", () => {
+  withRepo({ "pharn-core/crlf.md": CRLF_VERIFIER }, (root) => {
+    const r = run(root);
+    assert.equal(r.status, 0);
+    assert.deepEqual(json(r), { registered: 1, verifiers: ["pharn-core/crlf.md"] });
   });
 });
 

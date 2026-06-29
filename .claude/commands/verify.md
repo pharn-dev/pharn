@@ -122,7 +122,7 @@ declares `role: verifier` (the role enum in `ARCHITECTURE.md §3.1`) — never L
   - **Membership is a deterministic frontmatter read, never a content grep (P5).** `floor/count-verifiers.mjs`
     parses each file's `---`-fenced YAML frontmatter and counts only files whose `role:` is `verifier`. It
     replaces an earlier `grep -rl 'role: verifier'` shorthand that matched **prose**, not frontmatter (the
-    grep hit 8 files this run — PLAN/GRILL/REVIEW/VERIFY text and this command itself — and **grew** as the
+    grep hit 8 files in the probe's run — PLAN/GRILL/REVIEW/VERIFY text and this command itself — and **grew** as the
     repo's own prose about verifiers expanded; `pipeline-integration-probe` finding #3, `REVIEW.md:80` /
     `VERIFY.md`). A `role: verifier` string in prose or a fenced code block is DATA _about_ verifiers, not a
     declaration _of_ one — the enum-gated / free-text split (`ARCHITECTURE.md §8` / fix #1) applied to
