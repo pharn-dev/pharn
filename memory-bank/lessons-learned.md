@@ -176,3 +176,32 @@ text for human-facing DATA. Complements L5.
 - surfaced by: `features/verifier-membership-frontmatter/REVIEW.md` — proposed lesson (triggered by
   `pipeline-integration-probe` finding #3, `REVIEW.md:80` / `VERIFY.md`).
 - promoted: 2026-06-29 via gated `/memory-promote` (human-approved).
+
+## L7 — A stage's writes: must equal exactly what it writes — never declare a downstream gate's target upstream
+
+**Lesson.** A pipeline stage's `writes:` declaration must list exactly the paths the stage's own code
+writes this run — nothing aspirational, and never the target of a _downstream_ gated action. Declaring
+`memory-bank/lessons-learned.md` in `/review`'s `writes:` made the fix #7 setter resolve a two-path scope
+the pre-write hook then PERMITTED, silently granting `/review` a direct, ungated canon write — the very
+power `/memory-promote`'s `check-provenance` + human accept exist to withhold. A stage that only _proposes_
+a lesson must not hold write-scope to canon; route the gated write through the dedicated command, which
+declares that path itself.
+
+**Why it matters.** fix #7's guarantee — that a stage may write only its declared outputs — is only as
+tight as the declaration it reads; an over-declaration is permissive in the _dangerous_ direction (the
+same class as the #15 scope-setter `## Files` leak, and the inverse of L3's too-narrow friction). It is the
+P0 disease one layer up: the gate is real, yet a stage can be handed a power the gate was built to withhold
+simply by naming the gate's target in its own `writes:`. The floor cannot catch a per-command
+over-declaration on its own — `validate.mjs` ignores `.claude/`, and nothing enumerates every command's
+`writes:` for canon paths (a named, P7-eligible residual). Remedy: declare only real outputs; keep canon
+writable solely through `/memory-promote`; and pin the resolved scope with a test (set-equality to the real
+outputs) so a future re-widening fails closed. Complements L3 (same field, opposite failure direction) and
+L5/L6 (a floor verdict or membership test is only as trustworthy as the declarations and inputs it reads).
+
+**Provenance.**
+
+- feature: `review-scope-tighten`
+- commit: `f225203fda33956f9dc4eeac3d42c66122ed3cdd`
+- surfaced by: `features/review-scope-tighten/REVIEW.md` — proposed lesson + finding F1; triggered by
+  `pipeline-integration-probe` finding #2 (`features/pipeline-integration-probe/REVIEW.md:101-114`).
+- promoted: 2026-06-29 via gated `/memory-promote` (human-approved).
