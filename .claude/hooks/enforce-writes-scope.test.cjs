@@ -222,6 +222,25 @@ test("setter --from-frontmatter keeps concrete paths and resolves placeholders w
   assert.deepEqual(rec.scope, ["features/foo/REVIEW.md", "memory-bank/lessons-learned.md"]);
 });
 
+// --- Regression (pipeline-integration-probe finding #2): the REAL /review declares ONLY its output ---
+// /review writes one artifact — features/<name>/REVIEW.md. Canon (memory-bank/**) is written solely by
+// /memory-promote (gated + check-provenance + human accept). A `memory-bank/**` entry in /review's
+// `writes:` would make the setter resolve a scope the pre-write hook then PERMITS — a direct, ungated
+// canon write. Pin the real command file's resolved scope to exactly its REVIEW.md path.
+
+test("setter --from-frontmatter on the REAL review.md resolves to ONLY features/<name>/REVIEW.md (no canon path)", () => {
+  const cwd = tmp();
+  const reviewCmd = join(__dirname, "..", "commands", "review.md");
+  const r = setter(cwd, "--from-frontmatter", reviewCmd, "--target", "features/sample/REVIEW.md");
+  assert.equal(r.status, 0);
+  const rec = JSON.parse(fs.readFileSync(join(cwd, ".pharn", "writes-scope.json"), "utf8"));
+  assert.deepEqual(rec.scope, ["features/sample/REVIEW.md"]);
+  assert.ok(
+    !rec.scope.includes("memory-bank/lessons-learned.md"),
+    "/review proposes lessons; only /memory-promote writes canon (P2) — review's scope must exclude memory-bank"
+  );
+});
+
 // --- Setter Mode B (PLAN.md ## Files) ---
 
 test("setter --from-plan reads the leading back-tick path of each ## Files item, stopping at 'not touched'", () => {
