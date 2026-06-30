@@ -45,3 +45,22 @@ test("artifact-split lock: a ROOT features/<name> --target is REJECTED (pharn-de
   assert.equal(r.status, 1);
   assert.equal(fs.existsSync(join(cwd, ".pharn", "writes-scope.json")), false);
 });
+
+// --- fail-closed: --from-plan on a PLAN with no parseable `## Files` (the /pharn-build crux) ---
+// /pharn-build sets its writes-scope via `set-writes-scope.cjs --from-plan PLAN.md`, which requires a
+// `## Files` heading whose items lead with a back-tick path. The product /pharn-plan template currently
+// emits a free-text `## Steps / Files` section instead — so the setter MUST fail-closed (exit 1, no scope
+// written) rather than guess a scope from un-parseable prose. This pins that crux scenario (previously
+// uncovered: every other --from-plan test feeds a present `## Files`).
+
+test("--from-plan on a PLAN with no `## Files` heading (a free-text `## Steps / Files`) exits 1 and writes nothing (fail-closed)", () => {
+  const cwd = tmp();
+  const plan = join(cwd, "PLAN.md");
+  fs.writeFileSync(
+    plan,
+    ["# PLAN — x", "", "## Steps / Files", "", "- a concrete step or file to change", "- another step", ""].join("\n")
+  );
+  const r = setter(cwd, "--from-plan", plan);
+  assert.equal(r.status, 1);
+  assert.equal(fs.existsSync(join(cwd, ".pharn", "writes-scope.json")), false);
+});
