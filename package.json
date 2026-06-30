@@ -25,7 +25,7 @@
   "type": "commonjs",
   "main": "index.js",
   "scripts": {
-    "test": "node --test \"**/*.test.mjs\" \"**/*.test.cjs\" \".claude/**/*.test.mjs\" \".claude/**/*.test.cjs\"",
+    "test": "node --test \"**/*.test.mjs\" \"**/*.test.cjs\" \".claude/**/*.test.mjs\" \".claude/**/*.test.cjs\" \".dev/**/*.test.mjs\" \".dev/**/*.test.cjs\"",
     "lint": "eslint .",
     "lint:md": "markdownlint-cli2",
     "format": "prettier --write .",

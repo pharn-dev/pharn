@@ -1,4 +1,4 @@
-// floor/count-verifiers.test.mjs — hermetic tests for the deterministic verifier-membership counter.
+// .dev/floor/count-verifiers.test.mjs — hermetic tests for the deterministic verifier-membership counter.
 //
 // NO `claude -p`, NO git, NO network. Each test builds a small repo in an os.tmpdir() scratch dir and
 // asserts the public surface (exit code + stdout JSON) by subprocess — mirroring check-verify.test.mjs.
@@ -8,7 +8,7 @@
 //     exact pipeline-integration-probe finding #3 defect (the old grep matched 8 prose files), PROVEN
 //     CLOSED;
 //   • a `role: verifier` in REAL `---`-fenced frontmatter registers as exactly one;
-//   • a frontmatter `role: verifier` under an EXCLUDED segment (floor/) is NOT a capability — so the
+//   • a frontmatter `role: verifier` under an EXCLUDED segment (.dev/floor/) is NOT a capability — so the
 //     count matches validate.mjs's surface and the live floor count stays 1;
 //   • a >=4-dash opening fence (`----`) registers iff validate.mjs would — frontmatterRole now mirrors
 //     validate.mjs's parseFrontmatter byte-for-byte, so the two never diverge (REVIEW.md F1, CLOSED).
@@ -198,8 +198,8 @@ test("CRLF frontmatter registers (parity with validate.mjs's slice/trim/split li
   });
 });
 
-test("★ a real verifier under an EXCLUDED segment (floor/) is not a capability → 0", () => {
-  withRepo({ "floor/fake-verifier.md": REAL_VERIFIER, ".claude/commands/also.md": REAL_VERIFIER }, (root) => {
+test("★ a real verifier under an EXCLUDED segment (.dev/floor/) is not a capability → 0", () => {
+  withRepo({ ".dev/floor/fake-verifier.md": REAL_VERIFIER, ".claude/commands/also.md": REAL_VERIFIER }, (root) => {
     const r = run(root);
     assert.equal(r.status, 0);
     assert.deepEqual(json(r), { registered: 0, verifiers: [] });

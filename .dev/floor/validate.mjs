@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// floor/validate.mjs — the deterministic floor for PHARN.
+// .dev/floor/validate.mjs — the deterministic floor for PHARN.
 //
 // This is the only GUARANTEED part of this repo's build loop (CONSTITUTION P0).
 // It is non-LLM, dependency-free (Node stdlib only), and exits non-zero on any RED finding.
@@ -13,11 +13,11 @@
 //   6. no forbidden sibling reference                               (P3, best-effort)
 //   7. archetype maps agree, if an archetype-maps manifest exists   (fix #5, conditional)
 //
-// Usage:  node floor/validate.mjs [targetDir]      (default: cwd)
+// Usage:  node .dev/floor/validate.mjs [targetDir]      (default: cwd)
 // Honest scope: checks 5 and 6 are BEST-EFFORT — markdown has no import statement to lint, so they
 // reduce a class of mistakes, they do not eliminate it (see ARCHITECTURE §4 caveat, LIMITS).
 //
-// It deliberately does NOT validate this repo's own tooling (.claude/commands, floor/) — those
+// It deliberately does NOT validate this repo's own tooling (.claude/commands, .dev/) — those
 // are advisory orchestration, not built PHARN capabilities. Point this at the PHARN repo.
 
 import { readFileSync, readdirSync, statSync, existsSync } from "node:fs";
@@ -27,7 +27,7 @@ const TARGET = process.argv[2] || ".";
 const COUPLING_ENUM = ["agnostic", "framework-seam", "framework-specific"];
 const ROLE_ENUM = ["skill", "lens", "validator", "verifier", "griller", "auditor"];
 const KIND_ENUM = ["pharn-owned", "vendor-official", "community"];
-const EXCLUDE_SEGMENTS = [`${sep}.claude${sep}commands${sep}`, `${sep}floor${sep}`, `${sep}node_modules${sep}`, `${sep}.git${sep}`];
+const EXCLUDE_SEGMENTS = [`${sep}.claude${sep}commands${sep}`, `${sep}.dev${sep}`, `${sep}node_modules${sep}`, `${sep}.git${sep}`];
 
 const findings = [];
 function finding(severity, rule_id, file, problem) {

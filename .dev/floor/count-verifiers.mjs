@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// floor/count-verifiers.mjs — deterministic verifier-MEMBERSHIP counter (CONSTITUTION P0/P5).
+// .dev/floor/count-verifiers.mjs — deterministic verifier-MEMBERSHIP counter (CONSTITUTION P0/P5).
 //
 // Answers ONE structural question for /verify Step 2: which capabilities DECLARE `role: verifier`?
 // Membership is read ONLY from the `---`-fenced YAML frontmatter — never a substring grep over file
@@ -9,7 +9,7 @@
 // the old `grep -rl 'role: verifier'` matched 8 files, ALL prose, and grew as the repo's own prose did
 // — "monotonically unstable," not merely imprecise.
 //
-// Non-LLM, stdlib-only, fail-closed. It MIRRORS floor/validate.mjs (does not import — validate.mjs exports
+// Non-LLM, stdlib-only, fail-closed. It MIRRORS .dev/floor/validate.mjs (does not import — validate.mjs exports
 // nothing, it runs on load): the same `walk` + EXCLUDE_SEGMENTS capability surface AND the same
 // `parseFrontmatter` fence/line algorithm for reading `role` — so it counts EXACTLY the files validate.mjs
 // treats as role-bearing capabilities, byte-for-byte on all inputs (this is what closes
@@ -17,7 +17,7 @@
 // separate file with its own single axis (P3): validate.mjs owns the structural floor verdict, this owns
 // the verifier-membership count.
 //
-// Usage:  node floor/count-verifiers.mjs [targetDir]      (default: cwd)
+// Usage:  node .dev/floor/count-verifiers.mjs [targetDir]      (default: cwd)
 // Output: {"registered":<int>,"verifiers":[<repo-rel path>,...]} on stdout; exit 0 on success.
 //         Exits non-zero (writing NOTHING to stdout) if targetDir is missing / not a directory — never a
 //         silent 0 from looking in the wrong place (P5, fail-closed).
@@ -26,9 +26,9 @@ import { readFileSync, readdirSync, statSync, existsSync } from "node:fs";
 import { join, relative, sep } from "node:path";
 
 const TARGET = process.argv[2] || ".";
-// Same exclusions as floor/validate.mjs: tooling (.claude/commands, floor/) and noise are NOT the
+// Same exclusions as .dev/floor/validate.mjs: tooling (.claude/commands, .dev/) and noise are NOT the
 // capability surface, so a `role: verifier` frontmatter there is not a built-PHARN verifier.
-const EXCLUDE_SEGMENTS = [`${sep}.claude${sep}commands${sep}`, `${sep}floor${sep}`, `${sep}node_modules${sep}`, `${sep}.git${sep}`];
+const EXCLUDE_SEGMENTS = [`${sep}.claude${sep}commands${sep}`, `${sep}.dev${sep}`, `${sep}node_modules${sep}`, `${sep}.git${sep}`];
 
 function fail(msg) {
   process.stderr.write("count-verifiers: " + msg + "\n");
@@ -40,7 +40,7 @@ if (!existsSync(TARGET) || !statSync(TARGET).isDirectory()) {
   fail(`target dir not found (or not a directory): ${TARGET}`);
 }
 
-// Recursive *.md collector — mirrors floor/validate.mjs `walk`.
+// Recursive *.md collector — mirrors .dev/floor/validate.mjs `walk`.
 function walk(dir, acc = []) {
   let entries;
   try {
@@ -62,14 +62,14 @@ function walk(dir, acc = []) {
   return acc;
 }
 
-// Mirrors floor/validate.mjs `isExcluded` — the same EXCLUDE_SEGMENTS surface.
+// Mirrors .dev/floor/validate.mjs `isExcluded` — the same EXCLUDE_SEGMENTS surface.
 function isExcluded(file) {
   const norm = sep + relative(TARGET, file);
   return EXCLUDE_SEGMENTS.some((seg) => norm.includes(seg));
 }
 
 // The `role:` value declared INSIDE a file's `---`-fenced YAML frontmatter, or null if there is none.
-// MIRRORS floor/validate.mjs `parseFrontmatter` EXACTLY (restricted to the `role` key): the same opening
+// MIRRORS .dev/floor/validate.mjs `parseFrontmatter` EXACTLY (restricted to the `role` key): the same opening
 // fence (`startsWith("---")`), the same close (`indexOf("\n---", 3)`), the same `slice(3, end).trim()`
 // block, the same `^([A-Za-z0-9_]+):\s*(.*)$` line parse, and the same `^["']|["']$` quote-strip. That
 // byte-for-byte sameness is what makes membership agree with the AUTHORITY on EVERY input — closing

@@ -31,31 +31,40 @@ Two gates, and both must pass:
 
 ```bash
 npm run check                 # format:check + lint + lint:md + test
-node floor/validate.mjs .     # the deterministic floor (exits non-zero on any RED finding)
+node .dev/floor/validate.mjs .     # the deterministic floor (exits non-zero on any RED finding)
 ```
 
-`npm run check` runs Prettier (`--check`), ESLint, markdownlint, and the `node --test` suite (the write-guard hook and the floor each have tests). The floor checks the structural invariants of any PHARN capability you add. A GREEN floor means "the shape is sound," never "the design is right" — that judgment is [`/review`](./.claude/commands/review.md)'s advisory job, and yours.
+`npm run check` runs Prettier (`--check`), ESLint, markdownlint, and the `node --test` suite (the write-guard hook and the floor each have tests). The floor checks the structural invariants of any PHARN capability you add. A GREEN floor means "the shape is sound," never "the design is right" — that judgment is [`/pharn-dev-review`](./.claude/commands/pharn-dev-review.md)'s advisory job, and yours.
 
 ## The build loop
 
 PHARN is built one increment at a time, via three slash commands:
 
 ```text
-/plan  →  approve/correct PLAN.md  →  /build  →  floor/validate.mjs  →  /review  →  fold lessons  →  next
+/pharn-dev-plan  →  approve/correct PLAN.md  →  /pharn-dev-build  →  .dev/floor/validate.mjs  →  /pharn-dev-review  →  fold lessons  →  next
 ```
 
-- [`/plan`](./.claude/commands/plan.md) — discovery-first; scopes the smallest coherent increment, pins the architecture content-hash, then **halts** to ask. It never builds.
-- [`/build`](./.claude/commands/build.md) — executes one approved increment, writes each capability **together with its evals**, runs the floor, and halts on RED.
-- [`/review`](./.claude/commands/review.md) — the floor first, then four advisory lenses, each citing a principle. It treats the increment under review as untrusted.
+- [`/pharn-dev-plan`](./.claude/commands/pharn-dev-plan.md) — discovery-first; scopes the smallest coherent increment, pins the architecture content-hash, then **halts** to ask. It never builds.
+- [`/pharn-dev-build`](./.claude/commands/pharn-dev-build.md) — executes one approved increment, writes each capability **together with its evals**, runs the floor, and halts on RED.
+- [`/pharn-dev-review`](./.claude/commands/pharn-dev-review.md) — the floor first, then four advisory lenses, each citing a principle. It treats the increment under review as untrusted.
 
 When you add a PHARN capability, follow the conventions in [`CLAUDE.md`](./CLAUDE.md) ("Conventions when building PHARN capabilities"): every capability ships with evals (P1), and the floor enforces it.
+
+## The dev/product boundary
+
+The repo separates the **product** (what a user receives) from the **build apparatus** (what a contributor uses), in the filesystem and in command names:
+
+- **`.dev/`** holds the apparatus — `.dev/floor/` (checkers + tests), `.dev/features/` (build-loop audit trails), `.dev/memory-bank/`. It is committed but excluded **wholesale** by `.dev/floor/validate.mjs`. The product lives at the root (`pharn-review/`, `pharn-contracts/`, and a root `features/` for product-pipeline artifacts).
+- **Commands split by name prefix** (they cannot move out of `.claude/`): build-apparatus commands are **`pharn-dev-*`** (`pharn-dev-plan`, `-build`, …); product commands are **`pharn-*`** without `-dev-`. The prefix is naming/UX only — **not** an access gate.
+
+See [`CLAUDE.md`](./CLAUDE.md) ("Repo layout — the dev/product boundary") for the full map.
 
 ## Branches and commits
 
 - Open an issue first for any non-trivial change. this repo is small-surface on purpose (P7: a new rule or enforcer is justified only by a _real_ failure, never a hypothetical).
 - Branch from `main`: `feat/…`, `fix/…`, or `docs/…`.
 - Write [Conventional Commits](https://www.conventionalcommits.org/), one logical change per commit.
-- Changes to the executable floor (`.claude/hooks/*.cjs`, `floor/*.mjs`) ship with tests (`*.test.cjs` / `*.test.mjs`, run by `npm test`).
+- Changes to the executable floor (`.claude/hooks/*.cjs`, `.dev/floor/*.mjs`) ship with tests (`*.test.cjs` / `*.test.mjs`, run by `npm test`).
 
 ## Conduct and security
 

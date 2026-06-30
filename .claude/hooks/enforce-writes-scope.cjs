@@ -23,9 +23,12 @@ const path = require("path");
 const ALWAYS = [".pharn/**"];
 
 // Fail-closed allow-list used when no scope file is set. Module dirs + process scratch only; the
-// sensitive zones (memory-bank/, floor/, .claude/, root files) are intentionally absent — reaching
-// them requires an explicit `writes:` declaration.
-const DEFAULT_SAFE_SET = ["features/**", "pharn-*/**"];
+// sensitive zones (.dev/memory-bank/, .dev/floor/, .claude/, root files) are intentionally absent —
+// reaching them requires an explicit `writes:` declaration. `.dev/features/**` (build-loop artifacts)
+// IS in the set: the dev/product move relocated `features/**` there, and it keeps its prior
+// writable-by-default behavior — every sensitive zone above still stays deny-by-default (it matches
+// none of these globs).
+const DEFAULT_SAFE_SET = ["features/**", ".dev/features/**", "pharn-*/**"];
 
 const SCOPE_FILE = ".pharn/writes-scope.json";
 

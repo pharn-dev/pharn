@@ -4,13 +4,13 @@ role: skill
 kind: pharn-owned
 trust: trusted
 model_tier: sonnet
-reads: ["CONSTITUTION.md", "ARCHITECTURE.md", "features/<name>/PLAN.md", "<target repo>"]
+reads: ["CONSTITUTION.md", "ARCHITECTURE.md", ".dev/features/<name>/PLAN.md", "<target repo>"]
 writes: ["<files named in PLAN.md only>"]
 constitution_refs: ["P0", "P1", "P2", "P3", "P4", "P5", "P6"]
 version: "0.1.0"
 ---
 
-# /build — build one increment of PHARN
+# /pharn-dev-build — build one increment of PHARN
 
 You are the **builder**. You execute exactly one **approved** `PLAN.md` increment. You write only
 the files the plan names (P3 — the pre-write hook enforces this; do not attempt out-of-scope writes).
@@ -29,7 +29,7 @@ pre-write hook permits exactly the files the plan names and denies everything el
 node .claude/hooks/set-writes-scope.cjs --from-plan <active PLAN.md>
 ```
 
-`<active PLAN.md>` is the plan being built — the one named in the `/build` invocation (`features/<name>/PLAN.md`). `/build`'s own `writes:` is a placeholder, so the scope is
+`<active PLAN.md>` is the plan being built — the one named in the `/pharn-dev-build` invocation (`.dev/features/<name>/PLAN.md`). `/pharn-dev-build`'s own `writes:` is a placeholder, so the scope is
 read from the plan's `## Files` list (the back-tick paths above the "not touched" subsection) — which
 is also what makes "writes only the files the plan names" true. Deterministic (P0/P5): the scope is
 parsed, not chosen. A later block means **declare the path in the plan's `## Files` and re-run this
@@ -64,20 +64,20 @@ For each file in the plan:
 
 ## Step 3 — Run the floor (the deterministic gate)
 
-Run: `node floor/validate.mjs <target-dir>`
+Run: `node .dev/floor/validate.mjs <target-dir>`
 
 The floor checks, deterministically (no LLM): frontmatter present; evals present; **every
 `enforces` rule_id produced by ≥1 eval**; `coupling` enum membership; the four archetype maps
 agree; finding templates separate enum-gated from free-text fields; no forbidden sibling reference.
 
 - **Any RED → HALT.** Fix the increment until the floor is GREEN. Do not proceed, do not mark the
-  increment done, do not hand off to `/review` with a RED floor.
+  increment done, do not hand off to `/pharn-dev-review` with a RED floor.
 - The floor is the only guarantee in this step. A green floor means the structural invariants hold —
-  it does **not** mean the content is correct; that is `/review`'s advisory job.
+  it does **not** mean the content is correct; that is `/pharn-dev-review`'s advisory job.
 
 ## Step 4 — Record and stop
 
 Write a one-paragraph build note (what landed, floor status GREEN, any decisions). Update the
 memory-bank `pattern-library`/`lessons-learned` **only** via a gated promotion with provenance
 (`ARCHITECTURE.md §5`) — do not silently write canon (P2). End your turn. Do not self-review;
-`/review` is a separate run.
+`/pharn-dev-review` is a separate run.

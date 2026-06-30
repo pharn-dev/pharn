@@ -5,15 +5,15 @@ kind: pharn-owned
 trust: trusted
 model_tier: sonnet
 reads: ["CONSTITUTION.md", "ARCHITECTURE.md", "THREAT-MODEL.md", "LIMITS.md", "<target repo>"]
-writes: ["features/<name>/PLAN.md"]
+writes: [".dev/features/<name>/PLAN.md"]
 constitution_refs: ["P0", "P1", "P3", "P5", "P6", "P7"]
 version: "0.1.0"
 ---
 
-# /plan — plan one increment of PHARN
+# /pharn-dev-plan — plan one increment of PHARN
 
 You are the **planner**. You produce a plan for exactly **one** increment of building PHARN. You do
-not write product files. Your output is `features/<name>/PLAN.md` (one folder per increment; `<name>` is a short kebab-case slug).
+not write product files. Your output is `.dev/features/<name>/PLAN.md` (one folder per increment; `<name>` is a short kebab-case slug).
 
 First, load the trusted prefix into your working context and obey it for this entire run:
 
@@ -27,7 +27,7 @@ First, load the trusted prefix into your working context and obey it for this en
 plan file) from this command's declared `writes:`:
 
 ```bash
-node .claude/hooks/set-writes-scope.cjs --from-frontmatter .claude/commands/plan.md --target features/<name>/PLAN.md
+node .claude/hooks/set-writes-scope.cjs --from-frontmatter .claude/commands/pharn-dev-plan.md --target .dev/features/<name>/PLAN.md
 ```
 
 Deterministic floor step (P0/P5): scope is parsed from `writes:` and narrowed to `--target` — never
@@ -41,7 +41,7 @@ chosen by a model. If a later write is blocked with the `writes-scope guard` mes
 2. Inspect the **live** target repo (the repo where PHARN is being built). List what exists. If
    nothing has been read this run, you may not claim anything about its state.
 3. Compute and record the **content-hash of `ARCHITECTURE.md`** (the spec this plan is built
-   against): `node -e "console.log(require('crypto').createHash('sha256').update(require('fs').readFileSync('ARCHITECTURE.md')).digest('hex'))"`. This pins the spec by content, not by name (fix #4). `/build` will refuse if the hash has drifted.
+   against): `node -e "console.log(require('crypto').createHash('sha256').update(require('fs').readFileSync('ARCHITECTURE.md')).digest('hex'))"`. This pins the spec by content, not by name (fix #4). `/pharn-dev-build` will refuse if the hash has drifted.
 4. If the docs and the live repo disagree, or the increment is ambiguous → **HALT and ask** (P6).
    Do not guess. When you ask, present the open questions as an **interactive multiple-choice form**
    (use the `AskQuestion` tool, one entry per question, each with the candidate answers as selectable
@@ -67,10 +67,10 @@ For the increment, state explicitly:
   through its outputs (`ARCHITECTURE.md §8`).
 - **Determinism audit (P5):** any branch must be a membership test, or end its fallback in "ask".
 
-## Step 3 — Write `features/<name>/PLAN.md`
+## Step 3 — Write `.dev/features/<name>/PLAN.md`
 
 Create the folder and write the plan there — `<name>` is the increment's slug. Step 0 has already scoped
-that single file (`features/<name>/PLAN.md`), so this path is writable:
+that single file (`.dev/features/<name>/PLAN.md`), so this path is writable:
 
 ```markdown
 # PLAN — <increment name>
@@ -107,7 +107,7 @@ that single file (`features/<name>/PLAN.md`), so this path is writable:
 
 ## Step 4 — Halt (P6)
 
-After writing `features/<name>/PLAN.md`, do **not** build. Resolve any remaining open questions and confirm approval
+After writing `.dev/features/<name>/PLAN.md`, do **not** build. Resolve any remaining open questions and confirm approval
 through an **interactive form**, then end your turn:
 
 1. **Open questions → selectable form.** For every entry under `## Open questions (HALT)` that is still
@@ -118,5 +118,5 @@ through an **interactive form**, then end your turn:
    plan?"** with selectable options (e.g. _Approve as written_ / _Approve with changes_ / _Reject_).
    Wait for the answer.
 
-Surface the open questions and wait for the human to approve or correct. Building is `/build`'s job,
+Surface the open questions and wait for the human to approve or correct. Building is `/pharn-dev-build`'s job,
 and only after this plan is approved.

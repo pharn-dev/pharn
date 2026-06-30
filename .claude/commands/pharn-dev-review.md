@@ -1,21 +1,21 @@
 ---
-description: "Review what /build produced. Apply the 4 review lenses (each citing a principle), emit findings in the enum-gated/free-text split, separate floor-gate (blocking) from advisory findings, feed lessons. This is PHARN reviewing PHARN."
+description: "Review what /pharn-dev-build produced. Apply the 4 review lenses (each citing a principle), emit findings in the enum-gated/free-text split, separate floor-gate (blocking) from advisory findings, feed lessons. This is PHARN reviewing PHARN."
 role: lens
 kind: pharn-owned
 trust: trusted
 model_tier: sonnet
 reads: ["CONSTITUTION.md", "ARCHITECTURE.md", "THREAT-MODEL.md", "LIMITS.md", "<built increment>"]
-writes: ["features/<name>/REVIEW.md"]
+writes: [".dev/features/<name>/REVIEW.md"]
 constitution_refs: ["P0", "P1", "P2", "P3", "P4"]
 enforces: ["P0", "P1", "P2", "P3"]
 version: "0.1.0"
 ---
 
-# /review — review one increment of PHARN
+# /pharn-dev-review — review one increment of PHARN
 
-You are the **reviewer**. You review the increment `/build` just produced. You are PHARN reviewing
+You are the **reviewer**. You review the increment `/pharn-dev-build` just produced. You are PHARN reviewing
 PHARN — so your own output must obey the architecture you are checking (especially the finding
-object, fix #1). You emit `features/<name>/REVIEW.md`; you do not edit the built files.
+object, fix #1). You emit `.dev/features/<name>/REVIEW.md`; you do not edit the built files.
 
 Load the trusted prefix and obey it:
 
@@ -27,22 +27,22 @@ Load the trusted prefix and obey it:
 ## Step 0 — Set the writes-scope (fix #7, fail-closed)
 
 **Before any write,** set the active writes-scope from this command's declared `writes:`
-(`features/<name>/REVIEW.md` — the single artifact `/review` writes), resolved to the increment under
+(`.dev/features/<name>/REVIEW.md` — the single artifact `/pharn-dev-review` writes), resolved to the increment under
 review:
 
 ```bash
-node .claude/hooks/set-writes-scope.cjs --from-frontmatter .claude/commands/review.md --target features/<name>/REVIEW.md
+node .claude/hooks/set-writes-scope.cjs --from-frontmatter .claude/commands/pharn-dev-review.md --target .dev/features/<name>/REVIEW.md
 ```
 
-Deterministic floor step (P0/P5): the scope is parsed from `writes:`, never chosen by a model. `/review`
-declares **no** `memory-bank/**` path: a gated lesson is _proposed_ here and written only by a separate
-`/memory-promote` run (under its own scope, behind `check-provenance` + the human gate, P2) — so a canon
-write is never permitted to `/review`. If a later write is blocked, the fix is to **declare the path in
+Deterministic floor step (P0/P5): the scope is parsed from `writes:`, never chosen by a model. `/pharn-dev-review`
+declares **no** `.dev/memory-bank/**` path: a gated lesson is _proposed_ here and written only by a separate
+`/pharn-dev-memory-promote` run (under its own scope, behind `check-provenance` + the human gate, P2) — so a canon
+write is never permitted to `/pharn-dev-review`. If a later write is blocked, the fix is to **declare the path in
 `writes:` and re-run this setter** — never to bypass the hook (see CLAUDE.md, "Writes-scope").
 
 ## Step 1 — Floor first (P0)
 
-Before any LLM judgment, confirm `node floor/validate.mjs <target-dir>` is GREEN for the increment.
+Before any LLM judgment, confirm `node .dev/floor/validate.mjs <target-dir>` is GREEN for the increment.
 If it is RED, the increment should not have reached review — record a blocking finding citing the
 failed check and stop. The floor is the only guaranteed part of this review; everything below is
 **advisory**.
@@ -101,14 +101,14 @@ Emit each finding in the exact object shape, with the split honored:
   **inform**; they are never the sole basis for blocking a guaranteed/constitutional invariant. Mark
   them clearly as advisory.
 
-## Step — Write `features/<name>/REVIEW.md` and feed lessons
+## Step — Write `.dev/features/<name>/REVIEW.md` and feed lessons
 
-Write `features/<name>/REVIEW.md`: the findings, grouped floor-gate vs advisory, and a one-line verdict (GREEN /
+Write `.dev/features/<name>/REVIEW.md`: the findings, grouped floor-gate vs advisory, and a one-line verdict (GREEN /
 blocked-with-N-floor-findings). A blocking floor-finding means the increment is not done.
 
 If a finding reveals a **real** recurring failure (P7 — real, not hypothetical), **propose** one lesson
-for canon (`memory-bank/lessons-learned.md`): record it **inside this `REVIEW.md`** as a proposed
-candidate with provenance (this increment's id/diff). Do **not** write canon here — `/review`'s scope is
-`REVIEW.md` only. The actual promotion is a separate, human-gated `/memory-promote` run that sets its own
+for canon (`.dev/memory-bank/lessons-learned.md`): record it **inside this `REVIEW.md`** as a proposed
+candidate with provenance (this increment's id/diff). Do **not** write canon here — `/pharn-dev-review`'s scope is
+`REVIEW.md` only. The actual promotion is a separate, human-gated `/pharn-dev-memory-promote` run that sets its own
 scope, runs `check-provenance.mjs`, and halts for accept/deny (the model never self-promotes — P2). End
 your turn.

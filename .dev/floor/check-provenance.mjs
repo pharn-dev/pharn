@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// floor/check-provenance.mjs — the deterministic PROVENANCE + DUPLICATE-ID CHECKER for memory-bank promotion.
+// .dev/floor/check-provenance.mjs — the deterministic PROVENANCE + DUPLICATE-ID CHECKER for memory-bank promotion.
 //
 // Floor primitive #3 (enum / regex / presence; ARCHITECTURE §2), like validate.mjs and check-structural.mjs.
 // It is the floor reduction of ARCHITECTURE §5's "Promotion of a lesson/pattern to canon is a gated action
@@ -23,7 +23,7 @@
 // floor-verifiable fields (target enum, provenance shape, id set-membership). No guaranteed decision rests
 // on a free-text field (mirrors check-structural.mjs).
 //
-// Usage:  node floor/check-provenance.mjs <candidate.json> <canon-file.md>
+// Usage:  node .dev/floor/check-provenance.mjs <candidate.json> <canon-file.md>
 //   candidate.json : { target, id, provenance: { feature, commit, source, date } }  (+ title/body — IGNORED)
 //   canon-file.md  : the target canon file to check id-uniqueness against
 //                    (a not-yet-created file => empty canon, no duplicates — the first promotion case)
@@ -34,7 +34,7 @@ import { readFileSync, existsSync } from "node:fs";
 
 // Enums / shapes — every branch is a membership / regex / presence test (P5); the terminal fallback on any
 // non-member is a loud RED, never a guess. These are the enum-gated / floor-verifiable fields (never body).
-const TARGET_ENUM = ["memory-bank/lessons-learned.md", "memory-bank/pattern-library.md"]; // Q1: the two prescription files
+const TARGET_ENUM = [".dev/memory-bank/lessons-learned.md", ".dev/memory-bank/pattern-library.md"]; // Q1: the two prescription files
 const REQUIRED_PROVENANCE = ["feature", "commit", "source", "date"]; // Q2: the mandatory per-entry schema
 const COMMIT_RE = /^[0-9a-f]{7,40}$/; // a git SHA (short or full); the real value is captured by the command via `git rev-parse HEAD`
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/; // ISO calendar date
@@ -95,7 +95,7 @@ function main() {
   const canonPath = process.argv[3];
 
   if (!candidatePath || !canonPath) {
-    console.log("RED — usage: node floor/check-provenance.mjs <candidate.json> <canon-file.md>");
+    console.log("RED — usage: node .dev/floor/check-provenance.mjs <candidate.json> <canon-file.md>");
     return 1;
   }
 

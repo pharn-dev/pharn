@@ -49,12 +49,18 @@ test("no scope: features/ scratch is ALLOWED", () => {
   assert.equal(hook(tmp(), "features/foo/bar.md").status, 0);
 });
 
-test("no scope: memory-bank/ is DENIED (P2-gated zone)", () => {
-  assert.equal(hook(tmp(), "memory-bank/x.md").status, 2);
+test("no scope: .dev/memory-bank/ is DENIED (P2-gated zone — moved under .dev/, still deny-by-default)", () => {
+  assert.equal(hook(tmp(), ".dev/memory-bank/x.md").status, 2);
 });
 
-test("no scope: floor/ is DENIED (the floor itself)", () => {
-  assert.equal(hook(tmp(), "floor/x.mjs").status, 2);
+test("no scope: .dev/floor/ is DENIED (the floor itself — moved under .dev/, still deny-by-default)", () => {
+  assert.equal(hook(tmp(), ".dev/floor/x.mjs").status, 2);
+});
+
+test("no scope: .dev/features/ build-loop artifacts are ALLOWED (decision A — relocated features/ keeps writable-by-default)", () => {
+  // Locks decision A: the dev/product move added `.dev/features/**` to DEFAULT_SAFE_SET so the build-loop
+  // artifact zone keeps its prior behavior, while the two sensitive .dev/ zones above stay denied.
+  assert.equal(hook(tmp(), ".dev/features/foo/PLAN.md").status, 0);
 });
 
 test("no scope: .claude/ is DENIED (commands + hooks — a write here could disable fix #7)", () => {
@@ -228,16 +234,16 @@ test("setter --from-frontmatter keeps concrete paths and resolves placeholders w
 // `writes:` would make the setter resolve a scope the pre-write hook then PERMITS — a direct, ungated
 // canon write. Pin the real command file's resolved scope to exactly its REVIEW.md path.
 
-test("setter --from-frontmatter on the REAL review.md resolves to ONLY features/<name>/REVIEW.md (no canon path)", () => {
+test("setter --from-frontmatter on the REAL pharn-dev-review.md resolves to ONLY .dev/features/<name>/REVIEW.md (no canon path)", () => {
   const cwd = tmp();
-  const reviewCmd = join(__dirname, "..", "commands", "review.md");
-  const r = setter(cwd, "--from-frontmatter", reviewCmd, "--target", "features/sample/REVIEW.md");
+  const reviewCmd = join(__dirname, "..", "commands", "pharn-dev-review.md");
+  const r = setter(cwd, "--from-frontmatter", reviewCmd, "--target", ".dev/features/sample/REVIEW.md");
   assert.equal(r.status, 0);
   const rec = JSON.parse(fs.readFileSync(join(cwd, ".pharn", "writes-scope.json"), "utf8"));
-  assert.deepEqual(rec.scope, ["features/sample/REVIEW.md"]);
+  assert.deepEqual(rec.scope, [".dev/features/sample/REVIEW.md"]);
   assert.ok(
-    !rec.scope.includes("memory-bank/lessons-learned.md"),
-    "/review proposes lessons; only /memory-promote writes canon (P2) — review's scope must exclude memory-bank"
+    !rec.scope.includes(".dev/memory-bank/lessons-learned.md"),
+    "/pharn-dev-review proposes lessons; only /pharn-dev-memory-promote writes canon (P2) — review's scope must exclude memory-bank"
   );
 });
 

@@ -20,7 +20,7 @@ import { tmpdir } from "node:os";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const RUNNER = join(here, "check-variance.mjs");
-const REPO = join(here, ".."); // file_resolves (inside check-structural) resolves against the real repo
+const REPO = join(here, "..", ".."); // file_resolves (inside check-structural) resolves against the real repo ROOT — this test lives at .dev/floor/, two levels down
 const FIX = join(here, "test-fixtures", "variance");
 const EXPECTED = join(FIX, "expected.json");
 const CLEAN = join(FIX, "finding-clean.json");

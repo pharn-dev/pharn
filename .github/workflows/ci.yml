@@ -32,7 +32,7 @@ jobs:
         run: npm run lint
       - name: Validate floor
         if: ${{ always() && steps.install.outcome == 'success' }}
-        run: node floor/validate.mjs .
+        run: node .dev/floor/validate.mjs .
       - name: Test
         if: ${{ always() && steps.install.outcome == 'success' }}
         run: npm test

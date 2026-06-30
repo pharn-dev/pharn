@@ -1,4 +1,4 @@
-// floor/check-provenance.test.mjs — black-box tests for the deterministic provenance / duplicate-id checker.
+// .dev/floor/check-provenance.test.mjs — black-box tests for the deterministic provenance / duplicate-id checker.
 //
 // Run as a subprocess (mirrors check-structural.test.mjs / validate.test.mjs) so check-provenance.mjs keeps
 // its dependency-free, top-level-exec contract: we assert only on its public surface (exit code + RED/GREEN
@@ -22,12 +22,12 @@ const CHECK = join(here, "check-provenance.mjs");
 
 // A well-formed candidate (target in enum, full provenance, unique id) + a canon file holding L1, L2.
 const VALID = {
-  target: "memory-bank/lessons-learned.md",
+  target: ".dev/memory-bank/lessons-learned.md",
   id: "L5",
   provenance: {
     feature: "memory-promote",
     commit: "abc1234",
-    source: "features/memory-promote/REVIEW.md F1",
+    source: ".dev/features/memory-promote/REVIEW.md F1",
     date: "2026-06-26",
   },
   title: "Some lesson title",
@@ -86,7 +86,7 @@ test("RED: a duplicate id (already a `## <id>` heading in canon) exits 1", () =>
 });
 
 test("RED: a target outside the canon enum exits 1", () => {
-  const r = runWith({ ...VALID, target: "memory-bank/feature-catalog.md" });
+  const r = runWith({ ...VALID, target: ".dev/memory-bank/feature-catalog.md" });
   assert.equal(r.status, 1);
   assert.match(r.stdout, /RED — target failed/);
 });
@@ -106,7 +106,7 @@ test("GREEN: a not-yet-created canon file means no existing ids (the first-promo
   try {
     const candPath = join(dir, "candidate.json");
     const canonPath = join(dir, "does-not-exist.md"); // e.g. pattern-library.md before any pattern
-    writeFileSync(candPath, JSON.stringify({ ...VALID, target: "memory-bank/pattern-library.md" }));
+    writeFileSync(candPath, JSON.stringify({ ...VALID, target: ".dev/memory-bank/pattern-library.md" }));
     const r = spawnSync(process.execPath, [CHECK, candPath, canonPath], { encoding: "utf8" });
     assert.equal(r.status, 0);
     assert.match(r.stdout, /GREEN/);

@@ -15,7 +15,7 @@ import { dirname, join } from "node:path";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const CHECK = join(here, "check-structural.mjs");
-const REPO = join(here, ".."); // file_resolves resolves against the real repo root
+const REPO = join(here, "..", ".."); // file_resolves resolves against the real repo root — this test lives at .dev/floor/, two levels down
 const FIX = join(here, "test-fixtures", "structural");
 
 function run(name) {
