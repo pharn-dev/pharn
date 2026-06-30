@@ -14,11 +14,7 @@ reads:
     ".claude/hooks/enforce-writes-scope.cjs",
     "<the user's target repo>",
   ]
-writes:
-  [
-    "<user-code files named in the plan's ## Files (Phase-1, via --from-plan — not from this list)>",
-    "features/<name>/BUILD.md",
-  ]
+writes: ["<user-code files named in the plan's ## Files (Phase-1, via --from-plan — not from this list)>", "features/<name>/BUILD.md"]
 constitution_refs: ["P0", "P2", "P3", "P4", "P5", "P6", "P7"]
 version: "0.1.0"
 ---
@@ -79,7 +75,7 @@ Load the trusted prefix and obey it for the whole run:
   `/pharn-build`'s **act** of invoking them and obeying is **ADVISORY** command orchestration — nothing on
   the floor forces this prose to call the gates (the same split as `/pharn-grill` / `/pharn-plan`). In
   particular, **fail-closed-on-no-scope is advisory**: the setter's exit code is floor, but `/pharn-build`
-  *obeying* it (refusing) is command discipline — so you MUST hard-stop on a non-zero setter exit (Step 0),
+  _obeying_ it (refusing) is command discipline — so you MUST hard-stop on a non-zero setter exit (Step 0),
   never rely on a leftover scope to save you.
 
 ## Step 0 — Resolve `<name>`, then set the writes-scope from the plan (fix #7, fail-closed)

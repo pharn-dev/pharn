@@ -28,8 +28,8 @@
   rule_id: "P0"
   severity: important
   file: ".dev/features/build-stage/PLAN.md:33"
-  problem: "The declared `writes: [\"features/<name>/BUILD.md\"]` UNDER-declares: the command also writes plan-derived USER code (Phase-1). A reader of the §3.1 `writes:` honesty surface would think it only writes BUILD.md. Mirror /pharn-dev-build's self-documenting placeholder (`<files named in PLAN.md only>`) so the user-code writes are visible in `writes:`, not only in prose."
-  evidence: "`writes: [\"features/<name>/BUILD.md\"]` — the placeholder for the **Phase-2** build-record scope (OQ2); the **Phase-1** user-code scope comes from `--from-plan`, not from `writes:`"
+  problem: 'The declared `writes: ["features/<name>/BUILD.md"]` UNDER-declares: the command also writes plan-derived USER code (Phase-1). A reader of the §3.1 `writes:` honesty surface would think it only writes BUILD.md. Mirror /pharn-dev-build''s self-documenting placeholder (`<files named in PLAN.md only>`) so the user-code writes are visible in `writes:`, not only in prose.'
+  evidence: '`writes: ["features/<name>/BUILD.md"]` — the placeholder for the **Phase-2** build-record scope (OQ2); the **Phase-1** user-code scope comes from `--from-plan`, not from `writes:`'
 ```
 
 ### P1 — eval / test coverage of the named axes
