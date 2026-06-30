@@ -21,6 +21,7 @@ const { join } = require("node:path");
 
 const SETTER = join(__dirname, "set-writes-scope.cjs");
 const PLAN_CMD = join(__dirname, "..", "commands", "pharn-dev-plan.md");
+const PLAN_PRODUCT_CMD = join(__dirname, "..", "commands", "pharn-plan.md");
 
 function tmp() {
   return fs.mkdtempSync(join(os.tmpdir(), "pharn-sws-"));
@@ -61,6 +62,77 @@ test("--from-plan on a PLAN with no `## Files` heading (a free-text `## Steps / 
     ["# PLAN — x", "", "## Steps / Files", "", "- a concrete step or file to change", "- another step", ""].join("\n")
   );
   const r = setter(cwd, "--from-plan", plan);
+  assert.equal(r.status, 1);
+  assert.equal(fs.existsSync(join(cwd, ".pharn", "writes-scope.json")), false);
+});
+
+// --- closing-the-loop: --from-plan SUCCEEDS on a PLAN in /pharn-plan's NEW emitted shape ---
+// The inverse of the fail-closed test above (and of the /pharn-build crux). After the `plan-files-scope`
+// increment, the product /pharn-plan template emits a parseable `## Files` (a `## Files` heading whose
+// items lead with a back-tick path), splitting the old free-text `## Steps / Files`. This pins that a
+// PLAN in that shape sets a scope = exactly its `## Files` back-tick paths — proving the product chain
+// spec → plan → build can now derive a writes-scope. The fixture mirrors the template's section
+// structure (## Approach / ## Steps / ## Files / ### Explicitly not touched / ## Acceptance mapping) so
+// it pins the PRODUCER's shape, not an arbitrary parser-accepted one (cf. the producer-faithfulness test
+// below, which runs the setter over the real pharn-plan.md template).
+
+test("--from-plan on a /pharn-plan-shaped PLAN (## Files with back-tick paths) exits 0; scope = exactly the authorized paths", () => {
+  const cwd = tmp();
+  const plan = join(cwd, "PLAN.md");
+  fs.writeFileSync(
+    plan,
+    [
+      "---",
+      "spec_id: sample-feature",
+      "spec_content_hash: 0000000000000000000000000000000000000000000000000000000000000000",
+      "---",
+      "",
+      "## Approach",
+      "",
+      "Rework the widget pipeline; the public `src/should-not-leak.ts` API is not touched.",
+      "",
+      "## Steps", // advisory prose BEFORE ## Files — its back-tick paths must NOT enter scope
+      "",
+      "- `src/also-not-scope.ts` — a step that names a file in back-ticks above ## Files",
+      "- wire the new module into the pipeline",
+      "",
+      "## Files",
+      "",
+      "- `src/widget.ts` — the new widget module",
+      "- `src/widget.test.ts` — its unit tests",
+      "",
+      "### Explicitly not touched", // a heading → the setter stops here; these paths never enter scope
+      "",
+      "- `src/legacy.ts` — reused, never edited",
+      "",
+      "## Acceptance mapping",
+      "",
+      "- AC-1 → the widget renders",
+      "",
+    ].join("\n")
+  );
+  const r = setter(cwd, "--from-plan", plan);
+  assert.equal(r.status, 0); // SUCCESS — the inverse of the fail-closed cases above
+  const rec = JSON.parse(fs.readFileSync(join(cwd, ".pharn", "writes-scope.json"), "utf8"));
+  // scope is EXACTLY the ## Files back-tick paths, in order …
+  assert.deepEqual(rec.scope, ["src/widget.ts", "src/widget.test.ts"]);
+  // … and excludes the `### Explicitly not touched` path (the #15 hardening, here for a product plan) …
+  assert.equal(rec.scope.includes("src/legacy.ts"), false);
+  // … and excludes a back-tick path that appeared in ## Steps / ## Approach BEFORE ## Files.
+  assert.equal(rec.scope.includes("src/also-not-scope.ts"), false);
+  assert.equal(rec.scope.includes("src/should-not-leak.ts"), false);
+});
+
+// --- producer-faithfulness: the REAL product /pharn-plan template fails closed (locks the placeholder
+// style). The template's `## Files` example items are angle-bracket placeholders (`- `<path>``), which
+// `isConcrete` rejects → the setter emits no scope and exits 1. This ties a test to the actual producer
+// file: if the template ever regressed to a BARE-WORD example (`- `path``), that bare word would parse
+// as a real scope path, the setter would exit 0, and THIS test would fail — catching the regression
+// (the fail-closed-on-unfilled discipline the dev /pharn-dev-plan `<path>` placeholder also preserves).
+
+test("--from-plan over the real pharn-plan.md template exits 1 (its `## Files` `<path>` placeholders fail closed)", () => {
+  const cwd = tmp();
+  const r = setter(cwd, "--from-plan", PLAN_PRODUCT_CMD);
   assert.equal(r.status, 1);
   assert.equal(fs.existsSync(join(cwd, ".pharn", "writes-scope.json")), false);
 });
