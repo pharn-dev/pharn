@@ -1,6 +1,6 @@
 node_modules
 package-lock.json
-floor/test-fixtures
+.dev/floor/test-fixtures
 
 # Tool-managed Claude/Cursor settings (not project source)
 .claude/settings.json

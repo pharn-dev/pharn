@@ -23,6 +23,6 @@ jobs:
       - name: Unit tests (hook + floor)
         # Explicit globs (mirrors `npm test`): bare `node --test` skips the
         # dot-directory, which would silently drop the write-guard hook test.
-        run: node --test "**/*.test.mjs" "**/*.test.cjs" ".claude/**/*.test.cjs" ".claude/**/*.test.mjs"
+        run: node --test "**/*.test.mjs" "**/*.test.cjs" ".claude/**/*.test.cjs" ".claude/**/*.test.mjs" ".dev/**/*.test.cjs" ".dev/**/*.test.mjs"
       - name: Validate floor
-        run: node floor/validate.mjs .
+        run: node .dev/floor/validate.mjs .

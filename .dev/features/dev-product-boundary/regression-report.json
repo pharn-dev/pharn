@@ -1,0 +1,21 @@
+{
+  "feature": "dev-product-boundary",
+  "base": "defdc0d (HEAD; working-tree dogfood build)",
+  "verdict": "not-applicable",
+  "reason": "Repo-wide apparatus MOVE: the deterministic checkers themselves relocated (floor/ -> .dev/floor/), so a base(old-layout) <-> head(new-layout) exit-code comparison of 'the same gate' is ill-posed at the path level; and for a whole-repo move there is essentially nothing OUTSIDE the feature to compare. No base<->head comparison was run (human-approved 2026-06-30).",
+  "scope_partition": {
+    "changed_total": 127,
+    "declared_in_plan_files": 32,
+    "changed_outside_declared": 95,
+    "interpretation": "The 95 changed-but-undeclared paths are git-mv MOVES (the relocated features/, floor/, memory-bank/ trees + the 9 command renames), declared in the plan's '### Moves' section. fix #7 gates Write/Edit, NOT git mv (Bash) -- so moves are intentionally outside the Write-scope '## Files'. check-regress.mjs scope would exit 1 here, but that is a FALSE-POSITIVE scope-breach for a move-increment, not a /pharn-dev-build Write escaping its declared scope."
+  },
+  "regressions": [],
+  "green_check_deferred_to": "/pharn-dev-verify (HEAD-state: npm test + .dev/floor/validate.mjs GREEN + npm run lint)",
+  "head_state_signals_already_green": [
+    "validate: GREEN — 1 capabilities",
+    "floor suite (.dev/floor/*.test.mjs): green",
+    "eslint traverses .dev/: confirmed",
+    "functional stale-ref grep: clean"
+  ],
+  "note": "This is NOT a check-regress.mjs base<->head verdict object -- it is a human-recorded degenerate-move report. 'verdict: not-applicable' and 'regressions: []' must NOT be read as 'no regressions certified' (that conflation is the P0 disease). The meaningful 'still green' signal is /pharn-dev-verify, which OWNS the HEAD-state gate verdict."
+}

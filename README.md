@@ -94,7 +94,7 @@ Each stage reads the artifacts the previous stage produced, and every downstream
 `spec_id` (the plan additionally pins the spec's `spec_content_hash`, so a spec edited after planning
 is detectable, not silent).
 
-> **What runs today:** the build _tooling_ — `/plan`, `/build`, `/review` — not the user-facing
+> **What runs today:** the build _tooling_ — `/pharn-dev-plan`, `/pharn-dev-build`, `/pharn-dev-review` — not the user-facing
 > pipeline. The seven-stage spine above is the architecture PHARN is being built _to_, not a shipped
 > feature. See [Current state](#current-state).
 
@@ -143,14 +143,14 @@ building PHARN itself. A violation is always blocking and is flagged for a human
 What exists today:
 
 - **The architecture spec** — the four trusted documents above.
-- **The build tooling** — three slash commands ([`/plan`](./.claude/commands/plan.md),
-  [`/build`](./.claude/commands/build.md), [`/review`](./.claude/commands/review.md)), a deterministic
-  validator ([`floor/validate.mjs`](./floor/validate.mjs)), and a write-guard hook
+- **The build tooling** — three slash commands ([`/pharn-dev-plan`](./.claude/commands/pharn-dev-plan.md),
+  [`/pharn-dev-build`](./.claude/commands/pharn-dev-build.md), [`/pharn-dev-review`](./.claude/commands/pharn-dev-review.md)), a deterministic
+  validator ([`.dev/floor/validate.mjs`](./.dev/floor/validate.mjs)), and a write-guard hook
   ([`.claude/hooks/protect-trusted-paths.cjs`](./.claude/hooks/protect-trusted-paths.cjs)) that keeps
   the trusted spec human-only.
 - **The first built increment** — a trust-boundary lens (`pharn-review/trust-fence/`) with its
   contract (`pharn-contracts/finding-shape.md`) and a hostile eval, reviewed and recorded in
-  [`features/trust-fence/REVIEW.md`](./features/trust-fence/REVIEW.md).
+  [`.dev/features/trust-fence/REVIEW.md`](./.dev/features/trust-fence/REVIEW.md).
 
 The two module folders that exist (`pharn-contracts`, the schemas-only root; and `pharn-review`) are
 the bottom of the layer tree described in `ARCHITECTURE.md §4`. The remaining layers
@@ -169,7 +169,7 @@ PHARN is developed in the open and is **self-hosting**: it is built using its ow
 increment at a time, with a deterministic floor gating every step.
 
 ```text
-/plan  →  approve/correct PLAN.md  →  /build  →  floor/validate.mjs  →  /review  →  fold lessons  →  next
+/pharn-dev-plan  →  approve/correct PLAN.md  →  /pharn-dev-build  →  .dev/floor/validate.mjs  →  /pharn-dev-review  →  fold lessons  →  next
 ```
 
 The floor and the write-guard hook carry **zero runtime dependencies** (Node stdlib, Node 24); the

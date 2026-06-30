@@ -5,7 +5,7 @@ name: gitleaks
 # committed, before it reaches main. gitleaks is a deterministic regex scanner — the
 # same primitive the floor calls "regex for a hardcoded secret" (ARCHITECTURE.md §2) —
 # but it lives in CI and scans THIS repo, so it is repo hygiene, not part of
-# PHARN's floor (floor/validate.mjs) and not a P0 guarantee about the PHARN being built.
+# PHARN's floor (.dev/floor/validate.mjs) and not a P0 guarantee about the PHARN being built.
 #
 # Runs the open-source gitleaks BINARY pinned by version + SHA-256, rather than the
 # gitleaks-action (which gates organization use behind a license key). This mirrors the

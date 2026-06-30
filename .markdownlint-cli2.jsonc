@@ -1,10 +1,10 @@
 {
   // Lint all markdown except the trusted spec docs (see ignores).
-  "globs": ["**/*.md"],
+  "globs": ["**/*.md", ".dev/**/*.md"],
   // Trusted spec docs are human-only and hook-protected; they are excluded so
   // style fixes can never mutate their content-hash (fix #4 / spec-drift).
   // They may still be formatted by hand; this only removes them from scope.
-  "ignores": ["node_modules", "floor/test-fixtures", "CONSTITUTION.md", "ARCHITECTURE.md", "THREAT-MODEL.md", "LIMITS.md"],
+  "ignores": ["node_modules", ".dev/floor/test-fixtures", "CONSTITUTION.md", "ARCHITECTURE.md", "THREAT-MODEL.md", "LIMITS.md"],
   "config": {
     "default": true,
     // Long-form specs use wide lines and occasional inline HTML.

@@ -1,16 +1,20 @@
-# features/
+# features/ — product-loop artifacts (what a PHARN user produces)
 
-Each increment of PHARN-OSS gets one folder here — `features/<feature-name>/` — holding its
-**process and audit artifacts**:
+Each increment a **PHARN user** runs through the product pipeline gets one folder here —
+`features/<feature-name>/` — holding its **process and audit artifacts**:
 
-- `SPEC.md` — intent (Draft → Approved)
-- `PLAN.md` — the approved plan, pinning `spec_id` + `spec_content_hash` (fix #4), committed
-- `REVIEW.md` — the `/review` audit trail
+- `SPEC.md` — intent (Draft → Approved), the root artifact every downstream stage carries `spec_id` from
+  (`ARCHITECTURE.md §6`)
+- the downstream product-pipeline artifacts as those stages are built (`spec → plan → grill → build →
+regress → verify → ship`)
 
-These record _how_ an increment was specified, planned, and reviewed. The **built capabilities
-themselves live in their modules** (`pharn-contracts/`, `pharn-core/`, `pharn-review/`, …),
-not here — `features/` carries process, not product.
+This mirrors `.dev/features/` — but for the **product loop**, not the build loop. The split is the
+dev/product boundary made structural:
 
-Artifacts are written only when they genuinely exist. An increment that had no SPEC or PLAN —
-e.g. a hand-built probe predating the pipeline — records that honestly rather than backfilling a
-fabricated one (see `features/trust-fence/NOTES.md`).
+- **root `features/`** (here) = what a PHARN **user** produces with the `pharn-*` product commands;
+- **`.dev/features/`** = the audit trail of **building PHARN itself**, with the `pharn-dev-*` commands
+  (contributor apparatus — see `.dev/features/README.md`).
+
+`/pharn-spec` (a later increment) writes the first `SPEC.md` here. Until then this directory is the
+declared, empty home for product-pipeline artifacts — so every product capability lands on the product
+side of the boundary from the start, never needing a later migration.
