@@ -1,0 +1,12 @@
+{
+  "base": "122b8edb83cdd800348d9924fa1b20f728f3ab82",
+  "inside": [".claude/commands/pharn-build.md"],
+  "outside_gates": {
+    "structural:trust-fence": { "base": 0, "head": 0 },
+    "tests": { "base": 1, "head": 1 },
+    "validate": { "base": 0, "head": 0 }
+  },
+  "regressions": [],
+  "pre_existing": ["tests"],
+  "verdict": "no-regressions"
+}

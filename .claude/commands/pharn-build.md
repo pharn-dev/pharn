@@ -92,19 +92,19 @@ Load the trusted prefix and obey it for the whole run:
    ```
 
    - **HALT on a non-zero exit, BEFORE any write (fail-closed).** A non-zero exit means the setter wrote
-     **no scope** — the plan declares **no parseable `## Files`** (e.g. a plan carrying only a free-text
-     `## Steps / Files` section — see the caveat). **REFUSE:** tell the user the plan declares no parseable
+     **no scope** — the plan declares **no parseable `## Files`** (e.g. a malformed or hand-written plan
+     lacking `## Files` back-tick paths — see the note). **REFUSE:** tell the user the plan declares no parseable
      writable scope and must be re-planned with a `## Files` section of back-tick paths. Do **not** proceed —
      a leftover `.pharn/writes-scope.json` from an earlier command must never become this build's scope by
      accident (the refuse is command discipline, not a floor guarantee — the two-clocks note above).
    - A later in-build block (`writes-scope guard`) means **declare the path in the plan's `## Files` and
      re-run this setter** — never bypass the hook (CLAUDE.md, "Writes-scope").
 
-   > **Scope-source caveat (a current, honest limit — `LIMITS.md`).** The product `/pharn-plan` template
-   > currently emits a free-text `## Steps / Files` section, which is **not** a `## Files` heading with
-   > back-tick paths — so a stock product PLAN.md **fails this step fail-closed** until the `plan-files-scope`
-   > follow-up aligns `/pharn-plan` to emit a parseable `## Files`. That is **correct fail-closed behavior**,
-   > not a bug: `/pharn-build` refuses rather than guess a scope.
+   > **Scope-source note (resolved — `plan-files-scope`).** The product `/pharn-plan` template now emits a
+   > parseable `## Files` (a `## Files` heading with leading back-tick paths), aligned by the
+   > `plan-files-scope` increment — so a stock product PLAN.md sets a scope at this step. The fail-closed
+   > behavior still holds for a **malformed/incomplete** plan (no parseable `## Files`): `/pharn-build`
+   > **refuses rather than guess a scope** — correct fail-closed behavior, not a bug.
 
 ## Step 1 — Discovery + chain inputs (P6, mandatory; never assert from memory)
 
