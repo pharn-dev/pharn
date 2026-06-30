@@ -1,0 +1,17 @@
+{
+  "base": "a730f28",
+  "inside": [".dev/features/product-pipeline-probe/PROBE.md"],
+  "outside_gates": {
+    "tests": {
+      "base": 0,
+      "head": 0
+    },
+    "validate": {
+      "base": 0,
+      "head": 0
+    }
+  },
+  "regressions": [],
+  "pre_existing": [],
+  "verdict": "no-regressions"
+}

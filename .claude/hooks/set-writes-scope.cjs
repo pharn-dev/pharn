@@ -166,8 +166,18 @@ function pathsFromPlanFiles(file) {
     // Boundary 2 — CUE fallback for a HEAD-LESS prose exclusion intro (`Files NOT written:`), anchored
     // to a NON-path line so an authorized item's own description ("… the public API is not touched")
     // never trips it. `\W*` (not `\s+`) tolerates markdown markup, e.g. `**not** touched`.
+    // A blockquote line (`> …`) is EXPLANATORY commentary, never an exclusion-section intro, so it is
+    // EXEMPT: an explanatory note under `## Files` that mentions "not touched" (e.g. a reference to the
+    // `### Explicitly not touched` subsection) must NOT truncate the authorized list. Only blockquotes
+    // are exempted, so a head-less NON-blockquote intro (`Files NOT written:`) and an exclusion-only
+    // `## Files` still fail closed (CF-E, .dev/features/product-pipeline-probe/PROBE.md).
     const isPathItem = /^\s*-\s+`[^`]+`/.test(line);
-    if (!isPathItem && /\bnot\W*(touch|writ|modif|edit|chang)|\bexplicitly\W*excluded|\bout\W*of\W*scope|\boff\W*limits/i.test(line)) {
+    const isBlockquote = /^\s*>/.test(line);
+    if (
+      !isPathItem &&
+      !isBlockquote &&
+      /\bnot\W*(touch|writ|modif|edit|chang)|\bexplicitly\W*excluded|\bout\W*of\W*scope|\boff\W*limits/i.test(line)
+    ) {
       break;
     }
     const m = line.match(/^\s*-\s+`([^`]+)`/);
