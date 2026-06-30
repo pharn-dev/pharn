@@ -145,3 +145,36 @@ test("fail-closed: cap omitted → INCONCLUSIVE, exit 2", () => {
     assert.equal(run([vp, rp, "--iter", "1"]).status, 2);
   });
 });
+
+// --- fail-closed argv shape (P5): a malformed invocation must NEVER yield a silent STOP_*/CONTINUE ---
+
+test("fail-closed: an extra positional report path → INCONCLUSIVE, exit 2 (not a silent STOP_GREEN)", () => {
+  withReports(PASS, CLEAN, (vp, rp) => {
+    const r = run([vp, rp, rp, "--iter", "1", "--cap", "3"]);
+    assert.equal(r.status, 2);
+    assert.equal(json(r).decision, "INCONCLUSIVE");
+  });
+});
+
+test("fail-closed: an unrecognized flag → INCONCLUSIVE, exit 2", () => {
+  withReports(PASS, CLEAN, (vp, rp) => {
+    const r = run([vp, rp, "--iter", "1", "--cap", "3", "--bogus", "x"]);
+    assert.equal(r.status, 2);
+    assert.equal(json(r).decision, "INCONCLUSIVE");
+  });
+});
+
+test("fail-closed: a repeated known flag (--iter twice) → INCONCLUSIVE, exit 2 (no first-wins)", () => {
+  withReports(VFAIL, CLEAN, (vp, rp) => {
+    // Without the guard, indexOf would pick the first --iter (1, CONTINUE) and ignore the second (5).
+    const r = run([vp, rp, "--iter", "1", "--iter", "5", "--cap", "3"]);
+    assert.equal(r.status, 2);
+    assert.equal(json(r).decision, "INCONCLUSIVE");
+  });
+});
+
+test("fail-closed: a known flag missing its value → INCONCLUSIVE, exit 2", () => {
+  withReports(PASS, CLEAN, (vp, rp) => {
+    assert.equal(run([vp, rp, "--iter", "1", "--cap"]).status, 2);
+  });
+});

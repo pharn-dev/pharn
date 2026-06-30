@@ -7,6 +7,7 @@ reads:
   [
     "CONSTITUTION.md",
     "ARCHITECTURE.md",
+    ".dev/features/<name>/PLAN.md",
     ".dev/floor/check-ship.mjs",
     ".dev/features/<name>/regression-report.json",
     ".dev/features/<name>/verify-report.json",

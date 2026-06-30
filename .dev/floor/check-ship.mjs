@@ -60,10 +60,29 @@ function emit(obj, code) {
   process.exit(code);
 }
 
-// --- read a flag value (`--flag value`) from an argv slice; undefined if absent. ---
-function flag(args, name) {
-  const i = args.indexOf(name);
-  return i !== -1 && i + 1 < args.length ? args[i + 1] : undefined;
+// --- strict argv parse (P5, fail-closed). The ONLY valid invocation is exactly two positional report
+//     paths plus `--iter <N>` and `--cap <M>`. Extra positionals, an unrecognized flag, a repeated known
+//     flag, or a flag missing its value are ALL malformed input → caller emits INCONCLUSIVE (exit 2),
+//     NEVER a silent STOP_*/CONTINUE. Flag VALUES are consumed in-line so they never leak in as a path. ---
+function parseArgs(argv) {
+  const KNOWN = new Set(["--iter", "--cap"]);
+  const positional = [];
+  const flags = {};
+  for (let i = 0; i < argv.length; i++) {
+    const a = argv[i];
+    if (a.startsWith("--")) {
+      if (!KNOWN.has(a)) return { ok: false, reason: `unrecognized flag: ${a}` };
+      if (a in flags) return { ok: false, reason: `repeated flag: ${a}` };
+      if (i + 1 >= argv.length) return { ok: false, reason: `${a} requires a value` };
+      flags[a] = argv[++i];
+    } else {
+      positional.push(a);
+    }
+  }
+  if (positional.length !== 2) {
+    return { ok: false, reason: `expected exactly 2 positional report paths, got ${positional.length}` };
+  }
+  return { ok: true, positional, iter: flags["--iter"], cap: flags["--cap"] };
 }
 
 // --- read a report file and validate its `.verdict` is a member of `allowed`. A missing / unparseable
@@ -98,18 +117,29 @@ function posInt(raw, name) {
 
 function main() {
   const argv = process.argv.slice(2);
-  // Leading positionals = everything before the first `--flag` (so a flag VALUE like `--iter 2` can never
-  // leak in as a report path). The command always passes the two report files first, then the flags.
-  const positional = [];
-  for (const a of argv) {
-    if (a.startsWith("--")) break;
-    positional.push(a);
+  // Strict, fail-closed argv parse (P5): a malformed invocation shape (extra positionals, an unknown flag,
+  // a repeated `--iter`/`--cap`, or a flag missing its value) is bad input → INCONCLUSIVE (exit 2), the
+  // SAME handling as a bad operand below — never a silent STOP_*/CONTINUE.
+  const parsed = parseArgs(argv);
+  if (!parsed.ok) {
+    emit(
+      {
+        verify_verdict: null,
+        regress_verdict: null,
+        floor_green: null,
+        iter: null,
+        cap: null,
+        decision: "INCONCLUSIVE",
+        reason: parsed.reason,
+      },
+      2
+    );
   }
 
-  const verify = readVerdict(positional[0], "verify-report.json", VERIFY_VERDICTS);
-  const regress = readVerdict(positional[1], "regression-report.json", REGRESS_VERDICTS);
-  const iterR = posInt(flag(argv, "--iter"), "iter");
-  const capR = posInt(flag(argv, "--cap"), "cap");
+  const verify = readVerdict(parsed.positional[0], "verify-report.json", VERIFY_VERDICTS);
+  const regress = readVerdict(parsed.positional[1], "regression-report.json", REGRESS_VERDICTS);
+  const iterR = posInt(parsed.iter, "iter");
+  const capR = posInt(parsed.cap, "cap");
 
   // Fail-closed (P5): any malformed operand → INCONCLUSIVE (exit 2), NEVER a silent CONTINUE. Echo back
   // whatever parsed cleanly (nulls otherwise) plus the helper's OWN diagnostic `reason` (not free-text).
