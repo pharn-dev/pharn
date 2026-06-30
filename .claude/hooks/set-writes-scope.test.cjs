@@ -123,6 +123,50 @@ test("--from-plan on a /pharn-plan-shaped PLAN (## Files with back-tick paths) e
   assert.equal(rec.scope.includes("src/should-not-leak.ts"), false);
 });
 
+// --- CF-E regression: an explanatory BLOCKQUOTE under `## Files` must NOT truncate the authorized list.
+// A `> …` note that mentions an exclusion cue ("not touched", e.g. a reference to the
+// `### Explicitly not touched` subsection) is explanatory commentary, never an exclusion-section intro.
+// Before the fix it tripped the head-less-exclusion Boundary-2 break and zeroed the scope → fail-closed
+// exit 1, blocking a valid plan (CF-E, .dev/features/product-pipeline-probe/PROBE.md). Only blockquotes are
+// exempted — the next test pins that a NON-blockquote head-less intro still fails closed.
+
+test("--from-plan: a blockquote note with an exclusion cue ABOVE the paths does NOT truncate scope (CF-E)", () => {
+  const cwd = tmp();
+  const plan = join(cwd, "PLAN.md");
+  fs.writeFileSync(
+    plan,
+    [
+      "## Files",
+      "",
+      "> Explanatory note: the files below are written; others are not touched (see the",
+      "> `### Explicitly not touched` subsection).",
+      "",
+      "- `src/widget.ts` — the new widget module",
+      "",
+      "### Explicitly not touched",
+      "",
+      "- `src/legacy.ts` — reused, never edited",
+      "",
+    ].join("\n")
+  );
+  const r = setter(cwd, "--from-plan", plan);
+  assert.equal(r.status, 0); // the blockquote no longer fails it closed
+  const rec = JSON.parse(fs.readFileSync(join(cwd, ".pharn", "writes-scope.json"), "utf8"));
+  assert.deepEqual(rec.scope, ["src/widget.ts"]); // the path AFTER the blockquote is collected …
+  assert.equal(rec.scope.includes("src/legacy.ts"), false); // … and the `### Explicitly not touched` path stays excluded
+});
+
+test("--from-plan: a NON-blockquote head-less exclusion intro (`Files NOT written:`) still fails closed", () => {
+  const cwd = tmp();
+  const plan = join(cwd, "PLAN.md");
+  // No authorized path precedes the head-less intro, so Boundary 2 (preserved for non-blockquotes) breaks
+  // before any path is collected → empty scope → fail-closed. Proves the CF-E fix did NOT weaken exclusions.
+  fs.writeFileSync(plan, ["## Files", "", "Files NOT written:", "", "- `src/legacy.ts` — excluded", ""].join("\n"));
+  const r = setter(cwd, "--from-plan", plan);
+  assert.equal(r.status, 1);
+  assert.equal(fs.existsSync(join(cwd, ".pharn", "writes-scope.json")), false);
+});
+
 // --- producer-faithfulness: the REAL product /pharn-plan template fails closed (locks the placeholder
 // style). The template's `## Files` example items are angle-bracket placeholders (`- `<path>``), which
 // `isConcrete` rejects → the setter emits no scope and exits 1. This ties a test to the actual producer
