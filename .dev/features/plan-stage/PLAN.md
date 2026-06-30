@@ -15,7 +15,7 @@
 
 ## Step 0 — Discovery results (live this run, P6 — never asserted from memory)
 
-- **`ARCHITECTURE.md §6`** (`ARCHITECTURE.md:197`–`218`) — the pipeline spine `spec → plan → grill → build → regress → verify → ship`. The **plan** artifact's key field is **`spec_id` + `spec_content_hash` (fix #4)** (`ARCHITECTURE.md:205`). The keystone para (`:212`–`218`): `SPEC.md` is the root, every downstream artifact carries `spec_id`, but **`spec_id` binds identity, not content** — so the plan **pins `spec_content_hash`** and post-plan spec edits become "**detectable, not silent**". **§6 puts only the *spec* through `Draft → Approved` (`:204`); the plan is NOT human-approved** — so `/pharn-plan` needs **no** plan-approval gate. (Resolved; **no §6 conflict to report**.)
+- **`ARCHITECTURE.md §6`** (`ARCHITECTURE.md:197`–`218`) — the pipeline spine `spec → plan → grill → build → regress → verify → ship`. The **plan** artifact's key field is **`spec_id` + `spec_content_hash` (fix #4)** (`ARCHITECTURE.md:205`). The keystone para (`:212`–`218`): `SPEC.md` is the root, every downstream artifact carries `spec_id`, but **`spec_id` binds identity, not content** — so the plan **pins `spec_content_hash`** and post-plan spec edits become "**detectable, not silent**". **§6 puts only the _spec_ through `Draft → Approved` (`:204`); the plan is NOT human-approved** — so `/pharn-plan` needs **no** plan-approval gate. (Resolved; **no §6 conflict to report**.)
 - **`/pharn-spec`** (`.claude/commands/pharn-spec.md`) — the stage that produces the input. It emits `features/<name>/SPEC.md` with frontmatter `spec_id` / `state ∈ {Draft, Approved}` / `spec_content_hash`, four required `##` sections, and on **explicit human approval** flips `Draft → Approved` and pins `spec_content_hash = sha256(body)` via `check-spec.mjs --hash`. It **does not chain** to `/pharn-plan` (`pharn-spec.md:172`).
 - **`.dev/floor/check-spec.mjs`** — the existing deterministic SPEC checker the gate **reuses** (a CLI to shell to; P3-clean — NOT a sibling import). Verified behavior (read live):
   - `check-spec.mjs <SPEC>` → **GREEN/exit 0** for a valid **Draft** (`:149` only checks the pin when `state === "Approved"`), **GREEN/0** for an **Approved + matching** hash, **RED/exit 1** for an **Approved + drifted** hash (`:153`–`155`), and **RED/1** for malformed / missing-section / no-frontmatter.
@@ -35,7 +35,7 @@
 > **No PLAN.md checker is built this increment (P7).** The floor deliverable is the **input** gate
 > (Approved + un-drifted SPEC). `/pharn-plan` carrying `spec_content_hash` forward is a **deterministic
 > copy** of an enum-gated value (the spec's own pinned hash) into the new `PLAN.md` frontmatter — not a
-> judgment. A checker that *re-verifies* "plan's hash still equals the spec's" belongs to the **next
+> judgment. A checker that _re-verifies_ "plan's hash still equals the spec's" belongs to the **next
 > stage's consumer** (`/pharn-grill` / `/pharn-build`), which does not exist yet — building it now would
 > be speculative (P7). Deferred, named, not hidden.
 

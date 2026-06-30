@@ -1,0 +1,21 @@
+{
+  "base": "0ff3b6c",
+  "inside": [".claude/commands/pharn-plan.md", ".dev/floor/check-spec-approved.mjs", ".dev/floor/check-spec-approved.test.mjs"],
+  "outside_gates": {
+    "structural:expected-injection-comment.json": {
+      "base": 0,
+      "head": 0
+    },
+    "tests": {
+      "base": 0,
+      "head": 0
+    },
+    "validate": {
+      "base": 0,
+      "head": 0
+    }
+  },
+  "regressions": [],
+  "pre_existing": [],
+  "verdict": "no-regressions"
+}
