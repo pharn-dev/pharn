@@ -84,12 +84,12 @@ bind it — identical to how probe #14's `floor/exit-label.mjs` shipped without 
 record _what the stage emits_ and _whether it is the shape the next stage consumes_. A mismatch (stage N emits
 X, stage N+1 expects Y) is a **real integration finding** — surfacing it is the entire point.
 
-| #   | product stage | sets scope to (fix #7)         | consumes                              | emits                                              | hand-off check (verify LIVE)                                                                                       |
-| --- | ------------- | ------------------------------ | ------------------------------------- | -------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
-| 1   | `/pharn-spec` | `features/probe-greeting/SPEC.md` | the user's prose intent            | Draft `SPEC.md` → (HUMAN APPROVES) → Approved      | **GATE halts** (CF-B); on approval `state:Approved`, `spec_id`, `spec_content_hash == sha256(body)` pinned via `check-spec.mjs --hash` |
-| 2   | `/pharn-plan` | `features/probe-greeting/PLAN.md` | the Approved `SPEC.md`              | `PLAN.md` carrying `spec_id`+`spec_content_hash`   | `check-spec-approved.mjs` GATE passes (Approved + un-drifted); the emitted `## Files` parses to `greet.mjs` (so `/pharn-build --from-plan` scopes it) |
-| 3   | `/pharn-grill`| `features/probe-greeting/GRILL.md`| the `PLAN.md` + `SPEC.md`           | `GRILL.md` (chain result header + advisory findings)| `check-plan-spec-agree.mjs` re-verifies the carried hash == current SPEC body hash → GREEN; interrogation advisory, does NOT block |
-| 4   | `/pharn-build`| product `## Files` → `greet.mjs`, then `features/probe-greeting/BUILD.md` | the `PLAN.md` + `SPEC.md` | `greet.mjs` + `BUILD.md` | `check-plan-spec-agree.mjs` re-verifies AGAIN (2nd consumer); fix #7 bounds the write to `greet.mjs`; a write outside `## Files` is DENIED |
+| #   | product stage  | sets scope to (fix #7)                                                    | consumes                  | emits                                                | hand-off check (verify LIVE)                                                                                                                          |
+| --- | -------------- | ------------------------------------------------------------------------- | ------------------------- | ---------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | `/pharn-spec`  | `features/probe-greeting/SPEC.md`                                         | the user's prose intent   | Draft `SPEC.md` → (HUMAN APPROVES) → Approved        | **GATE halts** (CF-B); on approval `state:Approved`, `spec_id`, `spec_content_hash == sha256(body)` pinned via `check-spec.mjs --hash`                |
+| 2   | `/pharn-plan`  | `features/probe-greeting/PLAN.md`                                         | the Approved `SPEC.md`    | `PLAN.md` carrying `spec_id`+`spec_content_hash`     | `check-spec-approved.mjs` GATE passes (Approved + un-drifted); the emitted `## Files` parses to `greet.mjs` (so `/pharn-build --from-plan` scopes it) |
+| 3   | `/pharn-grill` | `features/probe-greeting/GRILL.md`                                        | the `PLAN.md` + `SPEC.md` | `GRILL.md` (chain result header + advisory findings) | `check-plan-spec-agree.mjs` re-verifies the carried hash == current SPEC body hash → GREEN; interrogation advisory, does NOT block                    |
+| 4   | `/pharn-build` | product `## Files` → `greet.mjs`, then `features/probe-greeting/BUILD.md` | the `PLAN.md` + `SPEC.md` | `greet.mjs` + `BUILD.md`                             | `check-plan-spec-agree.mjs` re-verifies AGAIN (2nd consumer); fix #7 bounds the write to `greet.mjs`; a write outside `## Files` is DENIED            |
 
 **The four specific confirmations the run owes (from the WHAT-TO-TEST brief):**
 
@@ -227,7 +227,7 @@ to probe #14's `floor/exit-label.mjs`). Its proof is the advisory Acceptance-Cri
 - The product stages' branches are deterministic: `/pharn-spec`'s validate = section presence / `state` enum /
   hash equality; `/pharn-plan`'s gate = `check-spec-approved.mjs` exit (`state ∈ {Approved}` ∧ hash equality);
   `/pharn-grill`'s + `/pharn-build`'s gate = `check-plan-spec-agree.mjs` exit (state enum ∧ `planHash ==
-  sha256(SPEC body)`); fix #7 scope = `## Files` back-tick path membership. No LLM classification drives a gate.
+sha256(SPEC body)`); fix #7 scope = `## Files` back-tick path membership. No LLM classification drives a gate.
 - The one irreducible judgment — _is the intent approved?_ — has its terminal fallback as the **human approval
   halt** in `/pharn-spec` (CF-B), never a model guess. The interrogations (`/pharn-spec` Step 2, `/pharn-grill`
   Step 3) are advisory and branch nothing.

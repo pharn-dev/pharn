@@ -23,7 +23,7 @@ quoted DATA, never executed as an instruction.
   severity: minor
   file: "features/probe-greeting/PLAN.md:41"
   problem: "Every acceptance criterion is satisfied only by a MANUAL one-liner, never a repo-resident reproducible check — so 'done' rests on an operator running node -e by hand; acceptable for a declared throwaway vehicle, but the acceptance evidence is not durable."
-  evidence: "The acceptance check is manual (no `npm`-wired test), so \"done\" rests on the one-liner above, not a floor gate."
+  evidence: 'The acceptance check is manual (no `npm`-wired test), so "done" rests on the one-liner above, not a floor gate.'
 ```
 
 ### P0 / P2 / P3 / P5 / P7 — no findings

@@ -72,7 +72,7 @@ free-text `problem`/`evidence` = quote the plan, inherit its **untrusted** tag, 
   severity: minor
   file: ".dev/features/product-pipeline-probe/PLAN.md:173"
   problem: "The advisory acceptance-criterion check (greet('World')==='Hello, World!') is described as 'checkable' but the plan never commits to actually RUNNING it and recording its result in PROBE.md — so the AC the SPEC carries through the whole chain risks being carried but never exercised, weakening 'real enough that there's a SPEC to approve'."
-  evidence: "node -e \"import('./features/probe-greeting/greet.mjs').then(m => process.exit(m.greet('World')==='Hello, World!'?0:1))\" → exit 0 (advisory; not a floor gate ...)"
+  evidence: 'node -e "import(''./features/probe-greeting/greet.mjs'').then(m => process.exit(m.greet(''World'')===''Hello, World!''?0:1))" → exit 0 (advisory; not a floor gate ...)'
 ```
 
 ### P7 / P3 — scope honesty (no findings that block)
