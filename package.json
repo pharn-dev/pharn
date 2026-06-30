@@ -38,6 +38,6 @@
     "eslint-config-prettier": "^10.1.8",
     "globals": "^17.7.0",
     "markdownlint-cli2": "^0.22.1",
-    "prettier": "^3.8.4"
+    "prettier": "^3.9.4"
   }
 }
