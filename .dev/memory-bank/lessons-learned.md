@@ -234,3 +234,37 @@ reading `set-writes-scope.cjs` live, not by a dogfood failure.
   promotion time)
 - surfaced by: `.dev/features/pharn-spec/REVIEW.md` (proposed lesson candidate) + the `/pharn-dev-build` note
 - promoted: 2026-06-30 via gated `/pharn-dev-memory-promote` (human-approved).
+
+## L9 — An increment's own markdown style is gated by neither /pharn-dev-regress nor /pharn-dev-verify
+
+**Lesson.** The per-increment deterministic gates leave the increment's OWN markdown style ungated.
+`/pharn-dev-regress` deterministically SKIPS the style gates (`format:check` / `lint:md`) unless the change
+touches a shared style config — over outside files byte-identical at base and head a style result cannot
+flip, so the skip is sound — and `/pharn-dev-verify`'s canonical gate map (`test` / `validate` / `lint` /
+`structural`) OMITS them. So a style regression in an increment's own new files — a command edit, or the
+pipeline's own `.dev/features/<name>/*` audit artifacts — passes BOTH stages and surfaces only at the full
+`npm run check` (or CI). Remedy: add `format:check` + `lint:md` to `/pharn-dev-verify`'s canonical gate map;
+`/pharn-dev-verify` runs only at HEAD with devDeps present, so the style gates are cheap (no `npm ci`) and
+make the verify verdict track the full `npm run check`.
+
+**Why it matters.** Each stage's omission is individually defensible — regress proves a style flip
+impossible without a shared-config change; verify's four gates target 'is it green with this in it' — but
+the SEAM between them is unowned: the increment's own NEW markdown is checked by neither. That is the P0
+disease in coverage form — 'the gates passed' read as 'the increment is clean' when `npm run check` (the
+documented aggregate, GREEN at baseline) was RED. Concretely this run: the `plan-files-scope` build output
+plus its PLAN / GRILL / regression-report artifacts failed `format:check`, and PLAN.md failed `lint:md`
+(MD038 spaces-in-code-span, from embedding a back-tick-laden regex in prose, plus MD049 emphasis), yet
+`/pharn-dev-regress` returned `no-regressions` (style gates skipped — inside touched no shared config) and
+`/pharn-dev-verify`'s four canonical gates were green; only the full `npm run check` was RED, caught and
+fixed by hand at verify. The remedy lives in the orchestration layer (`/pharn-dev-verify`'s gate map), not
+the floor checker — complements L5 (a floor verdict is only as trustworthy as the inputs the orchestration
+captures).
+
+**Provenance.**
+
+- feature: `plan-files-scope`
+- commit: `a5de975f68af1fe51790a69f84a998b6e9c77baf`
+- surfaced by: `.dev/features/plan-files-scope/REVIEW.md` — advisory P0 finding (the `/pharn-dev-verify` gate
+  set) + proposed lesson `verify-include-style-gates`; corroborated by
+  `.dev/features/plan-files-scope/VERIFY.md` "Style-gate correction".
+- promoted: 2026-06-30 via gated `/pharn-dev-memory-promote` (human-approved).

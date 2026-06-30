@@ -85,30 +85,43 @@ mkdir -p .pharn/pharn-dev-verify
 npm test > /dev/null 2>&1; t=$?                       # the hermetic suite (incl. the feature's own *.test.*)
 node .dev/floor/validate.mjs . > /dev/null 2>&1; v=$?      # the structural floor — must be GREEN
 npm run lint > /dev/null 2>&1; l=$?                   # eslint clean
+npm run format:check > /dev/null 2>&1; f=$?           # prettier clean — whole-repo (L9: track full `npm run check`)
+npm run lint:md > /dev/null 2>&1; lm=$?               # markdownlint clean — whole-repo (L9)
 # per committed eval pair the feature ships (see below) — one structural:<expected> gate each:
 node .dev/floor/check-structural.mjs <expected.json> <actual.json> . > /dev/null 2>&1; s=$?
 # assemble → .pharn/pharn-dev-verify/results.json, one entry per gate actually run:
-printf '{"test":%d,"validate":%d,"lint":%d,"structural:%s":%d}' "$t" "$v" "$l" "<expected.json>" "$s" \
+printf '{"test":%d,"validate":%d,"lint":%d,"format:check":%d,"lint:md":%d,"structural:%s":%d}' \
+  "$t" "$v" "$l" "$f" "$lm" "<expected.json>" "$s" \
   > .pharn/pharn-dev-verify/results.json
 ```
 
 - **The gates are the existing checks — `/pharn-dev-verify` invents none** (`npm test`, `.dev/floor/validate.mjs`,
-  `.dev/floor/check-structural.mjs`, `npm run lint`). It orchestrates them; it does not reimplement checking
-  logic.
+  `.dev/floor/check-structural.mjs`, `npm run lint`, `npm run format:check`, `npm run lint:md`). It orchestrates
+  them; it does not reimplement checking logic. The `format:check` + `lint:md` + `lint` + `test` set is exactly
+  the repo's `npm run check` aggregate, so the verdict **tracks the full `npm run check`** — closing L9's
+  style-gate coverage hole **at verify** (an increment's own markdown style is caught here, not only at the full
+  `npm run check` / CI; `.dev/memory-bank/lessons-learned.md` L9 — cited, not restated, P4).
 - **`structural:<expected>` — one gate per committed eval pair the feature ships,** discovered by
   convention (P5 — membership, not classification): each `<cap>/evals/expected/*.json` with its committed
   actual `findings.json` (the emission contract of `pharn-contracts/finding-shape.md` — cited, not
   restated, P4). Today the one pair is `pharn-review/trust-fence/evals/expected/expected-injection-comment.json`
   ↔ `.dev/features/trust-fence/findings.json`. A feature shipping **no** eval-actual pair simply has **no**
   `structural:*` gate (absent from the map) — exactly as `/pharn-dev-regress` handles it.
-- **The core gates are stdlib-only** (`node --test`, `validate`, `check-structural`); `lint` needs the
-  dev devDeps already present in the working tree (no `npm ci` — `/pharn-dev-verify` runs only at HEAD, never in a
-  detached worktree).
-- **Granularity (honest, not a silent gap — P7):** `test` / `validate` / `lint` are **whole-repo** (they
-  re-run the full suite with the feature present — the most honest "is it green with this in it"); the
-  **feature-specific** correctness signal is the `structural:*` gate over the feature's own evals plus the
-  feature's own `*.test.*` collected by `npm test`. The verdict is exactly as good as that deterministic
-  suite — never more (P0/P7).
+- **The core gates are stdlib-only** (`node --test`, `validate`, `check-structural`); `lint` / `format:check` /
+  `lint:md` need the dev devDeps already present in the working tree (no `npm ci` — `/pharn-dev-verify` runs only
+  at HEAD, never in a detached worktree, so the style gates are cheap).
+- **Granularity (honest, not a silent gap — P7):** `test` / `validate` / `lint` / `format:check` / `lint:md`
+  are **whole-repo** (they re-run the full suite/style over the repo with the feature present — the most honest
+  "is it green with this in it", so verify PASS requires the **whole** repo clean, not just the increment's
+  files); the **feature-specific** correctness signal is the `structural:*` gate over the feature's own evals
+  plus the feature's own `*.test.*` collected by `npm test`. The verdict is exactly as good as that
+  deterministic suite — never more (P0/P7).
+- **The gate SET is advisory orchestration (two clocks, kept honest — L9, P0).** `check-verify.mjs` (the FLOOR
+  verdict) is generic over gate keys — it computes `PASS iff every gate exit 0` over **whatever** map this
+  command assembles. So the floor verdict mechanically covers `format:check` + `lint:md`, but **which** gates
+  are in the map is this command's **advisory** composition — there is no floor or test lock that the two style
+  gates STAY in the set. L9's remedy therefore lives in this orchestration layer (exactly where L9 places it),
+  not in a new floor primitive; do not read "verify runs the style gates" as floor-locked.
 
 ## Step 2 — ADVISORY layer: the verifier plug-in slot (LLM judgment — annotates, never gates)
 
@@ -157,7 +170,7 @@ Write, in order (re-scoping per artifact, per Step 0's caveat):
    ```json
    {
      "feature": "<name>",
-     "gates": { "test": 0, "validate": 0, "lint": 0, "structural:<expected>": 0 },
+     "gates": { "test": 0, "validate": 0, "lint": 0, "format:check": 0, "lint:md": 0, "structural:<expected>": 0 },
      "verdict": "PASS",
      "failing_gates": [],
      "verifiers": { "registered": 0, "findings": [] }
@@ -245,8 +258,8 @@ verifiers today, no such free-text is produced yet; the boundary is in place for
 
 ## Live integration (manual when verifiers exist; the floor verdict is hermetically tested)
 
-With **zero verifiers**, `/pharn-dev-verify` runs only stdlib gates + `npm run lint` and makes **no `claude -p`
-call** — runnable in CI-like conditions. When a verifier is added it needs `claude -p` (tokens, auth) and
+With **zero verifiers**, `/pharn-dev-verify` runs only stdlib gates + `npm run lint` / `format:check` / `lint:md`
+and makes **no `claude -p` call** — runnable in CI-like conditions. When a verifier is added it needs `claude -p` (tokens, auth) and
 is run **by hand**, like `/pharn-dev-eval`. The deterministic proof of the **verdict** logic is
 `.dev/floor/check-verify.test.mjs` (pre-recorded `{gate:exit}` fixtures, **no** `claude -p`), which `npm test`
 auto-collects via its `**/*.test.mjs` glob. This file is a command `.md` (not `*.test.mjs`), so `npm

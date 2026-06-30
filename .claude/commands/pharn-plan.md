@@ -133,10 +133,19 @@ spec_content_hash: <the SPEC's pinned hash, copied verbatim> # fix #4 — carrie
 
 <the implementation strategy derived from the approved intent — ADVISORY model work>
 
-## Steps / Files
+## Steps
 
-- <a concrete step or file to change>
+- <a concrete implementation step — ADVISORY prose>
 - <…>
+
+## Files
+
+- `<path/to/file>` — <what this file does / what changes>
+- `<…>`
+
+### Explicitly not touched
+
+- `<reused/or/excluded/path>` — <reused / shelled / out of scope; never edited>
 
 ## Acceptance mapping
 
@@ -146,6 +155,18 @@ spec_content_hash: <the SPEC's pinned hash, copied verbatim> # fix #4 — carrie
 
 - <anything to flag for the human / the next stage>
 ```
+
+> **`## Files` is the PARSEABLE writes-scope (not prose).** `/pharn-build` derives its fix #7
+> writes-scope from **this** section via `set-writes-scope.cjs --from-plan` — cite that contract
+> (its `## Files` extractor) + `ARCHITECTURE.md §6`, do not restate (P4). Three rules keep it
+> parseable: (1) the heading is exactly `## Files`; (2) each authorized path is a list item whose
+> **leading token is a back-tick path** — ``- `path/to/file` — <what changes>``; (3) to **exclude** a
+> path, put it under the `### Explicitly not touched` **subsection** (the setter stops at that
+> heading) — **never** inline as ``- `path` — not touched`` (an inline-marked item still enters
+> scope). Keep an unfilled placeholder in **angle-brackets** (`` `<path>` ``) so an un-filled
+> `## Files` **fails closed** at the setter — a bare word like `` `path` `` would wrongly parse as a
+> real scope path. The `## Steps` above is **advisory prose**; only `## Files` back-tick paths become
+> the build's scope, and `/pharn-build` writes nothing outside them (fix #7).
 
 `/pharn-plan` does **one** thing — it lands **one** plan derived from an approved spec. It does **not**
 chain to `/pharn-grill` or `/pharn-build` (later stages). **End your turn.**

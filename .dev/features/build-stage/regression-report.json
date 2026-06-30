@@ -1,0 +1,21 @@
+{
+  "base": "61b79df706bad03d0c327279a1bd41b308ba5628",
+  "inside": [".claude/commands/pharn-build.md", ".claude/hooks/set-writes-scope.test.cjs"],
+  "outside_gates": {
+    "structural:trust-fence": {
+      "base": 0,
+      "head": 0
+    },
+    "tests": {
+      "base": 1,
+      "head": 1
+    },
+    "validate": {
+      "base": 0,
+      "head": 0
+    }
+  },
+  "regressions": [],
+  "pre_existing": ["tests"],
+  "verdict": "no-regressions"
+}
