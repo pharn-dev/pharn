@@ -205,3 +205,32 @@ L5/L6 (a floor verdict or membership test is only as trustworthy as the declarat
 - surfaced by: `features/review-scope-tighten/REVIEW.md` — proposed lesson + finding F1; triggered by
   `pipeline-integration-probe` finding #2 (`features/pipeline-integration-probe/REVIEW.md:101-114`).
 - promoted: 2026-06-29 via gated `/memory-promote` (human-approved).
+
+## L8 — The writes-scope setter resolves one --target — favor single-file command outputs
+
+**Lesson.** `set-writes-scope.cjs` narrows a placeholder `writes:` entry to exactly ONE concrete `--target`
+path per call, and each call OVERWRITES `.pharn/writes-scope.json`. A command that emits ≥2 artifacts under
+placeholder paths therefore cannot scope them all in a single setter call — only the entry matching `--target`
+survives; the others are filtered out and the fix #7 pre-write hook then DENIES them. When designing a new
+command's outputs, prefer a SINGLE scopeable file (fold metadata into it); if two artifacts are genuinely
+needed, re-scope per-artifact — call the setter once immediately before each write, as `/pharn-dev-regress` and
+`/pharn-dev-verify` do. Never assume one setter call authorizes a multi-file placeholder output.
+
+**Why it matters.** fix #7's fail-closed guarantee is only ergonomic if a command's real outputs are
+scopeable; a multi-artifact command under placeholder paths silently loses scope on all-but-one output (the
+hook denies the rest), so the design pressure is toward single-file outputs or explicit per-artifact
+re-scoping. This shaped `/pharn-spec`: the approved-intent content-hash lives IN `SPEC.md` frontmatter
+(computed over the body — non-circular) rather than a sidecar `SPEC.lock.json`, keeping the command's output
+to one scopeable path. It is a setter MECHANIC constraining command DESIGN — a new axis on the `writes:`/scope
+subsystem of L3 (a too-narrow declaration becomes friction) and L7 (an over-broad declaration leaks power),
+both of which concern a declaration's CONTENT; this concerns the setter's RESOLUTION shape. Honest trigger
+(P7): the constraint was learned at design time and the sidecar friction was AVOIDED, not hit — surfaced by
+reading `set-writes-scope.cjs` live, not by a dogfood failure.
+
+**Provenance.**
+
+- feature: `pharn-spec`
+- commit: `8155e699e2587605a991d7c400b7065588b7f990` (working-tree dogfood built on this commit; uncommitted at
+  promotion time)
+- surfaced by: `.dev/features/pharn-spec/REVIEW.md` (proposed lesson candidate) + the `/pharn-dev-build` note
+- promoted: 2026-06-30 via gated `/pharn-dev-memory-promote` (human-approved).
