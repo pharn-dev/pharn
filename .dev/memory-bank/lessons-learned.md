@@ -268,3 +268,33 @@ captures).
   set) + proposed lesson `verify-include-style-gates`; corroborated by
   `.dev/features/plan-files-scope/VERIFY.md` "Style-gate correction".
 - promoted: 2026-06-30 via gated `/pharn-dev-memory-promote` (human-approved).
+
+## L10 — Product-pipeline artifacts sit on the validate-SCANNED surface; `.dev/` dev artifacts don't
+
+**Lesson.** The dev/product boundary is symmetric on the WRITE side (dev artifacts → `.dev/features/`, product
+artifacts → root `features/`) but ASYMMETRIC at the floor's SCAN side: `validate.mjs` `EXCLUDE_SEGMENTS`
+excludes `.dev/` wholesale but NOT root `features/`. So a finding-bearing PRODUCT artifact (e.g. a `/pharn-grill`
+`GRILL.md` emitting `rule_id:` + `problem:`) is subject to validate CHECK 5 (fix #1 — it must document the
+enum-gated / free-text split or trip RED), whereas the equivalent DEV artifact (`/pharn-dev-grill`'s `GRILL.md`
+in excluded `.dev/features/`) is never scanned. Consequence: moving the same pipeline from the dev loop to the
+product loop silently subjects its audit artifacts to a floor check they never faced — the first real
+product-pipeline run can RED validate for an artifact reason unrelated to the user's code. Remedy: either
+exclude finding-bearing product pipeline artifacts from validate's scan (mirroring the `.dev/` exclusion), or
+ensure the `pharn-*` commands emit split-documented findings by construction (the `/pharn-grill` command already
+instructs honoring the split — making it load-bearing for the floor, not just style).
+
+**Why it matters.** The STYLE-gate half of this same dev/product asymmetry (product artifacts also face
+`format:check` + `lint:md` at `/pharn-dev-verify`) is L9's territory — verify's style gates now cover them; THIS
+lesson is the validate-CHECK-5 half, which L9 does not touch. Note the trust UPSIDE: a laundered needle in a
+product `GRILL.md`'s enum-gated field WOULD be caught by CHECK 5, so the asymmetry also closes a real gap — the
+only cost is that benign product findings must document the split. Surfaced live by the product-pipeline-probe:
+the product `/pharn-grill` `GRILL.md` landed on the scanned surface and passed CHECK 5 only because the split was
+documented; a bare-findings `GRILL.md` would have RED'd the floor.
+
+**Provenance.**
+
+- feature: `product-pipeline-probe`
+- commit: `a66f5872e48265eb39c4c58b6d58c0593f00e8e4`
+- surfaced by: `.dev/features/product-pipeline-probe/PROBE.md` (CF-A) + `.dev/features/product-pipeline-probe/REVIEW.md`
+  (proposed lesson).
+- promoted: 2026-06-30 via gated `/pharn-dev-memory-promote` (human-approved).
