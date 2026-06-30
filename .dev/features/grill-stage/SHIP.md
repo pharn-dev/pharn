@@ -33,6 +33,15 @@ Each verdict is owned by its own sub-stage checker; `/pharn-dev-ship` only **rea
 
 The build's first emission did not pass `format:check`/`lint:md` — the offenders were **only this increment's own new files**, brought to green in-stage with the deterministic formatters (`prettier --write`, `markdownlint-cli2 --fix`, one manual `MD028` blockquote merge). Formatting only, no behavior change, within the increment's footprint; the re-run is all-green (`VERIFY.md`).
 
+## GATE-2 outcome — "fix all findings" (post-review)
+
+At GATE 2 the human chose to **address the findings before merging**. Disposition of all seven (GRILL ×5, REVIEW ×2):
+
+- **Folded into the build (3, already done):** trim + 64-hex-validate the `--hash` output (GRILL P5); explicit 64-hex gate on the carried hash (GRILL P2); symmetric GREEN-with-needle ★ test (GRILL P1).
+- **Fixed now, in-scope (1):** persist a `GRILL.md` on a **RED** chain (GRILL P0 / REVIEW B). `pharn-grill.md` Step 2/Step 4 now write the §6 grill-log on **either** chain result (RED: the broken-chain verdict + re-plan guidance, no interrogation; GREEN: chain-GREEN + findings). This **reverses the approved plan's** "halt-no-artifact-on-RED" decision — a GATE-2 human override, recorded in `PLAN.md` "Decisions made". Re-verified: `npm run check` GREEN, `validate` GREEN, checker tests GREEN.
+- **Ratified, no change (1):** the P7 trigger framing (GRILL P7) — the human's "fix everything" confirms the deferred-gap + P0 trigger meets the P7 bar.
+- **P7-DEFERRED, deliberately NOT fixed here (1):** the `.dev/` packaging boundary (REVIEW A). "Fixing" it now would be **speculative (P7)** — there is **no packaging step in the repo yet** to fix against, the concern is pre-existing and repo-wide (`/pharn-plan`, `/pharn-spec` share it), and a real fix would touch the **hook-protected** `ARCHITECTURE.md` / `CLAUDE.md` boundary docs and span multiple commands (breaking one-axis, P3). It stays **recorded** in `REVIEW.md` as a forward-constraint for the future packaging increment — the honest action, not laziness. (Available as its own `/pharn-dev-ship` when packaging is real.)
+
 ## Standing decision
 
-Chain ran; the named floor verdicts are as shown — this is **NOT** a judgment that the increment is good or wise; that is the human's call at the post-review gate. `/pharn-dev-ship` does **not** merge, push, commit, or apply the `PHARN ✓ reviewed` seal. **The decision (merge / fix / abandon) is yours.**
+Chain ran; the named floor verdicts are as shown, and the in-scope findings are fixed and **re-verified GREEN** — this is still **NOT** a judgment that the increment is good or wise; that is the human's call. `/pharn-dev-ship` does **not** merge, push, commit, or apply the `PHARN ✓ reviewed` seal. **The decision (merge / abandon) is yours.**

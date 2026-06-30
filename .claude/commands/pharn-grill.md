@@ -115,8 +115,10 @@ node .dev/floor/check-plan-spec-agree.mjs features/<name>/PLAN.md features/<name
 
 - **GREEN / exit 0** → the SPEC is Approved + un-drifted **and** the PLAN's carried hash equals the
   SPEC's current body hash (the chain holds) → proceed to Step 3 (the interrogation).
-- **RED / exit non-zero** → **HALT. Do not interrogate, do not write a GRILL.md.** Read the checker's
-  message — it tells the user which refusal it is, so the fix is unambiguous (P5):
+- **RED / exit non-zero** → **do NOT interrogate** (you never grill a stale plan), but **DO write the
+  grill-log recording the RED chain** (Step 4 — the §6 grill-log must exist even on RED; the audit trail
+  is never silent), then **HALT**. Read the checker's message — it tells the user which refusal it is, so
+  the fix is unambiguous (P5):
   - **a broken/stale chain** ("chain BROKEN … != …") → the spec changed after the plan was made; tell the
     user to **re-plan via `/pharn-plan`** (or, if the spec change is intended, **re-approve via
     `/pharn-spec`** then re-plan).
@@ -126,8 +128,9 @@ node .dev/floor/check-plan-spec-agree.mjs features/<name>/PLAN.md features/<name
 
   Never relax, skip, or work around the gate. The chain check is the floor reduction of the §6 Keystone
   (a plan made against a moved spec is stale, detectably — fix #4) — cited, not restated (P4). The floor
-  gate is a **precondition** for the advisory interrogation: you grill a plan only once it is known to be
-  built against the current approved intent.
+  gate is a **precondition for the interrogation** (you grill a plan only once it is known to be built
+  against the current approved intent) — **not** for the grill-log: the grill-log is written either way
+  (Step 4), recording the RED chain on failure or the chain-GREEN result plus findings on success.
 
 ## Step 3 — Interrogate the plan (ADVISORY — model work; reached only on a GREEN chain)
 
@@ -175,10 +178,25 @@ Emit each finding in the **exact finding-shape object**, with the split honored:
 
 ## Step 4 — Emit `features/<name>/GRILL.md` (the grill-log) and halt
 
-Write `features/<name>/GRILL.md` (scope-permitted from Step 0) containing, in order:
+Write `features/<name>/GRILL.md` (scope-permitted from Step 0) **on either chain result** — the §6
+grill-log is the stage's artifact and must exist whether the chain held or broke (the audit trail is
+never silent). Its content depends on the Step-2 chain result:
+
+**On a RED chain (the interrogation did NOT run):**
+
+- a one-line **header** — which plan, and the **FLOOR chain result**: `chain: RED
+(.dev/floor/check-plan-spec-agree.mjs — <which refusal>)`;
+- the checker's **verdict message**, quoted as DATA;
+- the **re-plan / re-approve guidance** for that refusal (from Step 2); and
+- an explicit line: `interrogation NOT performed — the chain must hold before the plan is grilled`.
+
+The RED grill-log records that the chain failed and what to do; it is **not** an interrogation result and
+makes **no** claim about the plan's quality. (Then **HALT**, as Step 2 directed.)
+
+**On a GREEN chain (the interrogation ran in Step 3):**
 
 - a one-line **header** — which plan, and the **FLOOR chain result**: `chain: GREEN (verified by
-.dev/floor/check-plan-spec-agree.mjs)` (you only reach this step on a GREEN chain);
+.dev/floor/check-plan-spec-agree.mjs)`;
 - the **findings** (the YAML objects above, grouped by axis), each with the split honored — or an explicit
   "no findings" if the plan is clean;
 - a **prose summary** of the concerns; and
@@ -187,8 +205,8 @@ Write `features/<name>/GRILL.md` (scope-permitted from Step 0) containing, in or
 /pharn-build`. **Never** "grill passed" or any wording that reads as a guarantee about the plan's quality
   (P0). The only guarantee this run made is the FLOOR chain result in the header.
 
-`/pharn-grill` does **one** stage — it re-verifies the chain, then interrogates one plan. It does **not**
-chain to `/pharn-build`. **End your turn.** The human reads the grill-log and decides.
+`/pharn-grill` does **one** stage — it re-verifies the chain, then (on GREEN) interrogates one plan. It
+does **not** chain to `/pharn-build`. **End your turn.** The human reads the grill-log and decides.
 
 ## Guarantee audit (P0) — the honest split
 
