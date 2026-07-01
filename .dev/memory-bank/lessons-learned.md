@@ -291,6 +291,33 @@ only cost is that benign product findings must document the split. Surfaced live
 the product `/pharn-grill` `GRILL.md` landed on the scanned surface and passed CHECK 5 only because the split was
 documented; a bare-findings `GRILL.md` would have RED'd the floor.
 
+## L11 — Verify's whole-repo style gates let a pre-existing unrelated error block every later feature's verify
+
+**Lesson.** L9 added `format:check` + `lint:md` to `/pharn-dev-verify` so an increment's OWN new markdown is
+caught. But those gates are WHOLE-REPO and `/pharn-dev-verify` runs them ONCE at HEAD with no base comparison, so
+a PRE-EXISTING style error in an UNRELATED committed file (e.g. another feature's frozen
+`.dev/features/<other>/REVIEW.md`) makes THIS feature's verify FAIL even when the feature is clean — and
+`/pharn-dev-verify`, unlike `/pharn-dev-regress` (which classifies a base-red gate as pre-existing rather than a
+regression), cannot distinguish 'this feature's' from 'pre-existing.' Remedy: keep the repo style-clean at merge
+(a red whole-repo style gate silently blocks EVERY later feature's verify until someone fixes the unrelated
+file), or give `/pharn-dev-verify` a base-vs-head comparison for the style gates (as `/pharn-dev-regress` already
+has) so a pre-existing red is classified, not blamed on the feature.
+
+**Why it matters.** It is the P0 two-clocks split at the gate's SCOPE: the whole-repo verdict answers 'is the
+repo green with this in it,' which is correct but conflates repo-cleanliness with FEATURE-cleanliness — so
+'verify FAILED' reads as 'this increment is bad' when the increment is spotless and an unrelated committed
+artifact is the offender. Concretely this run: a clean `architecture-griller` verify returned FAIL on `lint:md`
+solely because of a pre-existing MD038 cluster in #30's `root-apparatus-cleanup/REVIEW.md`; the fix required a
+human-approved, out-of-scope cleanup to unblock. Complements L9 (which ADDED the gates) and L5 (the
+input/orchestration trust boundary).
+
+**Provenance.**
+
+- feature: `architecture-griller`
+- commit: `05a466ed8ca8ab9ab45aa7397c6f081d863d319d`
+- surfaced by: `.dev/features/architecture-griller/REVIEW.md` — proposed lesson candidate L-GATE-1.
+- promoted: 2026-07-01 via gated `/pharn-dev-memory-promote` (human-approved).
+
 **Provenance.**
 
 - feature: `product-pipeline-probe`

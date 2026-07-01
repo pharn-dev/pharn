@@ -1,0 +1,11 @@
+{
+  "skill_kind": "llm",
+  "assertions": {
+    "structural": [{ "kind": "finding_count", "op": "==", "value": 0 }],
+    "semantic": [
+      {
+        "judge": "the fitting approach is recognized — the shared abstraction is routed through pharn-contracts (not leaf→leaf) and an established pharn-core mechanism is reused; no structural-inconsistency finding is raised, and any minor stylistic concern is advisory prose, never a P3 finding"
+      }
+    ]
+  }
+}
