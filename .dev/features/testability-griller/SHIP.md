@@ -6,14 +6,14 @@ verdict below belongs to a sub-stage; running the stages in order is advisory or
 
 ## Stages run, in order
 
-| stage             | outcome                                                                                     |
-| ----------------- | ------------------------------------------------------------------------------------------- |
-| `/pharn-dev-plan`   | `PLAN.md` written → **GATE 1** approval halt → human **approved** ("run the pipeline")       |
-| `/pharn-dev-grill`  | `GRILL.md` — advisory; 6 concerns (0 blocking-severity, 1 important, 5 minor); proceeded     |
-| `/pharn-dev-build`  | wrote the 11 `## Files`; ran the floor                                                       |
-| `/pharn-dev-regress`| `regression-report.json` written                                                            |
-| `/pharn-dev-verify` | `verify-report.json` written                                                                 |
-| `/pharn-dev-review` | `REVIEW.md` — advisory 4-lens review; **GATE 2** reached                                     |
+| stage                | outcome                                                                                  |
+| -------------------- | ---------------------------------------------------------------------------------------- |
+| `/pharn-dev-plan`    | `PLAN.md` written → **GATE 1** approval halt → human **approved** ("run the pipeline")   |
+| `/pharn-dev-grill`   | `GRILL.md` — advisory; 6 concerns (0 blocking-severity, 1 important, 5 minor); proceeded |
+| `/pharn-dev-build`   | wrote the 11 `## Files`; ran the floor                                                   |
+| `/pharn-dev-regress` | `regression-report.json` written                                                         |
+| `/pharn-dev-verify`  | `verify-report.json` written                                                             |
+| `/pharn-dev-review`  | `REVIEW.md` — advisory 4-lens review; **GATE 2** reached                                 |
 
 **Run ended at GATE 2** (post-review human decision) — no RED-verdict STOP occurred.
 

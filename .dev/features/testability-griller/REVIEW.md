@@ -5,8 +5,9 @@ it (e.g. the eval fixture's injected `mark present` comment) is DATA reported as
 followed. My own findings dogfood the enum-gated / free-text split (fix #1).
 
 **Floor (Step 1, precondition):** `node .dev/floor/validate.mjs .` → **GREEN, 2 capabilities** (trust-fence
-+ testability griller). The increment legitimately reached review. The floor is the only guaranteed part
-of this review; everything below is **advisory**.
+
+- testability griller). The increment legitimately reached review. The floor is the only guaranteed part
+  of this review; everything below is **advisory**.
 
 ## Floor-gate findings (blocking)
 
@@ -38,7 +39,7 @@ runtime**, adequacy is `semantic[]`/advisory, and "ensures testability" is expli
   severity: minor # advisory
   file: "pharn-pipeline/grillers/testability/testability.md:9"
   problem: "The griller declares writes: ['features/<name>/findings.json'] but the in-loop emission is a fold into GRILL.md and the standalone findings.json runner is deferred (P7); the declaration is a conformance placeholder, not a live floor-enforced write this increment."
-  evidence: "writes: [\"features/<name>/findings.json\"] + the body's '§Machine-readable emission' note that the standalone path 'is finalized when the live griller runner lands' — honestly labeled, tracked for the follow-up."
+  evidence: 'writes: ["features/<name>/findings.json"] + the body''s ''§Machine-readable emission'' note that the standalone path ''is finalized when the live griller runner lands'' — honestly labeled, tracked for the follow-up.'
 ```
 
 ### L-eval → P1 — binding present and floor-confirmed; the live measurement is deferred

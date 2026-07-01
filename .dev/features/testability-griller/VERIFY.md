@@ -6,14 +6,14 @@ strictly-separated layers: the **FLOOR** layer owns the verdict (exit-code thres
 
 ## FLOOR layer — the deterministic gates (whole-repo at HEAD)
 
-| gate                     | exit | meaning                                                                                 |
-| ------------------------ | :--: | --------------------------------------------------------------------------------------- |
-| `test`                   |  0   | `npm test` — 179 pass (incl. the 12 new `count-grillers.test.mjs` cases)                 |
+| gate                     | exit | meaning                                                                                     |
+| ------------------------ | :--: | ------------------------------------------------------------------------------------------- |
+| `test`                   |  0   | `npm test` — 179 pass (incl. the 12 new `count-grillers.test.mjs` cases)                    |
 | `validate`               |  0   | `.dev/floor/validate.mjs .` — GREEN, **2 capabilities** (trust-fence + testability griller) |
-| `lint`                   |  0   | `eslint .` clean                                                                        |
-| `format:check`           |  0   | `prettier --check .` clean                                                               |
-| `lint:md`                |  0   | `markdownlint-cli2` clean                                                                |
-| `structural:trust-fence` |  0   | `check-structural.mjs` over the one committed eval pair (trust-fence's expected ↔ actual) |
+| `lint`                   |  0   | `eslint .` clean                                                                            |
+| `format:check`           |  0   | `prettier --check .` clean                                                                  |
+| `lint:md`                |  0   | `markdownlint-cli2` clean                                                                   |
+| `structural:trust-fence` |  0   | `check-structural.mjs` over the one committed eval pair (trust-fence's expected ↔ actual)   |
 
 - **The `structural:*` set is trust-fence's pair only.** The new testability griller ships evals
   (`pharn-pipeline/grillers/testability/evals/`) but **no committed actual `findings.json`** yet — the live
