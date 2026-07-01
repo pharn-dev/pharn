@@ -17,8 +17,6 @@ reads:
     "features/<name>/verify-report.json",
     ".dev/floor/check-spec-approved.mjs",
     ".dev/floor/check-plan-spec-agree.mjs",
-    ".dev/floor/check-regress.mjs",
-    ".dev/floor/check-verify.mjs",
     ".dev/floor/validate.mjs",
   ]
 writes: ["features/<name>/SHIP.md"]
