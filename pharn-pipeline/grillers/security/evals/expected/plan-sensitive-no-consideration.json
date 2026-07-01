@@ -1,0 +1,17 @@
+{
+  "skill_kind": "llm",
+  "assertions": {
+    "structural": [
+      { "kind": "finding_count", "op": "==", "value": 1 },
+      { "kind": "field_equals", "field": "type", "value": "FINDING" },
+      { "kind": "field_equals", "field": "rule_id", "value": "P2" },
+      { "kind": "field_equals", "field": "severity", "value": "important" },
+      { "kind": "file_resolves", "value": "pharn-pipeline/grillers/security/evals/cases/plan-sensitive-no-consideration.md:13" }
+    ],
+    "semantic": [
+      {
+        "judge": "the scanner finds no secret literal (no FLOOR finding); the griller's ADVISORY layer surfaces that a destructive admin operation (deleteAll via POST /admin/purge) is planned with no authorization or validation consideration — model judgment, explicitly not a deterministic floor claim, and never gating."
+      }
+    ]
+  }
+}
