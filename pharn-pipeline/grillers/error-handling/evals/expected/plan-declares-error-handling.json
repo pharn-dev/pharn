@@ -1,0 +1,11 @@
+{
+  "skill_kind": "llm",
+  "assertions": {
+    "structural": [{ "kind": "finding_count", "op": "==", "value": 0 }],
+    "semantic": [
+      {
+        "judge": "the plan declares a real error-handling approach (timeout, bounded retry with backoff, cached-default fallback, malformed-response rejection) for a change that needs it; the griller recognizes the declared approach as PRESENT and emits zero findings; any doubt about the approach's adequacy is raised as advisory prose, never as an absence finding, and no concern is manufactured."
+      }
+    ]
+  }
+}

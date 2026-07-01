@@ -1,0 +1,34 @@
+{
+  "base": "HEAD",
+  "inside": [
+    "pharn-pipeline/grillers/error-handling/error-handling.md",
+    "pharn-pipeline/grillers/error-handling/evals/cases/plan-declares-error-handling.md",
+    "pharn-pipeline/grillers/error-handling/evals/cases/plan-omits-error-handling.md",
+    "pharn-pipeline/grillers/error-handling/evals/cases/plan-inadequate-error-handling.md",
+    "pharn-pipeline/grillers/error-handling/evals/expected/plan-declares-error-handling.json",
+    "pharn-pipeline/grillers/error-handling/evals/expected/plan-declares-error-handling.md",
+    "pharn-pipeline/grillers/error-handling/evals/expected/plan-omits-error-handling.json",
+    "pharn-pipeline/grillers/error-handling/evals/expected/plan-omits-error-handling.md",
+    "pharn-pipeline/grillers/error-handling/evals/expected/plan-inadequate-error-handling.json",
+    "pharn-pipeline/grillers/error-handling/evals/expected/plan-inadequate-error-handling.md",
+    ".dev/features/error-handling-griller/PLAN.md",
+    ".dev/features/error-handling-griller/GRILL.md"
+  ],
+  "outside_gates": {
+    "structural:trust-fence": {
+      "base": 0,
+      "head": 0
+    },
+    "tests": {
+      "base": 0,
+      "head": 0
+    },
+    "validate": {
+      "base": 0,
+      "head": 0
+    }
+  },
+  "regressions": [],
+  "pre_existing": [],
+  "verdict": "no-regressions"
+}
