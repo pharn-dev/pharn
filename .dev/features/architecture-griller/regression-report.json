@@ -1,0 +1,29 @@
+{
+  "base": "31689ca9e53eef105f67ae4047e88db7b0ad1de1",
+  "inside": [
+    "pharn-pipeline/grillers/architecture/architecture.md",
+    "pharn-pipeline/grillers/architecture/evals/cases/plan-fits.md",
+    "pharn-pipeline/grillers/architecture/evals/cases/plan-misfits.md",
+    "pharn-pipeline/grillers/architecture/evals/expected/plan-fits.json",
+    "pharn-pipeline/grillers/architecture/evals/expected/plan-fits.md",
+    "pharn-pipeline/grillers/architecture/evals/expected/plan-misfits.json",
+    "pharn-pipeline/grillers/architecture/evals/expected/plan-misfits.md"
+  ],
+  "outside_gates": {
+    "structural:trust-fence": {
+      "base": 0,
+      "head": 0
+    },
+    "tests": {
+      "base": 0,
+      "head": 0
+    },
+    "validate": {
+      "base": 0,
+      "head": 0
+    }
+  },
+  "regressions": [],
+  "pre_existing": [],
+  "verdict": "no-regressions"
+}
