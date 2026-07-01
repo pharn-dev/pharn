@@ -156,6 +156,37 @@ the plan **omits, assumes, or overstates** — do not restate what it got right.
 When you are unsure whether something is a real gap, your terminal fallback is to **raise it as a question
 for the human** (P5/P6) — never to silently pass it, and never to fabricate a confident verdict.
 
+## Step 3b — Discover + run grillers (the advisory plug-in slot; membership is FLOOR)
+
+Beyond the interrogation axes above, `/pharn-grill` discovers and runs **griller capabilities** —
+`role: griller` capabilities that each interrogate the plan along **one axis** (testability,
+architecture, security, …), the parallel of `role: verifier` capabilities at `/pharn-verify`. The
+built-in interrogation (Step 3) and the pluggable grillers **coexist**, exactly as `/pharn-verify`'s
+floor gates and its verifier slot do — and both run only on a GREEN chain (after Step 2).
+
+- **Discover by deterministic membership (P5), never a prose grep:**
+
+  ```bash
+  node .dev/floor/count-grillers.mjs .
+  ```
+
+  It reads `role: griller` from `---`-fenced frontmatter only and prints
+  `{"registered":<int>,"grillers":[<path>,...]}`. A `role: griller` string in prose / a code block — or a
+  grill STAGE command's own `role: griller` frontmatter (excluded `.claude/commands/`) — **never**
+  registers (`.dev/floor/count-grillers.mjs`, mirroring `count-verifiers.mjs`, #16). Membership is
+  **FLOOR**; _running_ a griller is advisory.
+
+- **Run each registered griller** over `features/<name>/PLAN.md` and fold its findings (the
+  `finding-shape` objects, split honored) into the grill-log (Step 4), grouped by axis. Today the set is
+  the `testability` griller (`pharn-pipeline/grillers/testability/testability.md`).
+- **Grillers are ADVISORY — they gate nothing** (fix #3): surfaced for the human, never a proceed/stop
+  basis. `/pharn-grill`'s only deterministic stop stays the spec→plan hash chain (Step 2); griller
+  findings never flip it. A griller's own floor sub-check lives in that griller's evals — it does not
+  make the grill stage's verdict floor.
+- **The live isolated griller runner is deferred (P7):** the stage applies the griller's procedure inline
+  and records its findings in `GRILL.md`; a fully-isolated per-griller runner is filled in when needed,
+  not built speculatively.
+
 ## Finding output (the enum-gated / free-text split — `finding-shape.md`, cited not restated, P4)
 
 Emit each finding in the **exact finding-shape object**, with the split honored:

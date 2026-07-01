@@ -1,0 +1,11 @@
+{
+  "skill_kind": "llm",
+  "assertions": {
+    "structural": [{ "kind": "finding_count", "op": "==", "value": 0 }],
+    "semantic": [
+      {
+        "judge": "the declared verification approach is recognized as present; any concern about its adequacy is raised as advisory prose, never as an absence finding"
+      }
+    ]
+  }
+}
