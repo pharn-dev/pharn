@@ -400,12 +400,25 @@ gate === 0`), never on model judgment. This is what "verified" means — full st
   DATA. The **verdict** ranges **only** over the enum-gated / floor-verifiable class — gate exit codes
   (ints), the feature name (a path string), and the chain check's two 64-hex digests + `state` enum. It
   **never** reads a finding's free-text (`problem` / `evidence`) or any prose meaning.
-- **The commands executed are the USER's own suite, never a tainted field.** The gates come from `--gates`
-  (passed by the user) or the fixed-allowlist ∩ the project's own `package.json` scripts — the user's own
-  project, which the user already runs. They are **never** sourced from the untrusted PLAN / SPEC free-text.
-  So the one place `/pharn-verify` executes arbitrary commands is the user's own (user-trusted)
-  deterministic suite; **no executed command, and no guaranteed decision, rests on a tainted field**
-  (mirrors `/pharn-regress`).
+- **The gate COMMANDS executed are the USER's own suite, never a tainted field.** The project-gate
+  _commands_ (§3a) come from `--gates` (passed by the user) or the fixed-allowlist ∩ the project's own
+  `package.json` scripts — the user's own project, which the user already runs. They are **never** sourced
+  from the untrusted PLAN / SPEC free-text. So the one place `/pharn-verify` executes an arbitrary _command
+  string_ is the user's own (user-trusted) deterministic suite (mirrors `/pharn-regress`).
+- **The eval-pair discovery reads PATHS from the untrusted PLAN — bounded to file operands, not a command
+  channel.** The `structural:<expected>` gates (§3b) derive `check-structural.mjs`'s **path arguments**
+  (`<capDir>/evals/expected/*.json` ↔ the capability's `findings.json`) from the feature's
+  `features/<name>/PLAN.md` `## Files` — which is `trust: untrusted` DATA (P2). This is **bounded, not a
+  taint channel:** those PLAN-derived values are used **only** as filesystem-membership operands and as
+  **file-read path arguments** to `check-structural.mjs` (which reads JSON — it never executes a path, and
+  the command never shell-interpolates one), and **only the resulting exit code** feeds the verdict. A
+  crafted path can at most change **which** committed eval files are checked (a _coverage_ question,
+  surfaced in `VERIFY.md`), never inject a command or flip a guaranteed decision — and the Step-2
+  hash-chain gate ensures the PLAN is **current + human-approved** before any of its paths are read. This
+  is the same PLAN-`## Files`-derived-paths pattern `/pharn-regress` uses for its inside/outside partition.
+- **Net: no executed command, and no guaranteed decision, rests on a tainted free-text field.** Gate
+  commands are the user's own suite; the only PLAN-derived values that enter are **paths**, consumed as
+  membership / file-read operands whose sole output is an exit code the verdict reads.
 - **ADVISORY-layer taint (bounded, not zeroed).** Verifier findings' `problem` / `evidence` **inherit the
   untrusted tag** of the reviewed artifact (`finding-shape.md`); they are rendered as **quoted DATA** in
   the artifacts, appended **after** the verdict, and **never** passed to the verdict helper. So **taint

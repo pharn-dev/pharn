@@ -38,6 +38,25 @@ The run reached **GATE 2** (post-review). No stage hit a RED-verdict STOP.
   deciding.
 - Machine artifacts: `regression-report.json`, `verify-report.json` (verdicts above, verbatim).
 
+## Post-review fix (at GATE 2, human-directed)
+
+At GATE 2 the human chose **fix** and directed: address the **important** advisory (`REVIEW.md` finding
+F1, P2). Applied to `.claude/commands/pharn-verify.md` (Trust audit §P2), a **prose-only** refinement (no
+behavioral change): the trust audit now (a) narrows the "gate commands are never sourced from the PLAN"
+claim to the gate _command strings_ (§3a), and (b) adds an explicit bullet naming the §3b eval-pair
+discovery's PLAN-`## Files` path-source (untrusted DATA) and **bounding** its taint — those PLAN-derived
+values are used only as filesystem-membership / file-read operands to `check-structural.mjs` (never
+executed, never shell-interpolated) whose sole output is an exit code, so no command and no guaranteed
+decision rests on a tainted field (the same pattern `/pharn-regress` uses).
+
+**Re-verified after the fix (an unsound edit cannot fake a green verdict — the gates recompute):**
+`format:check` + `lint:md` re-checked the edited markdown; full `npm run check` **exit 0**; floor
+**GREEN**; verify re-run over the edited file → **`PASS`** (all 6 gates 0). The edit is **inside** the
+declared `## Files` scope and changed **no** outside gate input, so the regress `no-regressions` verdict
+still stands (not re-run — nothing outside changed). The **minor** advisory (F2, RED-chain cross-stage
+asymmetry) was left as-is per the human's scope ("the important advisory") and is reviewer-endorsed as
+sound + intentional.
+
 ## Standing decision
 
 **The decision is the human's.** This `SHIP.md` records **only that the chain ran and its named floor
