@@ -6,14 +6,14 @@ merge, a ship, or a `PHARN ✓ reviewed` seal.
 
 ## Stages run, in order
 
-| stage             | ran | structural verdict (read verbatim)                     |
-| ----------------- | --- | ------------------------------------------------------ |
-| `/pharn-dev-plan`   | ✓   | GATE 1 — human **approved** (OQ-1 complete cleanup; OQ-2 leave traces frozen) |
-| `/pharn-dev-grill`  | ✓   | advisory — 2 concerns (0 blocking); gates nothing      |
-| `/pharn-dev-build`  | ✓   | **FLOOR: `validate` exit 0** (GREEN — 2 capabilities)  |
-| `/pharn-dev-regress`| ✓   | **`regression-report.json` .verdict = `no-regressions`** (exit 0) |
-| `/pharn-dev-verify` | ✓   | **`verify-report.json` .verdict = `PASS`** (exit 0)    |
-| `/pharn-dev-review` | ✓   | advisory — REVIEW verdict GREEN, 0 floor-gate findings |
+| stage                | ran | structural verdict (read verbatim)                                            |
+| -------------------- | --- | ----------------------------------------------------------------------------- |
+| `/pharn-dev-plan`    | ✓   | GATE 1 — human **approved** (OQ-1 complete cleanup; OQ-2 leave traces frozen) |
+| `/pharn-dev-grill`   | ✓   | advisory — 2 concerns (0 blocking); gates nothing                             |
+| `/pharn-dev-build`   | ✓   | **FLOOR: `validate` exit 0** (GREEN — 2 capabilities)                         |
+| `/pharn-dev-regress` | ✓   | **`regression-report.json` .verdict = `no-regressions`** (exit 0)             |
+| `/pharn-dev-verify`  | ✓   | **`verify-report.json` .verdict = `PASS`** (exit 0)                           |
+| `/pharn-dev-review`  | ✓   | advisory — REVIEW verdict GREEN, 0 floor-gate findings                        |
 
 **Where the run ended:** GATE 2 (post-review human decision) — not a RED-verdict STOP.
 

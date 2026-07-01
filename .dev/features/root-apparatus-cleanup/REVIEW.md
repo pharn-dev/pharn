@@ -49,9 +49,9 @@ is introduced. The increment spans three dirs (`.claude/commands/`, `floor/`, `f
 
 ## Advisory notes (inform; never block)
 
-- **Both grill concerns were resolved in-run, not deferred.** The grill's P1 (verify should *confirm*
+- **Both grill concerns were resolved in-run, not deferred.** The grill's P1 (verify should _confirm_
   no live dangling ref, not assume it) → `/pharn-dev-verify` ran the grep: **zero** live refs. The grill's
-  P6 (a deletion-only plan needs the build to *execute* `git rm`, not write) → the orchestrator ran the
+  P6 (a deletion-only plan needs the build to _execute_ `git rm`, not write) → the orchestrator ran the
   `git rm` set; `validate` GREEN confirms.
 - **The `_italic_` / `#19`-heading style trip at first verify was self-contained** to this increment's
   own `GRILL.md`/`PLAN.md`, fixed and re-verified green (L9 working as intended — an increment's own
@@ -64,9 +64,9 @@ Both surfaced as **real** failures this run (P7 — not hypothetical). Recorded 
 
 - **Candidate L-DEL-1 — the writes-scope setter can't scope a deletion-only plan.**
   `set-writes-scope.cjs --from-plan` errored `no back-tick paths under `## Files`` because the bullets
-  are `**DELETE** \`path\``-prefixed (path not the first token). Harmless here (deletions go via `git rm`,
+are `**DELETE** \`path\``-prefixed (path not the first token). Harmless here (deletions go via `git rm`,
   which the `Write|Edit|MultiEdit` hook does not gate), but a future deletion/rename increment that
-  *also writes* would hit fail-closed. **Lesson:** deletion-only increments either (a) list plain
+  _also writes_ would hit fail-closed. **Lesson:** deletion-only increments either (a) list plain
   back-tick paths the setter can parse, or (b) the setter learns a `DELETE:`-aware parse.
   _Provenance: this increment (root-apparatus-cleanup), build Step 0._
 - **Candidate L-DEL-2 — zsh does not word-split unquoted `$list`; `node --test $FILES` collapses to one

@@ -6,13 +6,13 @@
 
 ## FLOOR layer — the gates that OWN the verdict (whole-repo, at HEAD)
 
-| gate           | exit | note                                                          |
-| -------------- | ---- | ------------------------------------------------------------ |
-| `test`         | 0    | `npm test` — **167 pass / 0 fail** (was 179; −12 stale dup)  |
-| `validate`     | 0    | `FLOOR: GREEN — 2 capabilities` (unchanged)                  |
-| `lint`         | 0    | eslint clean                                                 |
-| `format:check` | 0    | prettier clean (see note)                                    |
-| `lint:md`      | 0    | markdownlint clean (see note)                                |
+| gate           | exit | note                                                        |
+| -------------- | ---- | ----------------------------------------------------------- |
+| `test`         | 0    | `npm test` — **167 pass / 0 fail** (was 179; −12 stale dup) |
+| `validate`     | 0    | `FLOOR: GREEN — 2 capabilities` (unchanged)                 |
+| `lint`         | 0    | eslint clean                                                |
+| `format:check` | 0    | prettier clean (see note)                                   |
+| `lint:md`      | 0    | markdownlint clean (see note)                               |
 
 No `structural:*` gate — this feature ships **no** eval pair (deletion-only, no `role:` capability).
 
