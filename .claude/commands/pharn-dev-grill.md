@@ -108,6 +108,39 @@ When you are unsure whether something is a real gap, your terminal fallback is t
 question for the human** (P5/P6) — never to silently pass it, and never to fabricate a confident
 verdict.
 
+## Step 2b — Discover + run grillers (the advisory plug-in slot; membership is FLOOR)
+
+Beyond the built-in interrogation above, the grill stage discovers and runs **griller capabilities** —
+`role: griller` capabilities that each interrogate the plan along **one axis** (testability,
+architecture, security, …), the parallel of `role: verifier` capabilities at `/pharn-dev-verify`. The
+inline axes (Step 2) and the pluggable grillers **coexist** (exactly as `/pharn-dev-verify`'s floor gates
+and its verifier slot do); as axes are extracted into grillers over time, the inline set shrinks.
+
+- **Discover by deterministic membership (P5), never a prose grep:**
+
+  ```bash
+  node .dev/floor/count-grillers.mjs .
+  ```
+
+  This reads `role: griller` from `---`-fenced frontmatter only and prints
+  `{"registered":<int>,"grillers":[<path>,...]}`. A `role: griller` string in prose / a code block — or
+  **this stage command's own `role: griller` frontmatter** (it lives under the excluded
+  `.claude/commands/`) — **never** registers (`.dev/floor/count-grillers.mjs`, mirroring
+  `count-verifiers.mjs`, #16). Membership is **FLOOR** (enum/regex, `ARCHITECTURE.md §2`); _running_ a
+  griller is advisory.
+
+- **Run each registered griller** over `.dev/features/<name>/PLAN.md`: apply its procedure and fold its
+  findings (the `finding-shape` objects, enum-gated / free-text split honored) into the grill-log
+  (Step 3), grouped under the griller's axis. Today the registered set is the `testability` griller
+  (`pharn-pipeline/grillers/testability/testability.md`).
+- **Grillers are ADVISORY — they gate nothing** (fix #3): their findings are surfaced for the human,
+  never a proceed/stop basis — consistent with `/pharn-dev-grill` being advisory end-to-end. A griller's
+  own floor sub-check (e.g. the testability griller's membership + its `structural[]` eval assertions) is
+  floor **within that griller's evals**; it does **not** make the grill stage's verdict floor.
+- **The live isolated griller runner is deferred (P7):** today the stage applies the griller's procedure
+  inline and records its findings in `GRILL.md`; a fully-isolated `claude -p` per-griller runner (like
+  `/pharn-dev-eval`'s) is filled in when needed — not built speculatively for the first griller.
+
 ## Finding output (dogfood fix #1 — the enum-gated / free-text split)
 
 Emit each finding in the **exact finding-shape object** (`pharn-contracts/finding-shape.md` — cite and

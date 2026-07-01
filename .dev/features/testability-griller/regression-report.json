@@ -1,0 +1,33 @@
+{
+  "base": "4b03d743aed90919cea73d8525ef28dd34461ec6",
+  "inside": [
+    "pharn-pipeline/grillers/testability/testability.md",
+    "pharn-pipeline/grillers/testability/evals/cases/plan-with-verification.md",
+    "pharn-pipeline/grillers/testability/evals/cases/plan-no-verification.md",
+    "pharn-pipeline/grillers/testability/evals/expected/plan-with-verification.json",
+    "pharn-pipeline/grillers/testability/evals/expected/plan-with-verification.md",
+    "pharn-pipeline/grillers/testability/evals/expected/plan-no-verification.json",
+    "pharn-pipeline/grillers/testability/evals/expected/plan-no-verification.md",
+    ".dev/floor/count-grillers.mjs",
+    ".dev/floor/count-grillers.test.mjs",
+    ".claude/commands/pharn-dev-grill.md",
+    ".claude/commands/pharn-grill.md"
+  ],
+  "outside_gates": {
+    "structural:trust-fence": {
+      "base": 0,
+      "head": 0
+    },
+    "tests": {
+      "base": 0,
+      "head": 0
+    },
+    "validate": {
+      "base": 0,
+      "head": 0
+    }
+  },
+  "regressions": [],
+  "pre_existing": [],
+  "verdict": "no-regressions"
+}
