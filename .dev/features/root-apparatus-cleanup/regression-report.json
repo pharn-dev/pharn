@@ -1,0 +1,37 @@
+{
+  "base": "cbda487",
+  "inside": [
+    ".claude/commands/ship.md",
+    "features/ship-gated/PLAN.md",
+    "features/ship-gated/REGRESSION.md",
+    "features/ship-gated/REVIEW.md",
+    "features/ship-gated/VERIFY.md",
+    "features/ship-gated/regression-report.json",
+    "features/ship-gated/verify-report.json",
+    "features/ship-loop/PLAN.md",
+    "features/ship-loop/REGRESSION.md",
+    "features/ship-loop/REVIEW.md",
+    "features/ship-loop/VERIFY.md",
+    "features/ship-loop/regression-report.json",
+    "features/ship-loop/verify-report.json",
+    "floor/check-ship.mjs",
+    "floor/check-ship.test.mjs"
+  ],
+  "outside_gates": {
+    "structural:trust-fence": {
+      "base": 0,
+      "head": 0
+    },
+    "tests": {
+      "base": 0,
+      "head": 0
+    },
+    "validate": {
+      "base": 0,
+      "head": 0
+    }
+  },
+  "regressions": [],
+  "pre_existing": [],
+  "verdict": "no-regressions"
+}
