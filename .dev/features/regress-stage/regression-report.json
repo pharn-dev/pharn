@@ -1,0 +1,21 @@
+{
+  "base": "08881026d48455f092bb5e696a19ee3b6c8608f1",
+  "inside": [".claude/commands/pharn-regress.md"],
+  "outside_gates": {
+    "structural:trust-fence": {
+      "base": 0,
+      "head": 0
+    },
+    "tests": {
+      "base": 1,
+      "head": 1
+    },
+    "validate": {
+      "base": 0,
+      "head": 0
+    }
+  },
+  "regressions": [],
+  "pre_existing": ["tests"],
+  "verdict": "no-regressions"
+}
