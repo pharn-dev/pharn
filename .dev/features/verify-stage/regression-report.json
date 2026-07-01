@@ -1,0 +1,21 @@
+{
+  "base": "4e508ab3e03a579e909bc301cd9e8ecd69dec559",
+  "inside": [".claude/commands/pharn-verify.md"],
+  "outside_gates": {
+    "structural:trust-fence": {
+      "base": 0,
+      "head": 0
+    },
+    "tests": {
+      "base": 0,
+      "head": 0
+    },
+    "validate": {
+      "base": 0,
+      "head": 0
+    }
+  },
+  "regressions": [],
+  "pre_existing": [],
+  "verdict": "no-regressions"
+}
