@@ -29,8 +29,8 @@ one axis, no sibling import (L-axis, floor grep GREEN). The increment is **not b
   evidence: '"It detects deterministically-detectable breakage OUTSIDE the feature" → FLOOR: exit-code comparison of two {gate-id:int} maps, check-regress.mjs verdict'
 ```
 
-> Advisory, not blocking: the file **does** bound this correctly across two bullets (the *comparison* is
-> floor; *assembling the maps* — which gates, over which files — is advisory orchestration), and this is the
+> Advisory, not blocking: the file **does** bound this correctly across two bullets (the _comparison_ is
+> floor; _assembling the maps_ — which gates, over which files — is advisory orchestration), and this is the
 > **same** two-bullet framing `/pharn-dev-regress` itself uses. A single sharper sentence ("the comparison is
 > the guarantee; building the exit-code maps is advisory") would remove the need to read two bullets
 > together. The two grill "important" findings **were folded in and are honored**: Step 4b keeps cross-file

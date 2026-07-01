@@ -4,13 +4,13 @@
 
 ## FLOOR layer — the deterministic gates (own the verdict)
 
-| gate                     | exit | notes                                                                          |
-| ------------------------ | ---- | ------------------------------------------------------------------------------ |
-| `test`                   | 0    | canonical `npm test` — 163 tests green (unaffected; command is floor-ignored)  |
-| `validate`               | 0    | `.dev/floor/validate.mjs .` — GREEN, 1 capability (count unchanged)            |
-| `lint`                   | 0    | eslint clean                                                                   |
-| `format:check`           | 0    | prettier clean — **see the honest note below**                                 |
-| `lint:md`                | 0    | markdownlint clean                                                             |
+| gate                     | exit | notes                                                                              |
+| ------------------------ | ---- | ---------------------------------------------------------------------------------- |
+| `test`                   | 0    | canonical `npm test` — 163 tests green (unaffected; command is floor-ignored)      |
+| `validate`               | 0    | `.dev/floor/validate.mjs .` — GREEN, 1 capability (count unchanged)                |
+| `lint`                   | 0    | eslint clean                                                                       |
+| `format:check`           | 0    | prettier clean — **see the honest note below**                                     |
+| `lint:md`                | 0    | markdownlint clean                                                                 |
 | `structural:trust-fence` | 0    | the one committed eval pair (expected ↔ `.dev/features/trust-fence/findings.json`) |
 
 **VERIFIED: floor gates PASS** (`.dev/floor/check-verify.mjs`, exit 0 — every gate exit 0, `failing_gates: []`).

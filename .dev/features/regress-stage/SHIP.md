@@ -7,14 +7,14 @@ ran and its floor verdicts — it is **not** a judgment that the increment is go
 
 ## Stages run, in order
 
-| stage             | outcome                    | verdict source (read verbatim)                                     |
-| ----------------- | -------------------------- | ----------------------------------------------------------------- |
-| `/pharn-dev-plan`   | PLAN written, **approved** | GATE 1 — human approved as written (OQ1, OQ2 resolved as recommended) |
-| `/pharn-dev-grill`  | advisory, proceeded        | no structural verdict (grill gates nothing); 5 findings — see `GRILL.md` |
-| `/pharn-dev-build`  | **GREEN** → proceed        | `node .dev/floor/validate.mjs .` **exit 0** (FLOOR)               |
-| `/pharn-dev-regress`| **no-regressions** → proceed | `regression-report.json` `.verdict` = **`no-regressions`** (FLOOR, exit 0) |
-| `/pharn-dev-verify` | **PASS** → proceed         | `verify-report.json` `.verdict` = **`PASS`** (FLOOR, exit 0, all 6 gates green) |
-| `/pharn-dev-review` | **GREEN** (0 blocking)     | prose `REVIEW.md` — **no structural verdict** (LLM severity is advisory, fix #3) |
+| stage                | outcome                      | verdict source (read verbatim)                                                   |
+| -------------------- | ---------------------------- | -------------------------------------------------------------------------------- |
+| `/pharn-dev-plan`    | PLAN written, **approved**   | GATE 1 — human approved as written (OQ1, OQ2 resolved as recommended)            |
+| `/pharn-dev-grill`   | advisory, proceeded          | no structural verdict (grill gates nothing); 5 findings — see `GRILL.md`         |
+| `/pharn-dev-build`   | **GREEN** → proceed          | `node .dev/floor/validate.mjs .` **exit 0** (FLOOR)                              |
+| `/pharn-dev-regress` | **no-regressions** → proceed | `regression-report.json` `.verdict` = **`no-regressions`** (FLOOR, exit 0)       |
+| `/pharn-dev-verify`  | **PASS** → proceed           | `verify-report.json` `.verdict` = **`PASS`** (FLOOR, exit 0, all 6 gates green)  |
+| `/pharn-dev-review`  | **GREEN** (0 blocking)       | prose `REVIEW.md` — **no structural verdict** (LLM severity is advisory, fix #3) |
 
 ## Structural (FLOOR) verdicts, verbatim — the only guarantees in this run
 
