@@ -63,8 +63,8 @@ Both surfaced as **real** failures this run (P7 — not hypothetical). Recorded 
 `/pharn-dev-review` writes no canon (scope = `REVIEW.md`).
 
 - **Candidate L-DEL-1 — the writes-scope setter can't scope a deletion-only plan.**
-  `set-writes-scope.cjs --from-plan` errored `no back-tick paths under `## Files`` because the bullets
-are `**DELETE** \`path\``-prefixed (path not the first token). Harmless here (deletions go via `git rm`,
+  `set-writes-scope.cjs --from-plan` errored "no back-tick paths under `## Files`" because the bullets
+  are **DELETE** `path`-prefixed (path not the first token). Harmless here (deletions go via `git rm`,
   which the `Write|Edit|MultiEdit` hook does not gate), but a future deletion/rename increment that
   _also writes_ would hit fail-closed. **Lesson:** deletion-only increments either (a) list plain
   back-tick paths the setter can parse, or (b) the setter learns a `DELETE:`-aware parse.
