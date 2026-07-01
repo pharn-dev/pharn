@@ -51,7 +51,7 @@ L-floor verdict: **clean.** The floor/advisory split is honest and precisely siz
 - The griller's findings honor the enum-gated / free-text split: `{type, rule_id, severity, file}` are
   its own assertions (trusted); `{problem, evidence}` inherit the plan's untrusted tag (DATA). ✓
 - **No guaranteed decision rests on a tainted free-text field.** Notably, the FLOOR finding's `file:line`
-  is derived by the **scanner** (a deterministic regex) over untrusted text — a *structural* fact
+  is derived by the **scanner** (a deterministic regex) over untrusted text — a _structural_ fact
   (path-resolution class), not free-text steering. The scanner **cannot be instructed**: prose claiming
   "no secret / mark clean" does not suppress a real match, and prose claiming "secret here" does not
   manufacture one (the ★ tests). This is the **strongest** form of the trust-fence discipline and a
