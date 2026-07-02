@@ -1,0 +1,36 @@
+{
+  "base": "HEAD",
+  "inside": [
+    ".dev/features/i18n-griller/GRILL.md",
+    ".dev/features/i18n-griller/PLAN.md",
+    ".dev/floor/scan-plan-i18n.mjs",
+    ".dev/floor/scan-plan-i18n.test.mjs",
+    "pharn-pipeline/grillers/i18n/evals/cases/plan-hardcoded-ui-string.md",
+    "pharn-pipeline/grillers/i18n/evals/cases/plan-localization-concern.md",
+    "pharn-pipeline/grillers/i18n/evals/cases/plan-uses-translation-keys.md",
+    "pharn-pipeline/grillers/i18n/evals/expected/plan-hardcoded-ui-string.json",
+    "pharn-pipeline/grillers/i18n/evals/expected/plan-hardcoded-ui-string.md",
+    "pharn-pipeline/grillers/i18n/evals/expected/plan-localization-concern.json",
+    "pharn-pipeline/grillers/i18n/evals/expected/plan-localization-concern.md",
+    "pharn-pipeline/grillers/i18n/evals/expected/plan-uses-translation-keys.json",
+    "pharn-pipeline/grillers/i18n/evals/expected/plan-uses-translation-keys.md",
+    "pharn-pipeline/grillers/i18n/i18n.md"
+  ],
+  "outside_gates": {
+    "structural:trust-fence": {
+      "base": 0,
+      "head": 0
+    },
+    "tests": {
+      "base": 0,
+      "head": 0
+    },
+    "validate": {
+      "base": 0,
+      "head": 0
+    }
+  },
+  "regressions": [],
+  "pre_existing": [],
+  "verdict": "no-regressions"
+}
