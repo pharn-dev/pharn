@@ -1,0 +1,37 @@
+{
+  "base": "f811151cb0a21b6c49fd30553429e78bcf2f588a",
+  "inside": [
+    ".dev/floor/scan-plan-migrations.mjs",
+    ".dev/floor/scan-plan-migrations.test.mjs",
+    "pharn-pipeline/grillers/migrations/evals/cases/plan-fake-migration-injection.md",
+    "pharn-pipeline/grillers/migrations/evals/cases/plan-migration-declared.md",
+    "pharn-pipeline/grillers/migrations/evals/cases/plan-schema-no-migration.md",
+    "pharn-pipeline/grillers/migrations/evals/cases/plan-unsafe-migration.md",
+    "pharn-pipeline/grillers/migrations/evals/expected/plan-fake-migration-injection.json",
+    "pharn-pipeline/grillers/migrations/evals/expected/plan-fake-migration-injection.md",
+    "pharn-pipeline/grillers/migrations/evals/expected/plan-migration-declared.json",
+    "pharn-pipeline/grillers/migrations/evals/expected/plan-migration-declared.md",
+    "pharn-pipeline/grillers/migrations/evals/expected/plan-schema-no-migration.json",
+    "pharn-pipeline/grillers/migrations/evals/expected/plan-schema-no-migration.md",
+    "pharn-pipeline/grillers/migrations/evals/expected/plan-unsafe-migration.json",
+    "pharn-pipeline/grillers/migrations/evals/expected/plan-unsafe-migration.md",
+    "pharn-pipeline/grillers/migrations/migrations.md"
+  ],
+  "outside_gates": {
+    "structural:expected-injection-comment": {
+      "base": 0,
+      "head": 0
+    },
+    "tests": {
+      "base": 0,
+      "head": 0
+    },
+    "validate": {
+      "base": 0,
+      "head": 0
+    }
+  },
+  "regressions": [],
+  "pre_existing": [],
+  "verdict": "no-regressions"
+}

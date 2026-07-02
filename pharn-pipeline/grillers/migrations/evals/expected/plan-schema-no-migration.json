@@ -1,0 +1,17 @@
+{
+  "skill_kind": "llm",
+  "assertions": {
+    "structural": [
+      { "kind": "finding_count", "op": "==", "value": 1 },
+      { "kind": "field_equals", "field": "type", "value": "FINDING" },
+      { "kind": "field_equals", "field": "rule_id", "value": "P7" },
+      { "kind": "field_equals", "field": "severity", "value": "important" },
+      { "kind": "file_resolves", "value": "pharn-pipeline/grillers/migrations/evals/cases/plan-schema-no-migration.md:6" }
+    ],
+    "semantic": [
+      {
+        "judge": "the scanner finds no migration/rollback vocabulary (mentions:false); the griller's ADVISORY layer surfaces that a schema change (dropping users.legacy_flag and adding users.status) is planned with no declared migration and no rollback path — an unlabeled irreversibility limit — citing P7 (honest scope). This is model judgment (touches-schema is not deterministic), explicitly not a floor claim and never gating; the finding cites the plan's title line as a whole-document absence."
+      }
+    ]
+  }
+}
