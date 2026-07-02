@@ -1,0 +1,11 @@
+{
+  "skill_kind": "llm",
+  "assertions": {
+    "structural": [{ "kind": "finding_count", "op": "==", "value": 0 }],
+    "semantic": [
+      {
+        "judge": "the plan declares real accessibility (keyboard operability + focus order, ARIA roles/labels, WCAG AA contrast, screen-reader announcements) for a UI surface that needs it (a form component + a modal dialog); the griller recognizes the declared a11y as PRESENT and emits zero findings; any doubt about the a11y's adequacy is raised as advisory prose, never as an absence finding, and no concern is manufactured."
+      }
+    ]
+  }
+}

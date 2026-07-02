@@ -1,0 +1,37 @@
+{
+  "base": "HEAD",
+  "inside": [
+    ".dev/features/a11y-griller/GRILL.md",
+    ".dev/features/a11y-griller/PLAN.md",
+    "pharn-pipeline/grillers/a11y/a11y.md",
+    "pharn-pipeline/grillers/a11y/evals/cases/plan-declares-a11y.md",
+    "pharn-pipeline/grillers/a11y/evals/cases/plan-inadequate-a11y.md",
+    "pharn-pipeline/grillers/a11y/evals/cases/plan-non-ui.md",
+    "pharn-pipeline/grillers/a11y/evals/cases/plan-omits-a11y.md",
+    "pharn-pipeline/grillers/a11y/evals/expected/plan-declares-a11y.json",
+    "pharn-pipeline/grillers/a11y/evals/expected/plan-declares-a11y.md",
+    "pharn-pipeline/grillers/a11y/evals/expected/plan-inadequate-a11y.json",
+    "pharn-pipeline/grillers/a11y/evals/expected/plan-inadequate-a11y.md",
+    "pharn-pipeline/grillers/a11y/evals/expected/plan-non-ui.json",
+    "pharn-pipeline/grillers/a11y/evals/expected/plan-non-ui.md",
+    "pharn-pipeline/grillers/a11y/evals/expected/plan-omits-a11y.json",
+    "pharn-pipeline/grillers/a11y/evals/expected/plan-omits-a11y.md"
+  ],
+  "outside_gates": {
+    "structural:trust-fence": {
+      "base": 0,
+      "head": 0
+    },
+    "tests": {
+      "base": 0,
+      "head": 0
+    },
+    "validate": {
+      "base": 0,
+      "head": 0
+    }
+  },
+  "regressions": [],
+  "pre_existing": [],
+  "verdict": "no-regressions"
+}
