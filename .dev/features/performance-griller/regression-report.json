@@ -1,0 +1,31 @@
+{
+  "base": "HEAD",
+  "inside": [
+    ".dev/features/performance-griller/GRILL.md",
+    ".dev/features/performance-griller/PLAN.md",
+    "pharn-pipeline/grillers/performance/evals/cases/plan-clean.md",
+    "pharn-pipeline/grillers/performance/evals/cases/plan-perf-risk.md",
+    "pharn-pipeline/grillers/performance/evals/expected/plan-clean.json",
+    "pharn-pipeline/grillers/performance/evals/expected/plan-clean.md",
+    "pharn-pipeline/grillers/performance/evals/expected/plan-perf-risk.json",
+    "pharn-pipeline/grillers/performance/evals/expected/plan-perf-risk.md",
+    "pharn-pipeline/grillers/performance/performance.md"
+  ],
+  "outside_gates": {
+    "structural:trust-fence": {
+      "base": 0,
+      "head": 0
+    },
+    "tests": {
+      "base": 0,
+      "head": 0
+    },
+    "validate": {
+      "base": 0,
+      "head": 0
+    }
+  },
+  "regressions": [],
+  "pre_existing": [],
+  "verdict": "no-regressions"
+}

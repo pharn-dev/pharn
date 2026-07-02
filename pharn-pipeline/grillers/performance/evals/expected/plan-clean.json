@@ -1,0 +1,11 @@
+{
+  "skill_kind": "llm",
+  "assertions": {
+    "structural": [{ "kind": "finding_count", "op": "==", "value": 0 }],
+    "semantic": [
+      {
+        "judge": "the approach is recognized as having no scaling risk — a single indexed primary-key lookup returning a bounded one-row result, with no loop over a network call and no unbounded load; no performance finding is raised, and any minor micro-optimization remark stays advisory prose, never a P7 finding"
+      }
+    ]
+  }
+}
