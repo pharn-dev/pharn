@@ -10,17 +10,17 @@ The run reached **GATE 2** (post-review) — the human decision point. It did **
 
 ## Structural verdicts read (verbatim — the floor-grade proceed/stop inputs)
 
-| stage    | verdict source                                  | value                          |
-| -------- | ----------------------------------------------- | ------------------------------ |
-| build    | `node .dev/floor/validate.mjs .` exit code      | **0 (FLOOR GREEN — 6 capabilities)** |
-| regress  | `regression-report.json` `.verdict`             | **`no-regressions`** (exit 0)  |
-| verify   | `verify-report.json` `.verdict`                 | **`PASS`** (all 6 gates exit 0) |
+| stage   | verdict source                             | value                                |
+| ------- | ------------------------------------------ | ------------------------------------ |
+| build   | `node .dev/floor/validate.mjs .` exit code | **0 (FLOOR GREEN — 6 capabilities)** |
+| regress | `regression-report.json` `.verdict`        | **`no-regressions`** (exit 0)        |
+| verify  | `verify-report.json` `.verdict`            | **`PASS`** (all 6 gates exit 0)      |
 
 Membership: `count-grillers .` → **5** (testability, architecture, security, error-handling, observability). Verifiers: **0** (floor gates only, P7).
 
 ## Pointers (cite, do not restate — P4)
 
-- **GRILL:** `.dev/features/observability-griller/GRILL.md` — advisory; **2 findings**. Finding 1 (important, P0/P7) caught that the scanner is the same launderable-presence-scanner shape the `error-handling` griller (landed mid-run) rejects as the disease → **halted to the human**, who chose *keep the scanner + add the explicit "advisory evidence, never a floor-gate" distinction*; that distinction is in `observability.md`'s guarantee audit. Finding 2 (minor) count-drift → fixed (live count 5).
+- **GRILL:** `.dev/features/observability-griller/GRILL.md` — advisory; **2 findings**. Finding 1 (important, P0/P7) caught that the scanner is the same launderable-presence-scanner shape the `error-handling` griller (landed mid-run) rejects as the disease → **halted to the human**, who chose _keep the scanner + add the explicit "advisory evidence, never a floor-gate" distinction_; that distinction is in `observability.md`'s guarantee audit. Finding 2 (minor) count-drift → fixed (live count 5).
 - **REVIEW:** `.dev/features/observability-griller/REVIEW.md` — **GREEN, 0 floor-gate findings**; 2 minor advisory findings + 2 proposed lessons (see below).
 
 ## Deviations from a clean single-increment run (honest, P6)

@@ -6,10 +6,10 @@
 - **Inside (this feature's build outputs, 12):** the observability griller + its 10 eval files + the two `.dev/floor/scan-plan-observability.*` files. _(The pipeline stage-trace `.dev/features/observability-griller/{PLAN,GRILL,…}.md` and the unrelated untracked `privacy-griller/` leftover were excluded from `--changed` — they are not `/pharn-dev-build` outputs of this increment.)_
 - **Outside gates (base → head):**
 
-  | gate                   | base | head | flip? |
-  | ---------------------- | ---- | ---- | ----- |
-  | validate               | 0    | 0    | no    |
-  | structural:trust-fence | 0    | 0    | no    |
+  | gate                   | base | head | flip?             |
+  | ---------------------- | ---- | ---- | ----------------- |
+  | validate               | 0    | 0    | no                |
+  | structural:trust-fence | 0    | 0    | no                |
   | tests                  | 1    | 1    | no (pre-existing) |
 
 - **Style gates skipped** (deterministic P5 optimization): `inside` touches no shared style config (`eslint.config.mjs`, `.prettierrc.json`, …), so a style flip over byte-identical outside files is impossible.

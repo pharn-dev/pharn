@@ -2,14 +2,14 @@
 
 **VERIFIED: floor gates PASS.** Every deterministic gate exited 0 (`.dev/floor/check-verify.mjs` → `verdict: PASS`, exit 0).
 
-| gate                     | exit |
-| ------------------------ | ---- |
-| test (`npm test`)        | 0    |
-| validate                 | 0    |
-| lint (eslint)            | 0    |
-| format:check (prettier)  | 0    |
-| lint:md (markdownlint)   | 0    |
-| structural:trust-fence   | 0    |
+| gate                    | exit |
+| ----------------------- | ---- |
+| test (`npm test`)       | 0    |
+| validate                | 0    |
+| lint (eslint)           | 0    |
+| format:check (prettier) | 0    |
+| lint:md (markdownlint)  | 0    |
+| structural:trust-fence  | 0    |
 
 - **Feature:** observability-griller (the fifth griller — `pharn-pipeline/grillers/observability/`).
 - **Verifiers:** `count-verifiers .` → `{"registered":0}` — **no verifiers registered; floor gates only** (P7). Advisory layer is a no-op; the verdict is the floor gates alone.

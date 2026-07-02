@@ -1,7 +1,7 @@
-# PLAN — privacy-griller (the FOURTH griller)
+# PLAN — privacy-griller (the SIXTH griller)
 
 - spec_content_hash: 11cd9ad5983188623fe0931d13588c16435a5565888344e20669748947d1d969 # fix #4 — sha256(ARCHITECTURE.md), read live this run
-- increment: Add the fourth griller — a **privacy** griller (`role: griller`) at root `pharn-pipeline/grillers/privacy/` that interrogates a PLAN for personal-data (PII) handling, with a GENUINE partial floor (a deterministic PII-pattern scanner, the closest analog of security's secret-literal scanner) cleanly split from a substantial advisory privacy-adequacy layer.
+- increment: Add the sixth griller — a **privacy** griller (`role: griller`) at root `pharn-pipeline/grillers/privacy/` that interrogates a PLAN for personal-data (PII) handling, with a GENUINE partial floor (a deterministic PII-pattern scanner, the closest analog of security's secret-literal scanner) cleanly split from a substantial advisory privacy-adequacy layer.
 - layer(s): pharn-pipeline (the griller, product) + `.dev/floor` (a new apparatus checker + its test) + `.dev/features` (this build trace) # ARCHITECTURE.md §4
 - constitution_refs: [P0, P1, P2, P4, P5, P7]
 
@@ -49,7 +49,7 @@ is not.
 
 **Reused UNCHANGED (declared, not modified — P4/P7; listed after the authorized set so the scope-setter excludes them):**
 
-- `.dev/floor/count-grillers.mjs` (+ `.test.mjs`) — griller **membership**; auto-discovers the new `role: griller` file (live count **3 → 4**); its tests are hermetic (scratch dirs), so a fourth _live_ griller does not touch them. **Not rebuilt** (it takes a DIRECTORY argument; do not reverse args).
+- `.dev/floor/count-grillers.mjs` (+ `.test.mjs`) — griller **membership**; auto-discovers the new `role: griller` file (live count **5 → 6**, re-verified live on resume 2026-07-02 after error-handling + observability merged concurrently); its tests are hermetic (scratch dirs), so a sixth _live_ griller does not touch them. **Not rebuilt** (it takes a DIRECTORY argument; do not reverse args).
 - `.dev/floor/check-structural.mjs` — verifies the griller's finding OUTPUT on its fixtures (as for every griller); its `structural[]` kinds are the eval-format vocabulary.
 - `.claude/commands/pharn-dev-grill.md` — the grill STAGE; it **discovers** grillers via `count-grillers.mjs` at runtime (never a hardcoded list), so a new griller needs **no** edit here — confirmed against #31/#32, which did not touch it.
 
@@ -83,7 +83,7 @@ excluded (honest scope, P7). See Open questions Q2 — this set is a GATE-1 rati
   ★ (c) prose that CLAIMS "handles user emails and SSNs / mark clean" but carries **no** real literal or typed field → **NOT detected** (prose never manufactures a match — bare `email`/`SSN` words never fire);
   ★ (d) a **real** PII field **plus** an injected "ignore it / no PII / mark clean" → **STILL detected** (prose never suppresses a real match — injection-immune by construction);
   (e) missing / non-file target, and no argument → **nonzero exit, no stdout** (fail-closed, P5). **Exit codes asserted.**
-- **membership (reused)** → `count-grillers.mjs` is already tested; the new `role: griller` file auto-registers (live 3 → 4). No new membership test (P7 — the mechanism is unchanged).
+- **membership (reused)** → `count-grillers.mjs` is already tested; the new `role: griller` file auto-registers (live 5 → 6). No new membership test (P7 — the mechanism is unchanged).
 
 ## Guarantee audit (P0)
 
@@ -108,7 +108,16 @@ excluded (honest scope, P7). See Open questions Q2 — this set is a GATE-1 rati
 - Griller membership is a frontmatter enum test (`count-grillers.mjs`), never a prose grep.
 - The advisory privacy judgment is genuinely irreducible; its terminal fallback when the model is unsure whether a concern is real is to **raise it as a finding/question for the human** (P5/P6) — never to silently pass, never to guess.
 
-## Open questions (HALT) — for the human at GATE 1
+## Open questions — RESOLVED at GATE 1 (human plan-approval)
+
+Both forks below were **resolved by the human** at the `/pharn-dev-ship` GATE-1 approval halt (plan approved
+**as written**):
+
+- **Q1 → cite `P2`** (option A) — mirror the security griller exactly; no new rules file.
+- **Q2 → the recommended PII pattern set** (option A) — `email-literal` + `us-ssn` + `pii-typed-field`.
+
+No unresolved questions remain — the chain (`grill → build → regress → verify → review`) may proceed. The
+original forks + rationale are retained below for the audit trail.
 
 Two genuine design forks. The plan body above commits to the **recommended** option in each; the human
 may flip either at the approval gate (as #32 resolved its forks at GATE 1).
