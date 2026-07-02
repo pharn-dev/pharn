@@ -20,7 +20,7 @@ below are **advisory**.
 Every guarantee the griller claims is labeled: **membership** → FLOOR (`count-grillers.mjs`, enum/regex);
 **`enforces↔eval` binding** → FLOOR (`validate.mjs` CHECK 3); the **entire performance-risk assessment** →
 **ADVISORY**; **fixture behavior** → eval-time floor-CHECKED (`check-structural.mjs`) with an explicit
-two-clocks caveat that it is *not* a runtime guarantee; and **"ensures performance"** is explicitly
+two-clocks caveat that it is _not_ a runtime guarantee; and **"ensures performance"** is explicitly
 **struck** as the disease. The griller mirrors the architecture griller's honest advisory-only framing and
 names + rejects the launderable `scan-plan-performance.mjs` candidate (the error-handling precedent). No
 unlabeled guarantee. **No P0 finding.**
@@ -60,7 +60,7 @@ existing grillers cite each other, and the floor's P3 grep is GREEN. **No findin
 
 ### Advisory notes
 
-1. **(echo of GRILL.md, P7, minor)** The increment's *trigger* is griller-family build-out, not a specific
+1. **(echo of GRILL.md, P7, minor)** The increment's _trigger_ is griller-family build-out, not a specific
    captured dogfood/eval failure that a performance gap slipped through. Mitigated by the human-approved
    sibling-griller precedent (testability/architecture/security/error-handling) and GATE-1 approval.
    Surfaced, not blocking.
@@ -82,7 +82,7 @@ decision is the human's at the post-review gate.
 > **Provenance:** increment `performance-griller` (this run); the verify formatting loop above.
 >
 > **Candidate lesson (markdown-authoring style, real + recurring):** When the build agent authors a
-> markdown capability, single-emphasis *italic* must use underscore `_x_` — prettier normalizes italic to
+> markdown capability, single-emphasis _italic_ must use underscore `_x_` — prettier normalizes italic to
 > underscore, and markdownlint MD049 runs in **consistent** mode, so a mixed `*x*`/`_x_` file fails one or
 > the other; and no source line may **start** with `#NN` (MD018 reads it as a malformed heading). Prefer
 > `_italic_` + `**bold**`, and run `npm run format:check` + `npm run lint:md` (not only `validate.mjs`)

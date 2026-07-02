@@ -12,11 +12,11 @@ decision)**. No RED-verdict STOP occurred; the run reached GATE 2.
 
 ## Structural verdicts read (verbatim — the floor-grade decisions)
 
-| stage             | verdict source                        | value read              |
-| ----------------- | ------------------------------------- | ----------------------- |
-| `/pharn-dev-build`   | `validate.mjs` exit code              | **0** (GREEN, 8 caps)   |
-| `/pharn-dev-regress` | `regression-report.json` `.verdict`   | **"no-regressions"**    |
-| `/pharn-dev-verify`  | `verify-report.json` `.verdict`       | **"PASS"** (5/5 gates)  |
+| stage                | verdict source                      | value read             |
+| -------------------- | ----------------------------------- | ---------------------- |
+| `/pharn-dev-build`   | `validate.mjs` exit code            | **0** (GREEN, 8 caps)  |
+| `/pharn-dev-regress` | `regression-report.json` `.verdict` | **"no-regressions"**   |
+| `/pharn-dev-verify`  | `verify-report.json` `.verdict`     | **"PASS"** (5/5 gates) |
 
 Each verdict was read from the sub-stage's own deterministic checker (`validate` exit /
 `check-regress` / `check-verify`), never from `/pharn-dev-ship`'s judgment. Proceeding past each was

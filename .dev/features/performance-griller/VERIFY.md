@@ -5,13 +5,13 @@
 
 ## FLOOR layer — the deterministic gates (own the verdict)
 
-| gate         | exit | meaning                                                            |
-| ------------ | ---- | ----------------------------------------------------------------- |
-| test         | 0    | `npm test` — the hermetic suite (floor + hook `*.test.*`) green   |
-| validate     | 0    | `.dev/floor/validate.mjs .` — GREEN, 8 capabilities checked        |
-| lint         | 0    | `npm run lint` — eslint clean                                     |
-| format:check | 0    | `npm run format:check` — prettier clean (whole-repo)              |
-| lint:md      | 0    | `npm run lint:md` — markdownlint clean (whole-repo)               |
+| gate         | exit | meaning                                                         |
+| ------------ | ---- | --------------------------------------------------------------- |
+| test         | 0    | `npm test` — the hermetic suite (floor + hook `*.test.*`) green |
+| validate     | 0    | `.dev/floor/validate.mjs .` — GREEN, 8 capabilities checked     |
+| lint         | 0    | `npm run lint` — eslint clean                                   |
+| format:check | 0    | `npm run format:check` — prettier clean (whole-repo)            |
+| lint:md      | 0    | `npm run lint:md` — markdownlint clean (whole-repo)             |
 
 - **No `structural:*` gate:** the performance griller ships **expected-only** evals (the live griller
   runner is deferred, P7), so there is no committed `expected ↔ actual` pair for it — exactly as
