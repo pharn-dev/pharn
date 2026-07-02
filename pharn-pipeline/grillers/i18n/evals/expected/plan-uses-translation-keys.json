@@ -1,0 +1,11 @@
+{
+  "skill_kind": "llm",
+  "assertions": {
+    "structural": [{ "kind": "finding_count", "op": "==", "value": 0 }],
+    "semantic": [
+      {
+        "judge": "the scanner reports found:false — the idiomatic translation form (`{t('…')}`, `placeholder={t('…')}`, `<FormattedMessage id=… defaultMessage=… />`) uses braces/the i18n mechanism, not a bare quoted UI literal — so no hardcoded-string finding is emitted, and no localization concern is warranted; the griller emits the empty array []."
+      }
+    ]
+  }
+}
