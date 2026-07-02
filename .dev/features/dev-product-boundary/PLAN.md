@@ -144,7 +144,7 @@ layout**:
 - **check-provenance enum** (`memory-bank/`→`.dev/memory-bank/`) → floor: **enum/regex/presence**. The
   promotion gate still admits only the canon files — at their new home.
 - **npm-test-glob `.dev/**`append** → this **backs** the floor/hook guarantees (the suite is their
-regression net). **Probe (run this session, in scratchpad):** a`.dev/floor/x.test.mjs`under`**/\*.test.mjs`
+  regression net). **Probe (run this session, in scratchpad):** a`.dev/floor/x.test.mjs`under`**/\*.test.mjs`
   yielded **0 tests** — `**`does not descend dot-dirs (which is exactly why`.claude/**` is already listed
   explicitly). Without the append, 8 suites vanish **silently\*\* — the single highest-risk correctness item.
 - **`pharn-dev-` prefix + autocomplete** → **guarantees nothing about access; it is naming/menu UX, NOT a
