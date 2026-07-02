@@ -7,14 +7,14 @@ membership). This is a thin roll-up; it records **that the chain ran and its flo
 
 ## Stages run, in order, and where the run ended
 
-| # | stage             | outcome                                                                 |
-| - | ----------------- | ----------------------------------------------------------------------- |
-| 1 | `/pharn-dev-plan`   | PLAN.md written; **GATE 1** — human **approved as written**             |
-| 2 | `/pharn-dev-grill`  | GRILL.md — advisory, gates nothing; 3 concerns (0 blocking) → proceeded  |
-| 3 | `/pharn-dev-build`  | 7 product files written; floor **GREEN** → proceeded                    |
-| 4 | `/pharn-dev-regress`| regression-report.json → proceeded                                      |
-| 5 | `/pharn-dev-verify` | verify-report.json → proceeded                                          |
-| 6 | `/pharn-dev-review` | REVIEW.md — **GATE 2** (chain end); handed to human                     |
+| #   | stage                | outcome                                                                 |
+| --- | -------------------- | ----------------------------------------------------------------------- |
+| 1   | `/pharn-dev-plan`    | PLAN.md written; **GATE 1** — human **approved as written**             |
+| 2   | `/pharn-dev-grill`   | GRILL.md — advisory, gates nothing; 3 concerns (0 blocking) → proceeded |
+| 3   | `/pharn-dev-build`   | 7 product files written; floor **GREEN** → proceeded                    |
+| 4   | `/pharn-dev-regress` | regression-report.json → proceeded                                      |
+| 5   | `/pharn-dev-verify`  | verify-report.json → proceeded                                          |
+| 6   | `/pharn-dev-review`  | REVIEW.md — **GATE 2** (chain end); handed to human                     |
 
 **Ended at GATE 2** (post-review human decision), not at a RED-verdict STOP.
 

@@ -5,13 +5,13 @@ exited 0, run once at HEAD with the feature present.
 
 ## Floor layer — the gates (own the verdict)
 
-| gate           | exit | meaning                                                            |
-| -------------- | ---- | ----------------------------------------------------------------- |
-| `test`         | 0    | `npm test` — 218/218 pass (incl. the hermetic `count-grillers` suite) |
+| gate           | exit | meaning                                                                       |
+| -------------- | ---- | ----------------------------------------------------------------------------- |
+| `test`         | 0    | `npm test` — 218/218 pass (incl. the hermetic `count-grillers` suite)         |
 | `validate`     | 0    | `.dev/floor/validate.mjs .` GREEN — 13 capabilities, comprehension registered |
-| `lint`         | 0    | `npm run lint` (eslint) clean                                      |
-| `format:check` | 0    | `npm run format:check` (prettier) clean                           |
-| `lint:md`      | 0    | `npm run lint:md` (markdownlint) clean                            |
+| `lint`         | 0    | `npm run lint` (eslint) clean                                                 |
+| `format:check` | 0    | `npm run format:check` (prettier) clean                                       |
+| `lint:md`      | 0    | `npm run lint:md` (markdownlint) clean                                        |
 
 No `structural:<expected>` gate: the comprehension griller ships eval **expected** fixtures but **no
 committed actual `findings.json`** (the live griller runner is deferred, P7 — same as all 11 sibling
@@ -37,8 +37,8 @@ verdict is the floor gates alone. No verifier is authored speculatively (P7).
 
 ## Verdict
 
-**VERIFIED: floor gates PASS.** Honest residual (P0/P7): *verified = the named gates passed; this is NOT a
-guarantee of correctness beyond what those gates check.* The whole-repo gates confirm the repo is green
+**VERIFIED: floor gates PASS.** Honest residual (P0/P7): _verified = the named gates passed; this is NOT a
+guarantee of correctness beyond what those gates check._ The whole-repo gates confirm the repo is green
 **with** the comprehension griller in it, and `validate` confirms it is a well-formed, eval-bound,
 membership-counted griller — but "these gates passed" is **not** "the griller's advisory comprehension
 judgment is good." That judgment is irreducible and, by design, advisory (the griller guarantees only its
