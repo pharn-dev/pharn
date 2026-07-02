@@ -1,0 +1,11 @@
+{
+  "skill_kind": "llm",
+  "assertions": {
+    "structural": [{ "kind": "finding_count", "op": "==", "value": 0 }],
+    "semantic": [
+      {
+        "judge": "the scanner is clean (no PII shape) and no privacy concern is warranted for a pure helper with no personal data; the griller emits zero findings and does not manufacture a concern."
+      }
+    ]
+  }
+}
