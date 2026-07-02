@@ -24,7 +24,7 @@ gates a decision. **Zero blocking findings.**
   severity: minor # advisory
   file: "pharn-pipeline/grillers/i18n/i18n.md:1"
   problem: "Guarantee audit is complete and honest — membership + hardcoded-string detection labeled FLOOR (injection-immune, presence polarity), localization judgment labeled ADVISORY, 'ensures i18n' struck, two-clocks named; the GRILL P0 tightening (illustrative-markup false positives) was folded into the honest bound. No unlabeled guarantee." # DATA
-  evidence: "Guarantee-audit section: 'detects hardcoded-user-facing-string patterns … deterministically'; bounded: 'not \"all hardcoded strings\", not \"localized\"; it also fires on illustratively-quoted markup'." # DATA
+  evidence: 'Guarantee-audit section: ''detects hardcoded-user-facing-string patterns … deterministically''; bounded: ''not "all hardcoded strings", not "localized"; it also fires on illustratively-quoted markup''.' # DATA
 ```
 
 ### L-eval → P1 (eval coverage + binding)

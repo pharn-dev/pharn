@@ -4,13 +4,13 @@
 
 Every deterministic gate re-run at HEAD (repo-with-the-feature-in-it):
 
-| gate           | exit | meaning                                                    |
-| -------------- | ---- | ---------------------------------------------------------- |
+| gate           | exit | meaning                                                     |
+| -------------- | ---- | ----------------------------------------------------------- |
 | `test`         | 0    | `npm test` — 218/218 (incl. the feature's own scanner test) |
 | `validate`     | 0    | `.dev/floor/validate.mjs .` — GREEN, 12 capabilities        |
-| `lint`         | 0    | `eslint .` clean                                           |
-| `format:check` | 0    | `prettier --check .` clean                                 |
-| `lint:md`      | 0    | `markdownlint-cli2` clean                                  |
+| `lint`         | 0    | `eslint .` clean                                            |
+| `format:check` | 0    | `prettier --check .` clean                                  |
+| `lint:md`      | 0    | `markdownlint-cli2` clean                                   |
 
 These five are exactly the repo's `npm run check` aggregate, so this verdict tracks the full `npm run check`
 (L9 style-gate coverage — the increment's own markdown/style is caught here). The feature ships **no committed

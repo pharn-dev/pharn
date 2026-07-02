@@ -5,14 +5,14 @@ and its floor verdicts** — it is **not** a "shipped", an approval, or a `PHARN
 
 ## Stages run, in order — and where it ended
 
-| stage             | outcome                                                                                    |
-| ----------------- | ------------------------------------------------------------------------------------------ |
-| `/pharn-dev-plan`   | PLAN.md written; **GATE 1** halt → human **approved as written** (build the scanner; enforce P7) |
-| `/pharn-dev-grill`  | GRILL.md — advisory, 3 minor concerns, 0 blocking-severity; gates nothing → proceeded        |
-| `/pharn-dev-build`  | 12 files written (griller + 3 eval pairs + scanner + scanner test); floor gate GREEN         |
-| `/pharn-dev-regress`| regression-report.json — verdict read below                                                  |
-| `/pharn-dev-verify` | verify-report.json — verdict read below                                                      |
-| `/pharn-dev-review` | REVIEW.md — chain end → **GATE 2** (this stop)                                                |
+| stage                | outcome                                                                                          |
+| -------------------- | ------------------------------------------------------------------------------------------------ |
+| `/pharn-dev-plan`    | PLAN.md written; **GATE 1** halt → human **approved as written** (build the scanner; enforce P7) |
+| `/pharn-dev-grill`   | GRILL.md — advisory, 3 minor concerns, 0 blocking-severity; gates nothing → proceeded            |
+| `/pharn-dev-build`   | 12 files written (griller + 3 eval pairs + scanner + scanner test); floor gate GREEN             |
+| `/pharn-dev-regress` | regression-report.json — verdict read below                                                      |
+| `/pharn-dev-verify`  | verify-report.json — verdict read below                                                          |
+| `/pharn-dev-review`  | REVIEW.md — chain end → **GATE 2** (this stop)                                                   |
 
 **Ended at: GATE 2** (post-review human decision). No RED-verdict STOP occurred.
 
