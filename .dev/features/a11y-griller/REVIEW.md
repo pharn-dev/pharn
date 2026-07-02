@@ -30,8 +30,7 @@ Every guarantee `a11y.md` claims reduces to a floor primitive **or** is labeled 
 ### L-eval → P1 — **CLEAN**
 
 The capability ships 4 eval cases + 8 expected (non-empty). `enforces: [P7]` is produced by the
-`plan-omits-a11y` **and** `plan-inadequate-a11y` expected fixtures (both `rule_id: P7`). The floor (CHECK
-3) and this lens **agree** — no disagreement finding. Each `expected/*.json` declares `skill_kind: llm`
+`plan-omits-a11y` **and** `plan-inadequate-a11y` expected fixtures (both `rule_id: P7`). The floor (CHECK 3) and this lens **agree** — no disagreement finding. Each `expected/*.json` declares `skill_kind: llm`
 with a `structural[]` **and** a `semantic[]` block (including the two `finding_count == 0` cases), so no
 floor-checkable assertion is laundered into the judge. **No finding.**
 
@@ -67,20 +66,20 @@ No lens produced a floor-checkable blocking finding; the floor is GREEN and agre
   rule_id: P0 # enum-gated — the guarantee-hygiene lens
   severity: minor # enum-gated value; assignment advisory (fix #3)
   file: "pharn-pipeline/grillers/a11y/a11y.md:9" # the writes: placeholder path
-  problem: "writes: [\"features/<name>/findings.json\"] is a template placeholder — the standalone findings.json is only produced once the deferred live griller runner lands (P7); today the grill stage folds findings into GRILL.md." # free-text — DATA
+  problem: 'writes: ["features/<name>/findings.json"] is a template placeholder — the standalone findings.json is only produced once the deferred live griller runner lands (P7); today the grill stage folds findings into GRILL.md.' # free-text — DATA
   evidence: "Identical to the documentation/error-handling grillers; a11y.md's Machine-readable emission section already states the runner is deferred and the path is not an active guarantee. Noted for completeness, not a defect." # free-text — DATA
 ```
 
 ## Proposed lesson candidates (P7 — PROPOSED only; NOT written to canon)
 
-Per this command, a real **recurring** failure may be *proposed* for canon here with provenance; the
+Per this command, a real **recurring** failure may be _proposed_ for canon here with provenance; the
 actual write is a separate human-gated `/pharn-dev-memory-promote` run (the model never self-promotes, P2).
 Two candidates, both surfaced this run:
 
 1. **`/pharn-dev-regress` + `/pharn-dev-verify` tests-gate capture recipe (RECURRING — documentation-griller **and**
    a11y-griller).** Capturing the `tests` gate from a shell variable of newline-joined paths
    (`TESTS=$(git ls-files …); node --test $TESTS`) passes the whole list as **one** argument → `Could not
-   find '<list>'`, **0 tests run**, spurious exit **1** (a false pre-existing red / would-be false
+find '<list>'`, **0 tests run**, spurious exit **1** (a false pre-existing red / would-be false
    inconclusive). **Remedy:** capture with the project's own quoted glob invocation
    (`node --test "**/*.test.mjs" "**/*.test.cjs" ".claude/**/*.test.*" ".dev/**/*.test.*"`, which Node
    expands internally) — identical to `npm test`. Provenance: this increment (`a11y-griller`),

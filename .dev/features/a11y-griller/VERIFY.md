@@ -7,11 +7,11 @@
 
 ## FLOOR layer — the gates that own the verdict (whole-repo at HEAD)
 
-| gate           | exit | meaning                                                             |
+| gate           | exit | meaning                                                            |
 | -------------- | ---- | ------------------------------------------------------------------ |
 | `test`         | 0    | `npm test` — 208/208 hermetic tests pass (incl. the floor suites)  |
-| `validate`     | 0    | `.dev/floor/validate.mjs .` — FLOOR GREEN, 11 capabilities checked  |
-| `lint`         | 0    | `npm run lint` — eslint clean                                       |
+| `validate`     | 0    | `.dev/floor/validate.mjs .` — FLOOR GREEN, 11 capabilities checked |
+| `lint`         | 0    | `npm run lint` — eslint clean                                      |
 | `format:check` | 0    | `npm run format:check` — prettier clean (whole-repo)               |
 | `lint:md`      | 0    | `npm run lint:md` — markdownlint clean (whole-repo)                |
 
@@ -45,6 +45,6 @@ this verdict, fix #3). None exists today (P7).
 
 Honest residual (P0/P7): **verified = the named gates passed** — this is **NOT** a guarantee of
 correctness beyond what those gates check. The gates confirm the increment is structurally valid
-(`validate`), hermetically test-green, and style-clean; they do **not** prove the a11y griller's *prose
-judgment* is sound on a novel plan (that is the griller's own advisory nature, and the human's call at
+(`validate`), hermetically test-green, and style-clean; they do **not** prove the a11y griller's _prose
+judgment_ is sound on a novel plan (that is the griller's own advisory nature, and the human's call at
 the post-review gate). Verifier concerns would be advisory help, not assurance — and none are registered.
