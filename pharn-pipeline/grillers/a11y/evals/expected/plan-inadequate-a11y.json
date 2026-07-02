@@ -1,0 +1,17 @@
+{
+  "skill_kind": "llm",
+  "assertions": {
+    "structural": [
+      { "kind": "finding_count", "op": "==", "value": 1 },
+      { "kind": "field_equals", "field": "type", "value": "FINDING" },
+      { "kind": "field_equals", "field": "rule_id", "value": "P7" },
+      { "kind": "field_equals", "field": "severity", "value": "important" },
+      { "kind": "file_resolves", "value": "pharn-pipeline/grillers/a11y/evals/cases/plan-inadequate-a11y.md:17" }
+    ],
+    "semantic": [
+      {
+        "judge": "the plan DOES declare accessibility, so this is NOT an absence finding; the declared a11y covers only colour contrast and omits what a custom div-based dropdown critically needs (keyboard operability + focus management, and a name/role/value for screen readers — it is not a native <select>); the griller surfaces exactly one ADVISORY adequacy finding at the offending declaration line (line 17), frames it as judgment for the human, and never claims a floor/absence gate or manufactures an unrelated concern."
+      }
+    ]
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "skill_kind": "llm",
+  "assertions": {
+    "structural": [{ "kind": "finding_count", "op": "==", "value": 0 }],
+    "semantic": [
+      {
+        "judge": "the plan is recognized as touching no user-facing UI — a backend token-bucket rate limiter around an internal API route plus a data-retention cron, with no component, page, form, or rendered surface — so the accessibility axis legitimately does not apply; no a11y finding is raised, and no concern is manufactured (a backend-only plan triggering nothing is the correct, non-inflated outcome)."
+      }
+    ]
+  }
+}
