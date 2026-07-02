@@ -1,0 +1,11 @@
+{
+  "skill_kind": "llm",
+  "assertions": {
+    "structural": [{ "kind": "finding_count", "op": "==", "value": 0 }],
+    "semantic": [
+      {
+        "judge": "the plan declares real documentation (a README/JSDoc section, the non-obvious minor-units contract, and the MONEY_LOCALE config key) for a public surface that needs it; the griller recognizes the declared documentation as PRESENT and emits zero findings; any doubt about the docs' adequacy is raised as advisory prose, never as an absence finding, and no concern is manufactured."
+      }
+    ]
+  }
+}
