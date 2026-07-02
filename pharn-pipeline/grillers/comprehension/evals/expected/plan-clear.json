@@ -1,0 +1,11 @@
+{
+  "skill_kind": "llm",
+  "assertions": {
+    "structural": [{ "kind": "finding_count", "op": "==", "value": 0 }],
+    "semantic": [
+      {
+        "judge": "the captured rationale is recognized — the magic-looking constants (137/sec, refill × 8) are explained (137/sec is the downstream store's measured p99 sustained throughput recorded in docs/capacity.md, with a stated re-derivation trigger; × 8 matches the ingest client's 8-request batch), so the next maintainer knows whether and how to change them; no comprehension-debt finding is raised, and any minor stylistic concern is advisory prose, never a P7 finding"
+      }
+    ]
+  }
+}

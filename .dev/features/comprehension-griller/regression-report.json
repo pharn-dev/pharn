@@ -1,0 +1,31 @@
+{
+  "base": "HEAD",
+  "inside": [
+    "pharn-pipeline/grillers/comprehension/comprehension.md",
+    "pharn-pipeline/grillers/comprehension/evals/cases/plan-comprehension-debt.md",
+    "pharn-pipeline/grillers/comprehension/evals/cases/plan-clear.md",
+    "pharn-pipeline/grillers/comprehension/evals/expected/plan-comprehension-debt.json",
+    "pharn-pipeline/grillers/comprehension/evals/expected/plan-comprehension-debt.md",
+    "pharn-pipeline/grillers/comprehension/evals/expected/plan-clear.json",
+    "pharn-pipeline/grillers/comprehension/evals/expected/plan-clear.md",
+    ".dev/features/comprehension-griller/PLAN.md",
+    ".dev/features/comprehension-griller/GRILL.md"
+  ],
+  "outside_gates": {
+    "structural:trust-fence": {
+      "base": 0,
+      "head": 0
+    },
+    "tests": {
+      "base": 0,
+      "head": 0
+    },
+    "validate": {
+      "base": 0,
+      "head": 0
+    }
+  },
+  "regressions": [],
+  "pre_existing": [],
+  "verdict": "no-regressions"
+}
