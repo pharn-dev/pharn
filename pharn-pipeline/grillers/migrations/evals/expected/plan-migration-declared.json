@@ -1,0 +1,11 @@
+{
+  "skill_kind": "llm",
+  "assertions": {
+    "structural": [{ "kind": "finding_count", "op": "==", "value": 0 }],
+    "semantic": [
+      {
+        "judge": "the scanner reports migration/rollback vocabulary present in a dedicated ## Migration section (a forward ALTER TABLE ADD COLUMN and a down path that drops the new nullable column); the griller recognizes a real, safe, reversible migration for the additive schema change it builds, and emits zero findings — it does not manufacture an absence concern, and it does not treat the scanner hit as an auto-pass."
+      }
+    ]
+  }
+}

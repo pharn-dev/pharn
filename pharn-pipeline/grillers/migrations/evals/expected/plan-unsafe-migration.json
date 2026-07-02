@@ -1,0 +1,17 @@
+{
+  "skill_kind": "llm",
+  "assertions": {
+    "structural": [
+      { "kind": "finding_count", "op": "==", "value": 1 },
+      { "kind": "field_equals", "field": "type", "value": "FINDING" },
+      { "kind": "field_equals", "field": "rule_id", "value": "P7" },
+      { "kind": "field_equals", "field": "severity", "value": "important" },
+      { "kind": "file_resolves", "value": "pharn-pipeline/grillers/migrations/evals/cases/plan-unsafe-migration.md:17" }
+    ],
+    "semantic": [
+      {
+        "judge": "a migration and a rollback ARE declared, so the scanner reports mentions:true; the griller's ADVISORY safety judgment (the bulk of the axis) recognizes the migration is UNSAFE — it drops a populated email column with no backfill/archival (permanent data loss) and the declared rollback re-adds an EMPTY column that does not restore the dropped data, so it is irreversible dressed as reversible. It emits exactly one advisory finding (rule_id P7) on the offending forward-migration line (the DROP COLUMN email line), never gating; the presence of a declaration did not auto-suppress the concern."
+      }
+    ]
+  }
+}
