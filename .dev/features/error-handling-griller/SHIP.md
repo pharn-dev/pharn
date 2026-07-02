@@ -5,14 +5,14 @@ cleanly; no RED-verdict STOP.
 
 ## Stages that ran, in order, with the structural verdict read at each
 
-| stage             | verdict read (FLOOR)                                   | result           | proceed? |
-| ----------------- | ----------------------------------------------------- | ---------------- | -------- |
-| `/pharn-dev-plan`     | human approval (GATE 1)                                | approved as written | ✓ |
-| `/pharn-dev-grill`    | none (advisory by design — gates nothing)             | 2 minor findings | ✓ (carried into build) |
-| `/pharn-dev-build`    | `node .dev/floor/validate.mjs .` **exit 0**           | **GREEN** (5 caps) | ✓ |
-| `/pharn-dev-regress`  | `regression-report.json` `.verdict`                   | **`no-regressions`** | ✓ |
-| `/pharn-dev-verify`   | `verify-report.json` `.verdict`                       | **`PASS`** | ✓ |
-| `/pharn-dev-review`   | none (advisory lenses; floor-first = validate GREEN)  | GREEN — 0 blocking, 1 minor advisory | → GATE 2 |
+| stage                | verdict read (FLOOR)                                 | result                               | proceed?               |
+| -------------------- | ---------------------------------------------------- | ------------------------------------ | ---------------------- |
+| `/pharn-dev-plan`    | human approval (GATE 1)                              | approved as written                  | ✓                      |
+| `/pharn-dev-grill`   | none (advisory by design — gates nothing)            | 2 minor findings                     | ✓ (carried into build) |
+| `/pharn-dev-build`   | `node .dev/floor/validate.mjs .` **exit 0**          | **GREEN** (5 caps)                   | ✓                      |
+| `/pharn-dev-regress` | `regression-report.json` `.verdict`                  | **`no-regressions`**                 | ✓                      |
+| `/pharn-dev-verify`  | `verify-report.json` `.verdict`                      | **`PASS`**                           | ✓                      |
+| `/pharn-dev-review`  | none (advisory lenses; floor-first = validate GREEN) | GREEN — 0 blocking, 1 minor advisory | → GATE 2               |
 
 Every "proceed" was read from the named **deterministic verdict** (exit code / `.verdict` enum), never
 from a stage's prose or my judgment. The two human gates held: GATE 1 (plan approval) and GATE 2 (this
@@ -41,7 +41,8 @@ overwriting the shared `.pharn/writes-scope.json`. fix #7 **fail-closed denied**
 corruption); the human paused the other runs and the chain resumed. One foreign untracked file
 (`.dev/features/privacy-griller/PLAN.md`) remains in the tree — **not** this feature, not deleted, and
 excluded from the regress partition (provably not this build's output). REVIEW.md proposes a canon lesson
-+ a future increment (per-run scope isolation / a lock) for this real dogfood failure.
+
+- a future increment (per-run scope isolation / a lock) for this real dogfood failure.
 
 ## Standing decision — the human's (P0)
 

@@ -5,13 +5,13 @@
 
 ## FLOOR layer — deterministic gates (own the verdict)
 
-| gate           | exit | notes                                                         |
-| -------------- | ---- | ------------------------------------------------------------ |
-| `test`         | 0    | `npm test` — full hermetic suite (176 tests, `node --test`)  |
-| `validate`     | 0    | `.dev/floor/validate.mjs .` — GREEN, 5 capabilities          |
-| `lint`         | 0    | `npm run lint` — eslint clean                                |
-| `format:check` | 0    | `npm run format:check` — prettier clean (whole-repo)         |
-| `lint:md`      | 0    | `npm run lint:md` — markdownlint clean (whole-repo)          |
+| gate           | exit | notes                                                       |
+| -------------- | ---- | ----------------------------------------------------------- |
+| `test`         | 0    | `npm test` — full hermetic suite (176 tests, `node --test`) |
+| `validate`     | 0    | `.dev/floor/validate.mjs .` — GREEN, 5 capabilities         |
+| `lint`         | 0    | `npm run lint` — eslint clean                               |
+| `format:check` | 0    | `npm run format:check` — prettier clean (whole-repo)        |
+| `lint:md`      | 0    | `npm run lint:md` — markdownlint clean (whole-repo)         |
 
 **VERIFIED: floor gates PASS.**
 

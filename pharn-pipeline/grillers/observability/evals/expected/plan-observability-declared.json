@@ -1,0 +1,11 @@
+{
+  "skill_kind": "llm",
+  "assertions": {
+    "structural": [{ "kind": "finding_count", "op": "==", "value": 0 }],
+    "semantic": [
+      {
+        "judge": "the scanner reports observability vocabulary present (a dedicated ## Observability section: structured logging, a latency metric + a failure counter, a trace span with an alert); the griller recognizes real, adequate observability for the operationally-significant payout path it builds, and emits zero findings — it does not manufacture an absence concern, and it does not treat the scanner hit as an auto-pass."
+      }
+    ]
+  }
+}

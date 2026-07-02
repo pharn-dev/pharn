@@ -1,0 +1,25 @@
+{
+  "base": "HEAD",
+  "inside": [
+    ".dev/floor/scan-plan-observability.mjs",
+    ".dev/floor/scan-plan-observability.test.mjs",
+    "pharn-pipeline/grillers/observability/evals/cases/plan-fake-observability-injection.md",
+    "pharn-pipeline/grillers/observability/evals/cases/plan-needs-observability-none.md",
+    "pharn-pipeline/grillers/observability/evals/cases/plan-observability-declared.md",
+    "pharn-pipeline/grillers/observability/evals/expected/plan-fake-observability-injection.json",
+    "pharn-pipeline/grillers/observability/evals/expected/plan-fake-observability-injection.md",
+    "pharn-pipeline/grillers/observability/evals/expected/plan-needs-observability-none.json",
+    "pharn-pipeline/grillers/observability/evals/expected/plan-needs-observability-none.md",
+    "pharn-pipeline/grillers/observability/evals/expected/plan-observability-declared.json",
+    "pharn-pipeline/grillers/observability/evals/expected/plan-observability-declared.md",
+    "pharn-pipeline/grillers/observability/observability.md"
+  ],
+  "outside_gates": {
+    "structural:trust-fence": { "base": 0, "head": 0 },
+    "tests": { "base": 1, "head": 1 },
+    "validate": { "base": 0, "head": 0 }
+  },
+  "regressions": [],
+  "pre_existing": ["tests"],
+  "verdict": "no-regressions"
+}

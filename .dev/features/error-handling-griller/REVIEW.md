@@ -62,7 +62,7 @@ clean (validate GREEN).
   severity: minor
   file: "pharn-pipeline/grillers/error-handling/evals/expected/plan-inadequate-error-handling.md:8"
   problem: "The inadequate-handling finding anchors `file` at the ## Files op line (case:13) rather than the inadequate declaration itself (the '## Error handling: retry until it succeeds' line, case:16); both are defensible, and case:13 mirrors security's offending-op convention."
-  evidence: "'file: \"…plan-inadequate-error-handling.md:13\" # enum-gated — the op whose declared handling is inadequate' — a reasonable, precedent-following choice; surfaced only so the human can confirm the anchor they prefer."
+  evidence: '''file: "…plan-inadequate-error-handling.md:13" # enum-gated — the op whose declared handling is inadequate'' — a reasonable, precedent-following choice; surfaced only so the human can confirm the anchor they prefer.'
 ```
 
 This is the **only** advisory finding and it is **not** a defect — the anchor follows the security-griller
